@@ -139,11 +139,25 @@ def main():
               page.get_by_test_id("candidate-title").inner_text())
         shot("P03-CANDIDATE-KNOWLEDGE")
 
-        # Correct path exists and works
+        # Correct path exists and works — KK-PX-R5-03 (model A): 保存修正只更新
+        # 候选并返回候选卡,绝不直接入库;入库只能由显式「确认入库」触发
         page.get_by_test_id("candidate-correct").click()
         page.get_by_test_id("correct-block").wait_for()
+        check("CORRECT_SAVE_HINT_VISIBLE",
+              "不会直接入库" in page.get_by_test_id("correct-save-hint").inner_text(),
+              "user can predict before click: save does NOT ingest")
         page.get_by_test_id("correct-title").fill("备用供应商 XYZ 报价(已修正)")
         page.get_by_test_id("correct-save").click()
+        page.get_by_test_id("candidate-card").wait_for()
+        check("CORRECT_SAVE_RETURNS_TO_CANDIDATE",
+              page.get_by_test_id("candidate-title").inner_text() == "备用供应商 XYZ 报价(已修正)"
+              and page.get_by_test_id("app-root").get_attribute("data-journey-state") == "CANDIDATE_KNOWLEDGE",
+              "save correction returns to candidate card, still awaiting explicit confirm")
+        check("CORRECT_SAVE_NO_DIRECT_INGEST",
+              "6 条知识" in page.get_by_test_id("knowledge-context-summary").inner_text(),
+              "knowledge count unchanged after 保存修正 (KK-PX-R5-03)")
+        # Explicit 确认入库 is the ONLY ingest path
+        page.get_by_test_id("candidate-confirm").click()
         page.wait_for_timeout(400)
         check("CORRECT_WORKS", page.get_by_test_id("conversation").inner_text().find("已修正") >= 0,
               "corrected candidate confirmed into context")
@@ -315,16 +329,21 @@ def main():
         page.get_by_test_id("work-surface").wait_for()
         check("WORK_SURFACE_OPENS", page.get_by_test_id("work-surface").is_visible(), "contextual work surface")
         shot("P05-KNOWLEDGE-WORK-SURFACE")
+        # KK-PX-R5-04 (path 1: knowledge navigation): 「返回 Agent 对话」真的
+        # 直接返回 Agent 对话,而不是先回到上层知识面板
         page.get_by_test_id("work-surface-back").click()
-        page.get_by_test_id("knowledge-detail").wait_for()
-        page.get_by_test_id("knowledge-detail-close").click()
-        page.get_by_test_id("knowledge-sheet").wait_for()
-        page.get_by_test_id("knowledge-sheet-close").click()
         page.wait_for_timeout(300)
+        check("WORK_BACK_LABEL_MATCHES_TARGET_NAV_PATH",
+              page.get_by_test_id("work-surface").count() == 0
+              and page.get_by_test_id("knowledge-detail").count() == 0
+              and page.get_by_test_id("knowledge-sheet").count() == 0
+              and page.get_by_test_id("conversation").is_visible()
+              and page.get_by_test_id("app-root").get_attribute("data-journey-state") == "AGENT_CONTEXT_RESTORED",
+              "back from work surface lands DIRECTLY on Agent conversation")
         check("RETURN_PRESERVES_CONTEXT",
               page.get_by_test_id("message-user").count() == msg_count_before
               and "ABC 供应商延迟" in page.get_by_test_id("conversation").inner_text(),
-              "conversation intact after knowledge -> work surface -> back")
+              "conversation intact after knowledge -> work surface -> back to Agent")
 
         # --- Journey E: Capability attachment ---
         page.get_by_test_id("nav-calendar").click()
@@ -474,6 +493,200 @@ def main():
         page.get_by_test_id("capability-sheet-skills-close").click()
         page.wait_for_timeout(200)
         shot("P07-RETURN-CONTEXT-PRESERVED")
+
+        # ============================================================
+        # PX findings correction (Contract R2 exploratory findings)
+        # KK-PX-R5-01 semantic consistency / -02 sensing visibility /
+        # -03 confirm semantics / -04 return-target label match
+        # ============================================================
+
+        # --- KK-PX-R5-01: two clearly different synthetic topics ---
+        def capture_and_confirm(text):
+            page.get_by_test_id("nav-capture").click()
+            page.get_by_test_id("capture-sheet").wait_for()
+            page.get_by_test_id("capture-input").fill(text)
+            page.get_by_test_id("capture-submit").click()
+            page.get_by_test_id("candidate-card").wait_for()
+            page.get_by_test_id("candidate-confirm").click()
+            page.wait_for_timeout(400)
+
+        capture_and_confirm("读书笔记复核:复利曲线在长期主义第三章的论证结构。")
+        check("PX01_CAPTURE_CONFIRM_TOPIC_A",
+              "读书笔记复核" in page.get_by_test_id("conversation").inner_text(),
+              "topic A captured and confirmed")
+        capture_and_confirm("健身计划:每周三次力量训练,周日拉伸恢复。")
+        check("PX01_CAPTURE_CONFIRM_TOPIC_B",
+              "健身计划" in page.get_by_test_id("conversation").inner_text(),
+              "topic B captured and confirmed")
+
+        # exact-title query binds strictly to its own item
+        page.get_by_test_id("composer-input").fill("读书笔记复核")
+        page.get_by_test_id("composer-send").click()
+        page.wait_for_timeout(900)
+        last = page.get_by_test_id("message-agent").last.inner_text()
+        check("PX01_EXACT_TITLE_QUERY_BINDS_OWN_ITEM",
+              "读书笔记复核" in last and "复利曲线" in last, last[:60])
+        check("PX01_NO_CROSS_TOPIC_LEAKAGE",
+              "ABC" not in last and "AOG" not in last and "供应商" not in last,
+              "no AOG/ABC template leakage into unrelated topic")
+        check("PX01_HONEST_NO_CONCLUSION",
+              "没有可模拟的确定性结论" in last,
+              "honest note when the item has no deterministic conclusion")
+
+        # natural-wording query binds to topic B, again no leakage
+        page.get_by_test_id("composer-input").fill("健身计划一周练几次?")
+        page.get_by_test_id("composer-send").click()
+        page.wait_for_timeout(900)
+        last = page.get_by_test_id("message-agent").last.inner_text()
+        check("PX01_NATURAL_QUERY_BINDS_OWN_ITEM",
+              "健身计划" in last and "每周三次" in last, last[:60])
+        check("PX01_NATURAL_QUERY_NO_LEAKAGE",
+              "ABC" not in last and "AOG" not in last and "读书笔记" not in last,
+              "topic B answer contains neither AOG nor topic A content")
+
+        # unknown topic: honest gap, zero unrelated references
+        page.get_by_test_id("composer-input").fill("火星基地什么时候建成?")
+        page.get_by_test_id("composer-send").click()
+        page.wait_for_timeout(900)
+        last_msg = page.get_by_test_id("message-agent").last
+        check("PX01_UNKNOWN_NO_UNRELATED_REFS",
+              "已知空白" in last_msg.inner_text()
+              and last_msg.get_by_test_id("agent-refs").count() == 0,
+              "unknown topic yields honest gap with no unrelated refs")
+
+        # captured item detail: own content, one trustworthy CONFIRMED state
+        page.get_by_test_id("nav-knowledge").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
+        page.get_by_test_id("dim5-map-d5-work").click()
+        page.get_by_test_id("dim5-map-items-d5-work").wait_for()
+        page.get_by_test_id("dim5-map-items-d5-work").get_by_text("读书笔记复核").first.click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        detail_text = page.get_by_test_id("knowledge-detail").inner_text()
+        check("PX01_DETAIL_OWN_CONTENT",
+              "复利曲线" in detail_text and "ABC" not in detail_text,
+              "detail renders the item's own content only")
+        check("PX03_CONFIRMED_NO_PENDING_TAG",
+              "已确认" in detail_text and "待确认" not in detail_text and "CONFIRMED" in detail_text,
+              "confirmed item never shows 待确认 semantics (KK-PX-R5-03)")
+        # its work surface: own summary + honest conclusion + no fabricated conflict
+        page.get_by_test_id("open-work-surface").click()
+        page.get_by_test_id("work-surface").wait_for()
+        ws_text = page.get_by_test_id("work-surface").inner_text()
+        check("PX01_WORK_SURFACE_OWN_CONTENT",
+              "复利曲线" in page.get_by_test_id("work-item-content").inner_text()
+              and "ABC" not in ws_text and "AOG" not in ws_text,
+              "work surface bound to the captured item's own content")
+        check("PX01_WORK_SURFACE_HONEST_CONCLUSION",
+              "没有可模拟的确定性结论" in page.get_by_test_id("work-conclusion").inner_text(),
+              "no unrelated template conclusion for captured topic")
+        check("PX01_WORK_SURFACE_NO_FABRICATED_CONFLICT",
+              "0 项" in page.get_by_test_id("work-conflict").inner_text(),
+              "conflict count never fabricated")
+        page.get_by_test_id("work-surface-back").click()
+        page.wait_for_timeout(300)
+
+        # seed item keeps its own deterministic conclusion on the work surface
+        page.get_by_test_id("nav-knowledge").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
+        page.get_by_test_id("dim5-map-d5-think").click()
+        page.get_by_test_id("dim5-map-items-d5-think").wait_for()
+        page.get_by_test_id("dim5-map-items-d5-think").get_by_test_id("knowledge-item-k-sla-baseline").click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        page.get_by_test_id("open-work-surface").click()
+        page.get_by_test_id("work-surface").wait_for()
+        check("PX01_SEED_WORK_SURFACE_OWN_CONCLUSION",
+              "30 分钟" in page.get_by_test_id("work-conclusion").inner_text()
+              and "AOG 响应基线" in page.get_by_test_id("work-surface").inner_text(),
+              "seed AOG item work surface shows its own conclusion")
+        page.get_by_test_id("work-surface-back").click()
+        page.wait_for_timeout(300)
+
+        # --- KK-PX-R5-02: sensing status visible + pause/resume reachable ---
+        def check_sheet_sensing(name):
+            strip = page.get_by_test_id("sheet-sensing-strip")
+            check(f"PX02_SENSING_VISIBLE_{name}",
+                  strip.is_visible()
+                  and strip.get_attribute("data-sensing") == "on"
+                  and "后台持续感知中" in strip.inner_text()
+                  and "无真实 ASR" in strip.inner_text(),
+                  f"sensing status + disclosure visible inside {name}")
+            page.get_by_test_id("sheet-sensing-toggle").click()
+            page.wait_for_timeout(200)
+            check(f"PX02_PAUSE_REACHABLE_{name}",
+                  strip.get_attribute("data-sensing") == "paused"
+                  and "感知已暂停" in strip.inner_text()
+                  and "无真实 ASR" in strip.inner_text()
+                  and page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "off",
+                  f"pause reachable inside {name}; global strip in sync")
+            page.get_by_test_id("sheet-sensing-toggle").click()
+            page.wait_for_timeout(200)
+            check(f"PX02_RESUME_REACHABLE_{name}",
+                  strip.get_attribute("data-sensing") == "on"
+                  and page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "on",
+                  f"resume reachable inside {name}")
+
+        page.get_by_test_id("nav-knowledge").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
+        check_sheet_sensing("KNOWLEDGE")
+        page.get_by_test_id("dim5-map-d5-work").click()
+        page.get_by_test_id("dim5-map-items-d5-work").wait_for()
+        page.get_by_test_id("dim5-map-items-d5-work").get_by_test_id("knowledge-item-k-risk-note").click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        check_sheet_sensing("KNOWLEDGE_DETAIL")
+        page.get_by_test_id("open-work-surface").click()
+        page.get_by_test_id("work-surface").wait_for()
+        check_sheet_sensing("WORK_SURFACE")
+        page.get_by_test_id("work-surface-back").click()
+        page.wait_for_timeout(300)
+        page.get_by_test_id("nav-calendar").click()
+        page.get_by_test_id("capability-sheet-calendar").wait_for()
+        check_sheet_sensing("CALENDAR")
+        page.get_by_test_id("capability-sheet-calendar-close").click()
+        page.wait_for_timeout(300)
+        page.get_by_test_id("nav-todo").click()
+        page.get_by_test_id("capability-sheet-todo").wait_for()
+        check_sheet_sensing("TODO")
+        page.get_by_test_id("capability-sheet-todo-close").click()
+        page.wait_for_timeout(300)
+
+        # --- KK-PX-R5-04 path 2: Agent next action -> detail/work -> back ---
+        page.get_by_test_id("composer-input").fill("ABC 供应商延迟会影响什么?")
+        page.get_by_test_id("composer-send").click()
+        page.wait_for_timeout(900)
+        page.get_by_test_id("agent-next-action").last.click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        page.get_by_test_id("open-work-surface").click()
+        page.get_by_test_id("work-surface").wait_for()
+        page.get_by_test_id("work-surface-back").click()
+        page.wait_for_timeout(300)
+        check("PX04_AGENT_PATH_BACK_MATCHES_LABEL",
+              page.get_by_test_id("work-surface").count() == 0
+              and page.get_by_test_id("knowledge-detail").count() == 0
+              and page.get_by_test_id("conversation").is_visible()
+              and page.get_by_test_id("app-root").get_attribute("data-journey-state") == "AGENT_CONTEXT_RESTORED"
+              and "读书笔记复核" in page.get_by_test_id("conversation").inner_text(),
+              "Agent-route work surface back lands on conversation; context preserved")
+
+        # --- PX P3 (low-risk): postponed schedule stays time-ordered ---
+        page.get_by_test_id("nav-calendar").click()
+        page.get_by_test_id("capability-sheet-calendar").wait_for()
+        page.get_by_test_id("calendar-day-2026-09-16").click()
+        page.wait_for_timeout(250)
+        page.get_by_test_id("schedule-postpone-s-3").click()  # 14:00: 09-16 -> 09-17
+        page.wait_for_timeout(250)
+        page.get_by_test_id("calendar-day-2026-09-17").click()
+        page.wait_for_timeout(250)
+        page.get_by_test_id("schedule-postpone-s-3").click()  # 14:00: 09-17 -> 09-18
+        page.wait_for_timeout(250)
+        page.get_by_test_id("calendar-day-2026-09-18").click()
+        page.wait_for_timeout(250)
+        # 09-18 array order is [s-3 (14:00), s-5 (10:00)] — rendering must sort
+        times = page.get_by_test_id("calendar-day-schedule").locator("article time").all_inner_texts()
+        check("PX_P3_POSTPONED_SCHEDULE_TIME_ORDERED",
+              times == ["10:00", "14:00"],
+              f"09-18 schedule times ordered: {times}")
+        page.get_by_test_id("capability-sheet-calendar-close").click()
+        page.wait_for_timeout(300)
 
         # --- Mobile usability / hygiene ---
         # Unknown-topic question: Agent must acknowledge the gap and route to capture

@@ -194,7 +194,7 @@ function BottomNav({ onOpen, activeSheet }) {
   );
 }
 
-function Sheet({ title, testid, onClose, children, footer }) {
+function Sheet({ title, testid, onClose, children, footer, sensing }) {
   return (
     <div className="sheet-backdrop" role="presentation" onClick={onClose}>
       <section
@@ -209,6 +209,23 @@ function Sheet({ title, testid, onClose, children, footer }) {
           <h2>{title}</h2>
           <button type="button" className="sheet-close" data-testid={`${testid}-close`} onClick={onClose} aria-label={`关闭${title}`}>✕</button>
         </header>
+        {sensing && (
+          <div className="sheet-sensing" data-testid="sheet-sensing-strip" data-sensing={sensing.sensingOn ? "on" : "paused"}>
+            <i className={sensing.sensingOn ? "signal-live" : "signal-idle"} aria-hidden="true" />
+            <span className="sheet-sensing-text" data-testid="sheet-sensing-status">
+              {sensing.sensingOn ? `后台持续感知中 · ${sensing.line}` : "感知已暂停"}(模拟 · 无真实 ASR)
+            </span>
+            <button
+              type="button"
+              className="sheet-sensing-toggle"
+              data-testid="sheet-sensing-toggle"
+              aria-label={sensing.sensingOn ? "暂停后台语音感知" : "恢复后台语音感知"}
+              onClick={sensing.onToggle}
+            >
+              {sensing.sensingOn ? "暂停" : "恢复"}
+            </button>
+          </div>
+        )}
         <div className="sheet-body">{children}</div>
         {footer && <footer className="sheet-footer">{footer}</footer>}
       </section>
@@ -216,11 +233,11 @@ function Sheet({ title, testid, onClose, children, footer }) {
   );
 }
 
-function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStart, onCorrectSave, onReject, onClose }) {
+function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStart, onCorrectSave, onReject, onClose, sensing }) {
   const [text, setText] = useState("");
   const [fix, setFix] = useState({ title: "", summary: "" });
   return (
-    <Sheet title="捕获 · 信息进入知识" testid="capture-sheet" onClose={onClose}>
+    <Sheet title="捕获 · 信息进入知识" testid="capture-sheet" onClose={onClose} sensing={sensing}>
       <div className="channel-row" aria-label="捕获通道">
         {CAPTURE_CHANNELS.map((channel) => (
           <div key={channel.id} className="channel-card" data-testid={`capture-channel-${channel.id}`}>
@@ -298,6 +315,7 @@ function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStar
                 </button>
                 <button type="button" className="danger-action" data-testid="correct-reject" onClick={onReject}>拒绝</button>
               </div>
+              <small className="muted-line" data-testid="correct-save-hint">保存修正仅更新候选内容并返回候选卡,不会直接入库;点击「确认入库」后才会进入知识上下文。</small>
             </div>
           )}
         </div>
@@ -368,7 +386,7 @@ function DimensionMap({ title, testid, dims, knowledge, openDim, onToggle, onOpe
 // (R5: no extra MOC/WIKI groupings — the two maps are the navigation).
 // Knowledge is also viewable by calendar with 月/周/日 three views (R5),
 // mirroring the schedule calendar. Both views open the same knowledge detail.
-function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
+function KnowledgeSheet({ knowledge, onOpenItem, onClose, sensing }) {
   const [tab, setTab] = useState("nav");
   const [openDim, setOpenDim] = useState(null);
   const [calView, setCalView] = useState("day");
@@ -426,7 +444,7 @@ function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
   );
 
   return (
-    <Sheet title="知识 · 持续生长的上下文" testid="knowledge-sheet" onClose={onClose}>
+    <Sheet title="知识 · 持续生长的上下文" testid="knowledge-sheet" onClose={onClose} sensing={sensing}>
       <div className="sheet-tabs" role="tablist" aria-label="知识视图">
         <button type="button" className={tab === "nav" ? "active" : ""} data-testid="knowledge-tab-nav" onClick={() => setTab("nav")}>知识导航</button>
         <button type="button" className={tab === "calendar" ? "active" : ""} data-testid="knowledge-tab-calendar" onClick={() => setTab("calendar")}>按日历查看</button>
@@ -562,9 +580,9 @@ function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
   );
 }
 
-function KnowledgeDetail({ item, knowledge, onOpenLinked, onOpenWork, onBack }) {
+function KnowledgeDetail({ item, knowledge, onOpenLinked, onOpenWork, onBack, sensing }) {
   return (
-    <Sheet title={`知识详情 · ${item.title}`} testid="knowledge-detail" onClose={onBack}>
+    <Sheet title={`知识详情 · ${item.title}`} testid="knowledge-detail" onClose={onBack} sensing={sensing}>
       <p className="detail-summary">{item.summary}</p>
       <div className="tag-row">{item.tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}</div>
       <section className="detail-block" data-testid="knowledge-source-state">
@@ -599,23 +617,33 @@ function KnowledgeDetail({ item, knowledge, onOpenLinked, onOpenWork, onBack }) 
   );
 }
 
-function WorkSurface({ item, onBack }) {
+// PX-correction (KK-PX-R5-01): the work surface renders only the selected
+// item's own recorded content. Items without a deterministic conclusion get an
+// honest prototype note instead of an unrelated template; conflict counts are
+// never fabricated. PX-correction (KK-PX-R5-04): the back control really does
+// return directly to the Agent conversation, matching its label.
+function WorkSurface({ item, onBack, sensing }) {
   return (
-    <Sheet title={`工作面 · ${item.title}`} testid="work-surface" onClose={onBack}>
-      <header className="work-conclusion">
-        <small>当前稳定结论(Mock)</small>
-        <strong>30 分钟确认影响 · 4 小时形成方案</strong>
-        <span>🛡 来源可追溯 · 只读草案</span>
+    <Sheet title={`工作面 · ${item.title}`} testid="work-surface" onClose={onBack} sensing={sensing}>
+      <header className="work-conclusion" data-testid="work-conclusion">
+        <small>{item.conclusion ? "当前稳定结论(确定性 Mock)" : "结论状态(诚实说明)"}</small>
+        <strong>{item.conclusion || "当前没有可模拟的确定性结论"}</strong>
+        <span>{item.conclusion ? "🛡 来源可追溯 · 只读草案" : "原型说明:该条目为最近捕获的知识,不挂接无关主题模板"}</span>
       </header>
+      <section className="detail-block" data-testid="work-item-content">
+        <h3>条目内容</h3>
+        <p className="detail-summary">{item.summary}</p>
+        <small className="source-line">来源:{item.source}</small>
+      </section>
       <div className="work-grid">
         <article><small>关联知识</small><strong>{item.links.length} 条</strong></article>
         <article><small>证据来源</small><strong>{item.evidence ?? 1} 条</strong></article>
-        <article><small>冲突</small><strong>1 项</strong></article>
+        <article data-testid="work-conflict"><small>冲突</small><strong>{item.conflicts ?? 0} 项(无虚构)</strong></article>
         <article><small>更新</small><strong>{item.updated}</strong></article>
       </div>
       <section className="detail-block">
         <h3>可执行动作(原型)</h3>
-        <p className="muted-line">工作面为上下文化浮层:关闭后回到 Agent 对话,对话与知识上下文不丢失。</p>
+        <p className="muted-line">工作面为上下文化浮层:点击下方按钮直接返回 Agent 对话,对话与知识上下文不丢失。</p>
       </section>
       <button type="button" className="secondary-action" data-testid="work-surface-back" onClick={onBack}>
         ← 返回 Agent 对话
@@ -629,12 +657,14 @@ function WorkSurface({ item, onBack }) {
 // todos deep-link back into the calendar day view. R5: schedule and todo
 // items carry quick actions (complete / postpone one day) and 引用对话
 // (reference the item into the Agent conversation).
-function CapabilitySheet({ capability, todos, schedule, calendarDay, onSelectDay, onToggleTodo, onPostponeTodo, onToggleSchedule, onPostponeSchedule, onReference, onOpenCalendarDay, onClose }) {
+function CapabilitySheet({ capability, todos, schedule, calendarDay, onSelectDay, onToggleTodo, onPostponeTodo, onToggleSchedule, onPostponeSchedule, onReference, onOpenCalendarDay, onClose, sensing }) {
   const isCalendar = capability.id === "calendar";
   const isTodo = capability.id === "todo";
   const isSkills = capability.id === "skills";
   const [calView, setCalView] = useState("day");
-  const daySchedule = schedule.filter((item) => item.day === calendarDay);
+  // PX P3 fix: after 顺延 the day list stays time-ordered.
+  const daySchedule = schedule.filter((item) => item.day === calendarDay)
+    .slice().sort((a, b) => a.time.localeCompare(b.time));
   const dayTodos = todos.filter((todo) => todo.day === calendarDay);
 
   // September 2026 month grid, Monday-first, astronomically correct weekdays.
@@ -662,7 +692,7 @@ function CapabilitySheet({ capability, todos, schedule, calendarDay, onSelectDay
   };
 
   return (
-    <Sheet title={`能力 · ${capability.label}`} testid={`capability-sheet-${capability.id}`} onClose={onClose}>
+    <Sheet title={`能力 · ${capability.label}`} testid={`capability-sheet-${capability.id}`} onClose={onClose} sensing={sensing}>
       <div className="capability-state-row">
         <StateChip state={capability.state} />
         <small data-testid={`capability-note-${capability.id}`}>{capability.note}</small>
@@ -706,7 +736,8 @@ function CapabilitySheet({ capability, todos, schedule, calendarDay, onSelectDay
           {calView === "week" && (
             <div className="week-view" data-testid="calendar-week-view">
               {CALENDAR_DAYS.map((d) => {
-                const items = schedule.filter((item) => item.day === d.day);
+                const items = schedule.filter((item) => item.day === d.day)
+                  .slice().sort((a, b) => a.time.localeCompare(b.time));
                 const dayTodosCount = todos.filter((todo) => todo.day === d.day).length;
                 return (
                   <button
@@ -972,13 +1003,22 @@ export default function App() {
     setJourneyState("CANDIDATE_KNOWLEDGE");
   }, []);
 
-  const confirmCandidate = useCallback((fixed) => {
-    const base = fixed
-      ? { ...candidate, title: fixed.title.trim(), summary: fixed.summary.trim() }
-      : candidate;
+  // PX-correction (KK-PX-R5-03, model A): 保存修正 only updates the candidate
+  // draft and returns to the candidate card — it never ingests. Ingestion
+  // happens ONLY through the explicit 确认入库 action, so the user always knows
+  // before clicking whether the knowledge context will change.
+  const saveCorrection = useCallback((fix) => {
+    setCandidate((prev) => (prev ? { ...prev, title: fix.title.trim(), summary: fix.summary.trim() } : prev));
+    setCorrecting(false);
+    setJourneyState("CANDIDATE_KNOWLEDGE");
+  }, []);
+
+  const confirmCandidate = useCallback(() => {
     const id = `k-captured-${idCounter.current++}`;
     const newItem = {
-      ...base,
+      ...candidate,
+      // One trustworthy state: confirmed items never keep 待确认 semantics.
+      tags: [...candidate.tags.filter((tag) => tag !== "待确认"), "已确认"],
       id,
       group: "捕获",
       updated: "刚刚",
@@ -987,7 +1027,7 @@ export default function App() {
       dim9: "d9-09",
       evidence: 1,
       state: "CONFIRMED",
-      keywords: base.title.toLowerCase().split(/\s+/).filter((w) => w.length > 1),
+      keywords: candidate.title.toLowerCase().split(/\s+/).filter((w) => w.length > 1),
     };
     setKnowledge((prev) => [...prev, newItem]);
     setCandidate(null);
@@ -1028,7 +1068,16 @@ export default function App() {
     setJourneyState("KNOWLEDGE_WORK");
   }, []);
 
-  const backFromWork = useCallback(() => setWorkId(null), []);
+  // PX-correction (KK-PX-R5-04, option A): the control is labeled
+  // 「返回 Agent 对话」, so it returns DIRECTLY to the Agent conversation from
+  // both entry paths (knowledge navigation and Agent next action). The
+  // conversation and knowledge context persist — only the overlays close.
+  const backFromWork = useCallback(() => {
+    setSheet(null);
+    setDetailId(null);
+    setWorkId(null);
+    setJourneyState("AGENT_CONTEXT_RESTORED");
+  }, []);
   const backFromDetail = useCallback(() => { setDetailId(null); setWorkId(null); }, []);
 
   // Next action from Agent responses
@@ -1104,6 +1153,12 @@ export default function App() {
       : null,
     [sheet]
   );
+  // PX-correction (KK-PX-R5-02): the continuous sensing state stays visible
+  // and pause/resume stays reachable inside every work sheet overlay.
+  const sensingProps = useMemo(
+    () => ({ sensingOn, line: SENSING_MOCK_LINES[senseIdx], onToggle: toggleSensing }),
+    [sensingOn, senseIdx, toggleSensing]
+  );
 
   return (
     <div className="app-shell" data-testid="app-root" data-journey-state={journeyState}>
@@ -1126,15 +1181,16 @@ export default function App() {
           candidate={candidate}
           correcting={correcting}
           onDraft={draftFromText}
-          onConfirm={() => confirmCandidate(null)}
+          onConfirm={confirmCandidate}
           onCorrectStart={() => setCorrecting(true)}
-          onCorrectSave={(fix) => confirmCandidate(fix)}
+          onCorrectSave={saveCorrection}
           onReject={rejectCandidate}
           onClose={closeSheet}
+          sensing={sensingProps}
         />
       )}
       {sheet === "knowledge" && !detailItem && (
-        <KnowledgeSheet knowledge={knowledge} onOpenItem={openKnowledgeItem} onClose={closeSheet} />
+        <KnowledgeSheet knowledge={knowledge} onOpenItem={openKnowledgeItem} onClose={closeSheet} sensing={sensingProps} />
       )}
       {sheet === "knowledge" && detailItem && !workItem && (
         <KnowledgeDetail
@@ -1143,10 +1199,11 @@ export default function App() {
           onOpenLinked={openKnowledgeItem}
           onOpenWork={openWorkSurface}
           onBack={backFromDetail}
+          sensing={sensingProps}
         />
       )}
       {sheet === "knowledge" && detailItem && workItem && (
-        <WorkSurface item={workItem} onBack={backFromWork} />
+        <WorkSurface item={workItem} onBack={backFromWork} sensing={sensingProps} />
       )}
       {activeCapability && (
         <CapabilitySheet
@@ -1162,6 +1219,7 @@ export default function App() {
           onReference={referenceToConversation}
           onOpenCalendarDay={openCalendarDay}
           onClose={closeSheet}
+          sensing={sensingProps}
         />
       )}
     </div>

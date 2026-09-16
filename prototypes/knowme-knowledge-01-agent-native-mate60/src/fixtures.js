@@ -49,6 +49,7 @@ export const KNOWLEDGE_SEED = [
     dim5: "d5-work",
     dim9: "d9-07",
     summary: "围绕响应时限、供应风险、升级路径和复盘形成的主题入口。",
+    conclusion: "30 分钟确认影响范围,4 小时形成首个可执行处置方案;紧急调拨保留为升级路径。",
     tags: ["AOG", "保障", "MOC"],
     links: ["k-supplier-sla", "k-decision-parallel"],
     evidence: 18,
@@ -100,6 +101,7 @@ export const KNOWLEDGE_SEED = [
     dim5: "d5-think",
     dim9: "d9-03",
     summary: "30 分钟确认影响,4 小时形成首个可执行处置方案。",
+    conclusion: "30 分钟确认影响,4 小时形成首个可执行处置方案。",
     tags: ["基线", "时限"],
     links: ["k-aog-moc"],
     evidence: 7,
@@ -202,27 +204,48 @@ export const TODO_MOCK = [
   { id: "t-3", title: "确认周四装机窗口余量", meta: "关联:供应风险记录", done: true, day: "2026-09-17", knowledgeRef: "k-risk-note" },
 ];
 
+// Deterministic match terms for one knowledge item: its keywords, title words,
+// and 3-character title shingles (so natural-wording queries like
+// 「健身计划一周练几次?」 still bind to their own item). Fully deterministic.
+function matchTerms(item) {
+  const title = item.title.toLowerCase();
+  const terms = new Set(item.keywords.map((kw) => kw.toLowerCase()));
+  title.split(/\s+/).filter((w) => w.length > 1).forEach((w) => terms.add(w));
+  for (let i = 0; i + 3 <= title.length; i += 1) terms.add(title.slice(i, i + 3));
+  return terms;
+}
+
 // Deterministic mock Agent. Keyword-matches the current knowledge context and
-// always answers with explicit references plus one next action. No model, no
-// network, no randomness.
+// answers strictly from the matched items' own recorded content (title /
+// summary / conclusion). No model, no network, no randomness.
+//
+// PX-correction (KK-PX-R5-01): semantic consistency is mandatory —
+// title / source / stored content / Agent reply / work surface must stay on
+// the same topic. When matched items carry no deterministic conclusion, the
+// reply says so honestly; when nothing matches, the reply declares an honest
+// gap and never attaches unrelated topic templates or references.
 export function agentReply(question, knowledge) {
-  const q = question.toLowerCase();
-  const hits = knowledge.filter((item) =>
-    item.keywords.some((kw) => q.includes(kw)) ||
-    item.title.toLowerCase().split(/\s+/).some((w) => w.length > 1 && q.includes(w))
-  );
-  const used = hits.length > 0 ? hits : knowledge.slice(0, 2);
-  const refs = used.map((item) => item.title);
-  let text;
+  const q = question.toLowerCase().trim();
+  const hits = knowledge.filter((item) => {
+    const terms = matchTerms(item);
+    for (const term of terms) {
+      if (q.includes(term)) return true;
+    }
+    return q.length >= 2 && item.keywords.some((kw) => kw.toLowerCase().includes(q));
+  });
   if (hits.length > 0) {
-    text = `基于当前知识上下文中的「${refs.join("」「")}」:ABC 关键件可能延迟两天。按「AOG 响应基线」,先在 30 分钟内确认影响范围,4 小时内形成首个可执行方案;紧急调拨先保留为升级路径。`;
-  } else {
-    text = `当前知识上下文里没有直接覆盖「${question}」的条目,这是一个已知空白。我先引用最接近的「${refs.join("」「")}」作为参照;你可以把新信息通过捕获入口交给我,确认后我会把它并入知识上下文。`;
+    const used = hits.slice(0, 3);
+    const refs = used.map((item) => item.title);
+    const summaries = used.map((item) => `「${item.title}」:${item.summary}`).join(" ");
+    const conclusions = used.filter((item) => item.conclusion).map((item) => item.conclusion);
+    const text = conclusions.length > 0
+      ? `基于当前知识上下文:${summaries} 结论(确定性 Mock):${conclusions.join(" ")}`
+      : `基于当前知识上下文:${summaries} 原型说明:该知识当前没有可模拟的确定性结论,以上为它自身的记录内容(不挂接无关主题模板)。`;
+    const nextAction = { kind: "knowledge", targetId: used[0].id, label: `打开「${used[0].title}」工作面` };
+    return { text, refs, nextAction };
   }
-  const nextAction = hits.length > 0
-    ? { kind: "knowledge", targetId: used[0].id, label: `打开「${used[0].title}」工作面` }
-    : { kind: "capture", label: "把这个问题捕获为候选知识" };
-  return { text, refs, nextAction };
+  const text = `当前知识上下文里没有覆盖「${question}」的条目,这是一个诚实标注的已知空白。原型不会引用无关主题的知识作答;你可以把新信息通过捕获入口交给我,确认后我会把它并入知识上下文。`;
+  return { text, refs: [], nextAction: { kind: "capture", label: "把这个问题捕获为候选知识" } };
 }
 
 // Deterministic candidate-knowledge draft from free text capture.
@@ -256,14 +279,18 @@ export function nextDay(day) {
 
 // Deterministic Agent reply when a schedule/todo item is referenced into the
 // conversation. References the linked knowledge when one exists.
+// PX P3 fix: the date label is not duplicated when dayLabel falls back to the
+// raw day string (e.g. "2026-07-18(2026-07-18)" no longer occurs).
 export function referenceReply(quote, knowledge) {
   const linked = quote.knowledgeRef ? knowledge.find((item) => item.id === quote.knowledgeRef) : null;
-  const when = `${dayLabel(quote.day)}(${quote.day})${quote.time ? ` ${quote.time}` : ""}`;
+  const label = dayLabel(quote.day);
+  const when = `${label === quote.day ? quote.day : `${label}(${quote.day})`}${quote.time ? ` ${quote.time}` : ""}`;
   let text;
   let refs = [];
   let nextAction = null;
   if (linked) {
-    text = `已收到你引用的${quote.kind}「${quote.title}」(${when})。它关联知识「${linked.title}」:${linked.summary}按「AOG 响应基线」,建议先确认影响再行动。`;
+    const conclusion = linked.conclusion ? `结论(确定性 Mock):${linked.conclusion}` : "该知识当前没有可模拟的确定性结论(原型诚实说明)。";
+    text = `已收到你引用的${quote.kind}「${quote.title}」(${when})。它关联知识「${linked.title}」:${linked.summary}${conclusion}`;
     refs = [linked.title];
     nextAction = { kind: "knowledge", targetId: linked.id, label: `打开「${linked.title}」工作面` };
   } else {
