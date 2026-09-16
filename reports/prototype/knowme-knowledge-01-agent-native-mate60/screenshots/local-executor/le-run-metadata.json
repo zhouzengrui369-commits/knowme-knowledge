@@ -1,0 +1,197 @@
+{
+  "runs": [
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P01-FIRST-ENCOUNTER.png",
+      "sha256": "ddbe990eb65a06ab391a97fc3292d9e75f2df0da1f123250425cc8ee909dfc9e",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P01",
+      "state_before": "cold open",
+      "action": "page load",
+      "state_after": "sensing strip: '后台持续感知中\\n09:12 模拟感知:环境安静,无语音片段\\n模拟感知 · 无真实 ASR'; data-sensing=on",
+      "utc_timestamp": "2026-09-16T04:13:33.068078+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P02-ASK-AGENT.png",
+      "sha256": "403554ef5141cc88deb90ae849fc23220909b32a5b52596ef34d3ef69acc7bbf",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P02",
+      "state_before": "question typed",
+      "action": "composer-send click",
+      "state_after": "reply excerpt: '懂\\n懂我 · 确定性 Mock 回答 · 引用 2 条知识\\n\\n我是懂我,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。\\n\\nAOG 航材保障\\n供应风险记录\\n你\\n\\nABC 供应商延迟会影响什么?\\n\\n懂\\n懂我 · 确定性 Mock 回答 · 引用 3 条知识\\n\\n基于当前知识上下文中的「AOG 航材保障」「供应商与 '; refs=['AOG 航材保障\\n供应风险记录', 'AOG 航材保障', '供应风险记录', 'AOG 航材保障\\n供应商与 SLA\\n供应风险记录', 'AOG 航材保障', '供应商与 SLA', '供应风险记录']; next_action='打开「AOG 航材保障」工作面 →'",
+      "utc_timestamp": "2026-09-16T04:13:34.128247+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P03-CANDIDATE-KNOWLEDGE.png",
+      "sha256": "49a6bbdeda30c4fcb12d20257e15ce3ca9482ad5a866ce332c63219f5703e2fe",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P03",
+      "state_before": "capture sheet open, text filled",
+      "action": "capture-submit",
+      "state_after": "candidate card text: '已采集\\n→\\nAI 整理草稿\\n→\\n确认后入库\\nCANDIDATE\\n备用供应商 XYZ 报价便宜 8%\\n\\n备用供应商 XYZ 报价便宜 8%\\n\\n捕获\\n待确认\\n来源:Owner 文本捕获 · 原型本地状态\\n确认入库\\n修正\\n拒绝'",
+      "utc_timestamp": "2026-09-16T04:13:34.620352+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P04-KNOWLEDGE-CONTEXT-CHANGED.png",
+      "sha256": "9dcdb0888121cc565fe6adb362f3ccaca114363ce05e2207b0b6613c0db5a71c",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P04",
+      "state_before": "candidate card visible",
+      "action": "candidate-confirm",
+      "state_after": "context after: '懂\\n懂我 · 确定性 Mock 回答 · 引用 2 条知识\\n\\n我是懂我,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。\\n\\nAOG 航材保障\\n供应风险记录\\n你\\n\\nABC 供应商延迟会影响什么?\\n\\n懂\\n懂我 · 确定性 Mock 回答 · 引用 3 条知识\\n\\n基于当前知识上下文中的「AOG 航材保障」「供应商与 SLA」「供应风险记录」:ABC 关键件可能延迟两天。按「AOG 响应基线」,先在 30 分钟内确认'",
+      "utc_timestamp": "2026-09-16T04:13:35.188165+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P10-KNOWLEDGE-NAVIGATION.png",
+      "sha256": "a544fa45cdcbc35afda5cca40c617dc494ea01d11cfd070128413b20fcc2dfcf",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P10",
+      "state_before": "nav-knowledge click",
+      "action": "sheet opens in 知识导航 tab",
+      "state_after": "nav text excerpt: '知识 · 持续生长的上下文\\n✕\\n知识导航\\n按日历查看\\n主题入口 · MOC\\n1\\nMOC\\nAOG 航材保障\\n工作 · 刚刚 · 证据 18\\nCONFIRMED\\n知识文档 · WIKI\\n4\\nWIKI\\n供应商与 SLA\\n知识 · 12 分钟前 · 证据 11\\nCONFIRMED\\nWIKI\\n历史决策:双线并行\\n决策 · 今天 18:20 · 证据 9\\nCONFIRMED\\nWIKI\\nAOG 响应基线\\n规则 · 昨天 · 证据 7\\nCONFIRMED\\nWIKI\\n我的决策偏好\\n个人 · 7 月 18 日 · 证据 12\\nCONFIRMED\\n笔记与捕获 · NOTE\\n2\\nNOTE\\n供应风险记录\\n行动 · 刚刚'",
+      "utc_timestamp": "2026-09-16T04:13:35.245068+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P08-KNOWLEDGE-CALENDAR-VIEW.png",
+      "sha256": "22db7681929f3381205a6d729ecdc74ff575fdfb7cdd80214948347b28ef39d1",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P08",
+      "state_before": "knowledge nav tab",
+      "action": "knowledge-tab-calendar click",
+      "state_after": "calendar excerpt: '知识 · 持续生长的上下文\\n✕\\n知识导航\\n按日历查看\\n今天\\n2026-09-16 · 5 条\\nMOC\\nAOG 航材保障\\n工作 · 刚刚\\nCONFIRMED\\nWIKI\\n供应商与 SLA\\n知识 · 12 分钟前\\nCONFIRMED\\nWIKI\\n历史决策:双线并行\\n决策 · 今天 18:20\\nCONFIRMED\\nNOTE\\n供应风险记录\\n行动 · 刚刚\\nCONFIRMED\\nNOTE\\n备用供应商 XYZ 报价便宜 8%\\n捕获 · 刚刚\\nCONFIRMED\\n昨天\\n2026-09-15 · 1 条\\nWIKI\\nAOG 响应基线\\n规则 · 昨天\\nCONFIRMED\\n7 月 18 日\\n2026-07-18 · 1 '",
+      "utc_timestamp": "2026-09-16T04:13:35.693551+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P05-KNOWLEDGE-WORK-SURFACE.png",
+      "sha256": "7a714df7a78fb73d003cbfb43b0c16bfd36dcbab84d2395f853cc39e348e1911",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P05",
+      "state_before": "knowledge detail open",
+      "action": "open-work-surface",
+      "state_after": "detail excerpt: '知识详情 · 供应风险记录\\n✕\\n\\nABC 供应商通知关键件可能延迟两天,影响周四装机窗口。\\n\\n风险\\n行动\\n来源与状态\\n来源\\n原型种子数据 · MOCK_SOURCE\\n状态\\nCONFIRMED\\n日期\\n今天(2026-09-16)\\n证据\\n4 条(Mock)\\n更新\\n刚刚\\n关联知识\\n⛓ 供应商与 SLA\\n⛓ 历史决策:双线并行\\n打开上下文工作面'; work surface: '工作面 · 供应风险记录\\n✕\\n当前稳定结论(Mock)\\n30 分钟确认影响 · 4 小时形成方案\\n🛡 来源可追溯 · 只读草案\\n关联知识\\n2 条\\n证据来源\\n4 条\\n冲突\\n1 项\\n更新\\n刚刚\\n可执行动作(原型)\\n\\n工作面为上下文化浮层:关闭后回到 Agent 对话,对话与知识上下文不丢失。\\n\\n← 返回 Agent 对话'",
+      "utc_timestamp": "2026-09-16T04:13:36.586501+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P06-CAPABILITY-WORK-SURFACE.png",
+      "sha256": "954cb3b5b432dccb64c06a3c21de05c1ae628aa13b1beb1f155424d28af45da0",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P06",
+      "state_before": "calendar sheet open, today selected",
+      "action": "calendar-day-2026-09-18 click",
+      "state_after": "calendar excerpt: '能力 · 日历\\n✕\\nNOT_CONNECTED\\n无真实日历后端;展示 Mock 日程工作面\\n昨天 周一\\n今天 周二\\n明天 周三\\n周四\\n周五\\n10:00\\n装机窗口复核\\n30 分钟 · AOG\\n已准备\\n当日关联待办(1)\\n✓\\n确认周四装机窗口余量\\n关联:供应风险记录\\n\\nMock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。日程与待办关联为原型本地状态。'",
+      "utc_timestamp": "2026-09-16T04:13:37.813510+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P09-TODO-CALENDAR-LINK.png",
+      "sha256": "954cb3b5b432dccb64c06a3c21de05c1ae628aa13b1beb1f155424d28af45da0",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P09",
+      "state_before": "todo t-1 aria-pressed=false",
+      "action": "toggle t-1 (-> true), then todo-calendar-link-t-3",
+      "state_after": "calendar from todo: '能力 · 日历\\n✕\\nNOT_CONNECTED\\n无真实日历后端;展示 Mock 日程工作面\\n昨天 周一\\n今天 周二\\n明天 周三\\n周四\\n周五\\n10:00\\n装机窗口复核\\n30 分钟 · AOG\\n已准备\\n当日关联待办(1)\\n✓\\n确认周四装机窗口余量\\n关联:供应风险记录\\n\\nMock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。日程与待办关联为原型本地状态。'",
+      "utc_timestamp": "2026-09-16T04:13:38.550482+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    },
+    {
+      "file": "/tmp/le-kk02-screenshots/R2-LE-P07-RETURN-CONTEXT-PRESERVED.png",
+      "sha256": "c6525f28b6435084f16d7e23b93d3ae1a3542fd776fb1f21b7fdd3807cad60c7",
+      "candidate_sha": "9f3071e22def4f99cbf3a4589349e628e9e15a97",
+      "candidate_tree": "b165a075f4e6a3784c6fc7794fc8c5581dc539c0",
+      "runtime_url": "http://127.0.0.1:5173/",
+      "viewport": {
+        "width": 360,
+        "height": 780
+      },
+      "viewport_kind": "MATE60_CLASS_SIMULATION",
+      "journey": "P07",
+      "state_before": "all sheets closed",
+      "action": "inspect conversation",
+      "state_after": "conversation contains original question: True; excerpt: '懂\\n懂我 · 确定性 Mock 回答 · 引用 2 条知识\\n\\n我是懂我,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。\\n\\nAOG 航材保障\\n供应风险记录\\n你\\n\\nABC 供应商延迟会影响什么?\\n\\n懂\\n懂我 · 确定性 Mock 回答 · 引用 3 条知识\\n\\n基于当前知识上下文中的「AOG 航材保障」「供应商与 SLA」「供应风险记录」:ABC 关键件可能延迟两天。按「AOG 响应基线」,先在 30 分钟内确认'",
+      "utc_timestamp": "2026-09-16T04:13:38.811691+00:00",
+      "operator": "LOCAL_EXECUTOR"
+    }
+  ],
+  "sensing_states": {
+    "initial": "on",
+    "after_first_click": {
+      "data-sensing": "off",
+      "text": "感知已暂停\n点击麦克风恢复持续感知\n模拟感知 · 无真实 ASR"
+    },
+    "after_second_click": {
+      "data-sensing": "on",
+      "text": "后台持续感知中\n09:14 模拟感知:检测到一段语音(演示),未写入知识\n模拟感知 · 无真实 ASR"
+    }
+  },
+  "console_errors": [],
+  "page_errors": []
+}
