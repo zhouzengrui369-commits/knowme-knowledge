@@ -1,0 +1,18 @@
+{
+  "clientWidth": 254,
+  "overflow": "hidden",
+  "rect": {
+    "bottom": 205.203125,
+    "height": 14,
+    "left": 33,
+    "right": 286.515625,
+    "top": 191.203125,
+    "width": 253.515625,
+    "x": 33,
+    "y": 191.203125
+  },
+  "scrollWidth": 404,
+  "text": "后台持续感知中 · 09:14 模拟感知:检测到一段语音(演示),未写入知识(模拟 · 无真实 ASR)",
+  "textOverflow": "ellipsis",
+  "whiteSpace": "nowrap"
+}
