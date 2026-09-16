@@ -48,7 +48,7 @@ function Header({ knowledgeCount }) {
     <header className="app-header" data-testid="agent-identity">
       <span className="brand-mark" aria-hidden="true">脑</span>
       <div className="identity-text">
-        <strong>懂我 · KnowME</strong>
+        <strong>灵犀 · KnowME</strong>
         <small>个人知识 Agent · 当前知识上下文 {knowledgeCount} 条</small>
       </div>
       <span className="disclosure-pill" data-testid="prototype-disclosure">{PROTOTYPE_DISCLOSURE}</span>
@@ -86,9 +86,9 @@ function Message({ message, onNextAction }) {
   }
   return (
     <div className="msg msg-agent" data-testid="message-agent">
-      <span className="msg-avatar" aria-hidden="true">懂</span>
+      <span className="msg-avatar" aria-hidden="true">灵</span>
       <div className="msg-body">
-        <small>懂我 · 确定性 Mock 回答{message.refs?.length ? ` · 引用 ${message.refs.length} 条知识` : ""}</small>
+        <small>灵犀 · 确定性 Mock 回答{message.refs?.length ? ` · 引用 ${message.refs.length} 条知识` : ""}</small>
         <p>{message.text}</p>
         {message.refs?.length > 0 && (
           <div className="msg-refs" data-testid="agent-refs">
@@ -147,12 +147,12 @@ function Composer({ onSend, onVoiceKey, sensingOn, thinking }) {
         🎙
       </button>
       <input
-        aria-label="向懂我提问"
+        aria-label="向灵犀提问"
         data-testid="composer-input"
         value={value}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => { if (event.key === "Enter") send(); }}
-        placeholder={thinking ? "正在连接知识上下文…" : "问懂我,或用下方捕获入口记录新信息"}
+        placeholder={thinking ? "正在连接知识上下文…" : "问灵犀,或用下方捕获入口记录新信息"}
         disabled={thinking}
       />
       <button type="button" className="send" data-testid="composer-send" onClick={send} disabled={thinking}>
@@ -721,7 +721,7 @@ export default function App() {
   const [messages, setMessages] = useState([
     {
       role: "agent",
-      text: "我是懂我,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。",
+      text: "我是灵犀,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。",
       refs: ["AOG 航材保障", "供应风险记录"],
       nextAction: null,
     },
@@ -907,7 +907,7 @@ export default function App() {
         {messages.map((message, index) => (
           <Message key={index} message={message} onNextAction={handleNextAction} />
         ))}
-        {thinking && <div className="msg msg-agent thinking" data-testid="agent-thinking"><span className="msg-avatar">懂</span><div className="msg-body"><p>正在连接知识上下文…</p></div></div>}
+        {thinking && <div className="msg msg-agent thinking" data-testid="agent-thinking"><span className="msg-avatar">灵</span><div className="msg-body"><p>正在连接知识上下文…</p></div></div>}
       </main>
 
       <SensingStrip sensingOn={sensingOn} line={SENSING_MOCK_LINES[senseIdx]} />

@@ -72,6 +72,13 @@ def main():
         check("STATE_FIRST_VIEW",
               page.get_by_test_id("app-root").get_attribute("data-journey-state") == "FIRST_VIEW",
               page.get_by_test_id("app-root").get_attribute("data-journey-state"))
+        # Owner-directed (R4): brand renamed 懂我 -> 灵犀 (KnowMe-NJX-Demo authority)
+        header_text = page.get_by_test_id("agent-identity").inner_text()
+        first_agent_msg = page.get_by_test_id("message-agent").first.inner_text()
+        check("BRAND_RENAMED_LINGXI",
+              "灵犀" in header_text and "懂我" not in header_text
+              and "我是灵犀" in first_agent_msg and "懂我" not in first_agent_msg,
+              "header + opening message use 灵犀; 懂我 fully retired")
 
         # Owner-directed: continuous background voice sensing, honestly disclosed
         strip = page.get_by_test_id("sensing-strip")
