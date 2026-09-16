@@ -76,7 +76,7 @@
     {
       "assertion": "ASK_AGENT_WORKS",
       "pass": true,
-      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 3 条知识\n\n基于当前知识上下文中的「AOG 航材保障」「供应商与 SL"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 3 条知识\n\n基于当前知识上下文:「AOG 航材保障」:围绕响应时限、供"
     },
     {
       "assertion": "AGENT_RESPONSE_REFERENCES_CONTEXT",
@@ -117,6 +117,21 @@
       "assertion": "CANDIDATE_KNOWLEDGE_CREATED",
       "pass": true,
       "detail": "备用供应商 XYZ 报价每台便宜 8…"
+    },
+    {
+      "assertion": "CORRECT_SAVE_HINT_VISIBLE",
+      "pass": true,
+      "detail": "user can predict before click: save does NOT ingest"
+    },
+    {
+      "assertion": "CORRECT_SAVE_RETURNS_TO_CANDIDATE",
+      "pass": true,
+      "detail": "save correction returns to candidate card, still awaiting explicit confirm"
+    },
+    {
+      "assertion": "CORRECT_SAVE_NO_DIRECT_INGEST",
+      "pass": true,
+      "detail": "knowledge count unchanged after 保存修正 (KK-PX-R5-03)"
     },
     {
       "assertion": "CORRECT_WORKS",
@@ -254,9 +269,14 @@
       "detail": "contextual work surface"
     },
     {
+      "assertion": "WORK_BACK_LABEL_MATCHES_TARGET_NAV_PATH",
+      "pass": true,
+      "detail": "back from work surface lands DIRECTLY on Agent conversation"
+    },
+    {
       "assertion": "RETURN_PRESERVES_CONTEXT",
       "pass": true,
-      "detail": "conversation intact after knowledge -> work surface -> back"
+      "detail": "conversation intact after knowledge -> work surface -> back to Agent"
     },
     {
       "assertion": "CAPABILITY_OPENS_CONTEXTUAL_WORK",
@@ -369,9 +389,164 @@
       "detail": "skills honestly PLANNED, no fake work surface"
     },
     {
+      "assertion": "PX01_CAPTURE_CONFIRM_TOPIC_A",
+      "pass": true,
+      "detail": "topic A captured and confirmed"
+    },
+    {
+      "assertion": "PX01_CAPTURE_CONFIRM_TOPIC_B",
+      "pass": true,
+      "detail": "topic B captured and confirmed"
+    },
+    {
+      "assertion": "PX01_EXACT_TITLE_QUERY_BINDS_OWN_ITEM",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n基于当前知识上下文:「读书笔记复核:复利曲线在长期主义第三"
+    },
+    {
+      "assertion": "PX01_NO_CROSS_TOPIC_LEAKAGE",
+      "pass": true,
+      "detail": "no AOG/ABC template leakage into unrelated topic"
+    },
+    {
+      "assertion": "PX01_HONEST_NO_CONCLUSION",
+      "pass": true,
+      "detail": "honest note when the item has no deterministic conclusion"
+    },
+    {
+      "assertion": "PX01_NATURAL_QUERY_BINDS_OWN_ITEM",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n基于当前知识上下文:「健身计划:每周三次力量训练,周日拉伸"
+    },
+    {
+      "assertion": "PX01_NATURAL_QUERY_NO_LEAKAGE",
+      "pass": true,
+      "detail": "topic B answer contains neither AOG nor topic A content"
+    },
+    {
+      "assertion": "PX01_UNKNOWN_NO_UNRELATED_REFS",
+      "pass": true,
+      "detail": "unknown topic yields honest gap with no unrelated refs"
+    },
+    {
+      "assertion": "PX01_DETAIL_OWN_CONTENT",
+      "pass": true,
+      "detail": "detail renders the item's own content only"
+    },
+    {
+      "assertion": "PX03_CONFIRMED_NO_PENDING_TAG",
+      "pass": true,
+      "detail": "confirmed item never shows 待确认 semantics (KK-PX-R5-03)"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_OWN_CONTENT",
+      "pass": true,
+      "detail": "work surface bound to the captured item's own content"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_HONEST_CONCLUSION",
+      "pass": true,
+      "detail": "no unrelated template conclusion for captured topic"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_NO_FABRICATED_CONFLICT",
+      "pass": true,
+      "detail": "conflict count never fabricated"
+    },
+    {
+      "assertion": "PX01_SEED_WORK_SURFACE_OWN_CONCLUSION",
+      "pass": true,
+      "detail": "seed AOG item work surface shows its own conclusion"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside KNOWLEDGE"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "pause reachable inside KNOWLEDGE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "resume reachable inside KNOWLEDGE"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside KNOWLEDGE_DETAIL"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "pause reachable inside KNOWLEDGE_DETAIL; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "resume reachable inside KNOWLEDGE_DETAIL"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside WORK_SURFACE"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "pause reachable inside WORK_SURFACE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "resume reachable inside WORK_SURFACE"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_CALENDAR",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside CALENDAR"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_CALENDAR",
+      "pass": true,
+      "detail": "pause reachable inside CALENDAR; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_CALENDAR",
+      "pass": true,
+      "detail": "resume reachable inside CALENDAR"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_TODO",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside TODO"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_TODO",
+      "pass": true,
+      "detail": "pause reachable inside TODO; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_TODO",
+      "pass": true,
+      "detail": "resume reachable inside TODO"
+    },
+    {
+      "assertion": "PX04_AGENT_PATH_BACK_MATCHES_LABEL",
+      "pass": true,
+      "detail": "Agent-route work surface back lands on conversation; context preserved"
+    },
+    {
+      "assertion": "PX_P3_POSTPONED_SCHEDULE_TIME_ORDERED",
+      "pass": true,
+      "detail": "09-18 schedule times ordered: ['10:00', '14:00']"
+    },
+    {
       "assertion": "UNKNOWN_TOPIC_ACKNOWLEDGES_GAP",
       "pass": true,
-      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 2 条知识\n\n当前知识上下文里没有直接覆盖「今晚吃什么?」的条目,这是一"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答\n\n当前知识上下文里没有覆盖「今晚吃什么?」的条目,这是一个诚实标注的已知空白。原型"
     },
     {
       "assertion": "UNKNOWN_TOPIC_NEXT_ACTION_CAPTURE",
@@ -411,7 +586,7 @@
   ],
   "console_errors": [],
   "page_errors": [],
-  "passed": 80,
+  "passed": 115,
   "failed": 0,
-  "issued_at": "2026-09-16T08:18:19.827939+00:00"
+  "issued_at": "2026-09-16T14:08:46.548859+00:00"
 }
