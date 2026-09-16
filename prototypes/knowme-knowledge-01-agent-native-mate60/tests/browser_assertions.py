@@ -72,6 +72,17 @@ def main():
         check("STATE_FIRST_VIEW",
               page.get_by_test_id("app-root").get_attribute("data-journey-state") == "FIRST_VIEW",
               page.get_by_test_id("app-root").get_attribute("data-journey-state"))
+
+        # Owner-directed: continuous background voice sensing, honestly disclosed
+        strip = page.get_by_test_id("sensing-strip")
+        check("SENSING_STRIP_VISIBLE", strip.is_visible(), "persistent sensing strip mounted")
+        check("SENSING_CONTINUOUS_BY_DEFAULT",
+              strip.get_attribute("data-sensing") == "on" and "后台持续感知中" in strip.inner_text(),
+              strip.inner_text().replace("\n", " "))
+        check("SENSING_HONESTLY_MOCK",
+              "无真实 ASR" in strip.inner_text(), "simulated sensing never claims real ASR")
+        check("SENSING_STREAM_TICKS", "模拟感知" in page.get_by_test_id("sensing-line").inner_text(),
+              page.get_by_test_id("sensing-line").inner_text())
         shot("P01-FIRST-ENCOUNTER")
 
         # --- Journey B: Ask the Agent ---
@@ -162,6 +173,41 @@ def main():
               "8 条知识" in page.get_by_test_id("knowledge-context-summary").inner_text(),
               page.get_by_test_id("context-summary-button").inner_text())
 
+        # --- Owner-directed: knowledge navigation + knowledge by calendar ---
+        page.get_by_test_id("nav-knowledge").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
+        check("KNOWLEDGE_NAVIGATION_VIEW",
+              page.get_by_test_id("knowledge-nav-view").is_visible()
+              and "AOG 航材保障" in page.get_by_test_id("nav-group-moc").inner_text()
+              and "供应商与 SLA" in page.get_by_test_id("nav-group-wiki").inner_text(),
+              "MOC/WIKI/NOTE navigation groups render real items")
+        check("CAPTURED_ITEM_IN_NAV",
+              "周四装机窗口剩余" in page.get_by_test_id("nav-group-note").inner_text(),
+              "confirmed capture appears under 笔记与捕获 navigation")
+        shot("P10-KNOWLEDGE-NAVIGATION")
+        page.get_by_test_id("knowledge-tab-calendar").click()
+        page.get_by_test_id("knowledge-calendar-view").wait_for()
+        today_group = page.get_by_test_id("knowledge-day-2026-09-16").inner_text()
+        check("KNOWLEDGE_CALENDAR_VIEW",
+              "AOG 航材保障" in today_group and "供应风险记录" in today_group,
+              "knowledge grouped under 今天 (2026-09-16)")
+        check("VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR",
+              "周四装机窗口剩余" in today_group and "备用供应商 XYZ 报价" in today_group,
+              "both confirmed captures land on today's calendar view")
+        yesterday = page.get_by_test_id("knowledge-day-2026-09-15").inner_text()
+        check("KNOWLEDGE_CALENDAR_OTHER_DAYS", "AOG 响应基线" in yesterday, "昨天 group holds its item")
+        shot("P08-KNOWLEDGE-CALENDAR-VIEW")
+        # open an item from the calendar view into the same detail surface
+        page.get_by_test_id("knowledge-day-2026-09-15").get_by_test_id("knowledge-item-k-sla-baseline").click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        check("KNOWLEDGE_DETAIL_HAS_DAY",
+              "昨天" in page.get_by_test_id("knowledge-day-label").inner_text(),
+              page.get_by_test_id("knowledge-day-label").inner_text())
+        page.get_by_test_id("knowledge-detail-close").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
+        page.get_by_test_id("knowledge-sheet-close").click()
+        page.wait_for_timeout(300)
+
         # --- Journey D: Work from knowledge ---
         msg_count_before = page.get_by_test_id("message-user").count()
         page.get_by_test_id("nav-knowledge").click()
@@ -200,10 +246,29 @@ def main():
               "NOT_CONNECTED" in page.get_by_test_id("capability-sheet-calendar").inner_text()
               and "CONNECTED" not in page.get_by_test_id("capability-sheet-calendar").inner_text().replace("NOT_CONNECTED", ""),
               "calendar honestly NOT_CONNECTED")
+        # Owner-directed: visual calendar links schedule and todos per day
+        check("CALENDAR_VISUAL_WEEK_STRIP",
+              page.get_by_test_id("calendar-week-strip").is_visible()
+              and "今天" in page.get_by_test_id("calendar-week-strip").inner_text(),
+              "visual day strip rendered")
+        check("CALENDAR_TODO_LINKED_ON_DAY",
+              page.get_by_test_id("calendar-todo-t-1").is_visible()
+              and "补齐备用供应商成本证据" in page.get_by_test_id("calendar-day-todos").inner_text(),
+              "today's todos appear on the calendar day")
+        page.get_by_test_id("calendar-day-2026-09-18").click()
+        page.wait_for_timeout(200)
+        check("CALENDAR_DAY_SWITCH",
+              "装机窗口复核" in page.get_by_test_id("calendar-day-schedule").inner_text()
+              and page.get_by_test_id("calendar-todo-t-3").is_visible(),
+              "周四 shows its schedule + linked todo")
+        # Owner-directed: background sensing survives capability navigation
+        check("SENSING_RUNS_IN_BACKGROUND",
+              page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "on",
+              "sensing strip still on while calendar sheet is open")
+        shot("P06-CAPABILITY-WORK-SURFACE")
         check("STATE_CAPABILITY_WORK",
               page.get_by_test_id("app-root").get_attribute("data-journey-state") == "CAPABILITY_WORK",
               page.get_by_test_id("app-root").get_attribute("data-journey-state"))
-        shot("P06-CAPABILITY-WORK-SURFACE")
         page.get_by_test_id("capability-sheet-calendar-close").click()
         page.wait_for_timeout(300)
         check("STATE_CONTEXT_RESTORED",
@@ -216,8 +281,16 @@ def main():
         page.get_by_test_id("todo-toggle-t-1").click()
         after = page.get_by_test_id("todo-toggle-t-1").get_attribute("aria-pressed")
         check("TODO_STATE_CHANGES", before != after, f"aria-pressed {before} -> {after}")
-        page.get_by_test_id("capability-sheet-todo-close").click()
-        page.wait_for_timeout(200)
+        # Owner-directed: todo deep-links into the visual calendar day
+        page.get_by_test_id("todo-calendar-link-t-3").click()
+        page.get_by_test_id("capability-sheet-calendar").wait_for()
+        check("TODO_DEEP_LINKS_TO_CALENDAR_DAY",
+              "active" in (page.get_by_test_id("calendar-day-2026-09-18").get_attribute("class") or "")
+              and page.get_by_test_id("calendar-todo-t-3").is_visible(),
+              "todo opened its own day on the visual calendar")
+        shot("P09-TODO-CALENDAR-LINK")
+        page.get_by_test_id("capability-sheet-calendar-close").click()
+        page.wait_for_timeout(300)
 
         page.get_by_test_id("nav-skills").click()
         page.get_by_test_id("capability-sheet-skills").wait_for()
@@ -239,12 +312,18 @@ def main():
               "捕获" in page.get_by_test_id("agent-next-action").last.inner_text(),
               page.get_by_test_id("agent-next-action").last.inner_text())
 
-        # Voice key must disclose PROTOTYPE_ONLY inside the conversation (no fake recording)
+        # Voice key toggles the continuous background sensing (honest, no fake recording)
         page.get_by_test_id("voice-key").click()
         page.wait_for_timeout(200)
-        check("VOICE_KEY_HONEST_DISCLOSURE",
-              "PROTOTYPE_ONLY" in page.get_by_test_id("message-agent").last.inner_text(),
-              page.get_by_test_id("message-agent").last.inner_text()[:60])
+        check("VOICE_KEY_PAUSES_SENSING",
+              page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "off"
+              and "感知已暂停" in page.get_by_test_id("sensing-strip").inner_text(),
+              page.get_by_test_id("sensing-strip").inner_text().replace("\n", " "))
+        page.get_by_test_id("voice-key").click()
+        page.wait_for_timeout(200)
+        check("VOICE_KEY_RESUMES_SENSING",
+              page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "on",
+              "continuous background sensing resumed")
 
         overflow = page.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")
         check("NO_HORIZONTAL_BLOCKING_OVERFLOW", not overflow,

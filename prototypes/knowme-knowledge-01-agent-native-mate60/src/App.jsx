@@ -1,12 +1,16 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PROTOTYPE_DISCLOSURE,
   KNOWLEDGE_SEED,
   KNOWLEDGE_GAPS,
   CAPTURE_CHANNELS,
   CAPABILITIES,
+  CALENDAR_DAYS,
   CALENDAR_MOCK,
   TODO_MOCK,
+  TODAY,
+  dayLabel,
+  SENSING_MOCK_LINES,
   agentReply,
   draftCandidate,
 } from "./fixtures.js";
@@ -103,7 +107,23 @@ function Message({ message, onNextAction }) {
   );
 }
 
-function Composer({ onSend, onVoiceKey, thinking }) {
+// Continuous background voice sensing strip (Owner-directed 2026-09-16).
+// Simulated deterministic stream; honestly disclosed as PROTOTYPE_ONLY mock —
+// no real microphone, no ASR, nothing written to knowledge automatically.
+function SensingStrip({ sensingOn, line }) {
+  return (
+    <div className="sensing-strip" data-testid="sensing-strip" data-sensing={sensingOn ? "on" : "off"}>
+      <i className={sensingOn ? "signal-live" : "signal-idle"} aria-hidden="true" />
+      <div className="sensing-text">
+        <small>{sensingOn ? "后台持续感知中" : "感知已暂停"}</small>
+        <span data-testid="sensing-line">{sensingOn ? line : "点击麦克风恢复持续感知"}</span>
+      </div>
+      <span className="state-chip state-prototype-only">模拟感知 · 无真实 ASR</span>
+    </div>
+  );
+}
+
+function Composer({ onSend, onVoiceKey, sensingOn, thinking }) {
   const [value, setValue] = useState("");
   const send = () => {
     const text = value.trim();
@@ -115,10 +135,10 @@ function Composer({ onSend, onVoiceKey, thinking }) {
     <div className="composer" data-testid="ask-agent-entry">
       <button
         type="button"
-        className="voice-key"
-        aria-label="语音输入(原型占位)"
+        className={`voice-key ${sensingOn ? "sensing" : ""}`}
+        aria-label={sensingOn ? "暂停后台语音感知" : "恢复后台语音感知"}
         data-testid="voice-key"
-        title="语音为 PROTOTYPE_ONLY:无真实 ASR / 声纹"
+        title="语音感知为 PROTOTYPE_ONLY:模拟持续感知,无真实 ASR / 声纹"
         onClick={onVoiceKey}
       >
         🎙
@@ -276,27 +296,83 @@ function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStar
   );
 }
 
+const NAV_GROUPS = [
+  { id: "moc", label: "主题入口 · MOC", kinds: ["MOC"] },
+  { id: "wiki", label: "知识文档 · WIKI", kinds: ["WIKI"] },
+  { id: "note", label: "笔记与捕获 · NOTE", kinds: ["NOTE"] },
+];
+
+// Owner-directed: knowledge is viewable both as a MOC-style navigation and by
+// calendar day. Both views open the same knowledge detail.
 function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
+  const [tab, setTab] = useState("nav");
+  const days = useMemo(
+    () => [...new Set(knowledge.map((item) => item.day))].sort().reverse(),
+    [knowledge]
+  );
   return (
     <Sheet title="知识 · 持续生长的上下文" testid="knowledge-sheet" onClose={onClose}>
-      <div className="knowledge-list">
-        {knowledge.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className="knowledge-item"
-            data-testid={`knowledge-item-${item.id}`}
-            onClick={() => onOpenItem(item.id)}
-          >
-            <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
-            <div>
-              <strong>{item.title}</strong>
-              <small>{item.group} · {item.updated} · 证据 {item.evidence ?? 1}</small>
-            </div>
-            <StateChip state={item.state} />
-          </button>
-        ))}
+      <div className="sheet-tabs" role="tablist" aria-label="知识视图">
+        <button type="button" className={tab === "nav" ? "active" : ""} data-testid="knowledge-tab-nav" onClick={() => setTab("nav")}>知识导航</button>
+        <button type="button" className={tab === "calendar" ? "active" : ""} data-testid="knowledge-tab-calendar" onClick={() => setTab("calendar")}>按日历查看</button>
       </div>
+      {tab === "nav" && (
+        <div className="knowledge-nav" data-testid="knowledge-nav-view">
+          {NAV_GROUPS.map((group) => {
+            const items = knowledge.filter((item) => group.kinds.includes(item.kind));
+            if (items.length === 0) return null;
+            return (
+              <section key={group.id} className="nav-group" data-testid={`nav-group-${group.id}`}>
+                <header>{group.label}<span>{items.length}</span></header>
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="knowledge-item"
+                    data-testid={`knowledge-item-${item.id}`}
+                    onClick={() => onOpenItem(item.id)}
+                  >
+                    <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
+                    <div>
+                      <strong>{item.title}</strong>
+                      <small>{item.group} · {item.updated} · 证据 {item.evidence ?? 1}</small>
+                    </div>
+                    <StateChip state={item.state} />
+                  </button>
+                ))}
+              </section>
+            );
+          })}
+        </div>
+      )}
+      {tab === "calendar" && (
+        <div className="knowledge-calendar" data-testid="knowledge-calendar-view">
+          {days.map((day) => {
+            const items = knowledge.filter((item) => item.day === day);
+            return (
+              <section key={day} className="day-group" data-testid={`knowledge-day-${day}`}>
+                <header><strong>{dayLabel(day)}</strong><span>{day} · {items.length} 条</span></header>
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="knowledge-item"
+                    data-testid={`knowledge-item-${item.id}`}
+                    onClick={() => onOpenItem(item.id)}
+                  >
+                    <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
+                    <div>
+                      <strong>{item.title}</strong>
+                      <small>{item.group} · {item.updated}</small>
+                    </div>
+                    <StateChip state={item.state} />
+                  </button>
+                ))}
+              </section>
+            );
+          })}
+        </div>
+      )}
     </Sheet>
   );
 }
@@ -311,6 +387,7 @@ function KnowledgeDetail({ item, knowledge, onOpenLinked, onOpenWork, onBack }) 
         <dl>
           <div><dt>来源</dt><dd>{item.source}</dd></div>
           <div><dt>状态</dt><dd><StateChip state={item.state} /></dd></div>
+          <div><dt>日期</dt><dd data-testid="knowledge-day-label">{dayLabel(item.day)}({item.day})</dd></div>
           <div><dt>证据</dt><dd>{item.evidence ?? 1} 条(Mock)</dd></div>
           <div><dt>更新</dt><dd>{item.updated}</dd></div>
         </dl>
@@ -362,10 +439,14 @@ function WorkSurface({ item, onBack }) {
   );
 }
 
-function CapabilitySheet({ capability, todos, onToggleTodo, onClose }) {
+// Owner-directed: schedule and todos share one visual calendar. Selecting a
+// day filters both; todos deep-link back into the calendar day.
+function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggleTodo, onOpenCalendarDay, onClose }) {
   const isCalendar = capability.id === "calendar";
   const isTodo = capability.id === "todo";
   const isSkills = capability.id === "skills";
+  const daySchedule = CALENDAR_MOCK.filter((item) => item.day === calendarDay);
+  const dayTodos = todos.filter((todo) => todo.day === calendarDay);
   return (
     <Sheet title={`能力 · ${capability.label}`} testid={`capability-sheet-${capability.id}`} onClose={onClose}>
       <div className="capability-state-row">
@@ -373,16 +454,50 @@ function CapabilitySheet({ capability, todos, onToggleTodo, onClose }) {
         <small data-testid={`capability-note-${capability.id}`}>{capability.note}</small>
       </div>
       {isCalendar && (
-        <div className="plan-list" data-testid="calendar-work-surface">
-          {CALENDAR_MOCK.map((item) => (
-            <article key={item.time} className={item.state}>
-              <time>{item.time}</time>
-              <i />
-              <div><strong>{item.title}</strong><small>{item.meta}</small></div>
-              <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
-            </article>
-          ))}
-          <p className="muted-line">Mock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。</p>
+        <div data-testid="calendar-work-surface">
+          <div className="week-strip" role="tablist" aria-label="选择日期" data-testid="calendar-week-strip">
+            {CALENDAR_DAYS.map((d) => (
+              <button
+                key={d.day}
+                type="button"
+                className={d.day === calendarDay ? "active" : ""}
+                data-testid={`calendar-day-${d.day}`}
+                onClick={() => onSelectDay(d.day)}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+          <div className="plan-list" data-testid="calendar-day-schedule">
+            {daySchedule.length === 0 && <p className="muted-line">这一天没有 Mock 日程。</p>}
+            {daySchedule.map((item) => (
+              <article key={`${item.day}-${item.time}`} className={item.state}>
+                <time>{item.time}</time>
+                <i />
+                <div><strong>{item.title}</strong><small>{item.meta}</small></div>
+                <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
+              </article>
+            ))}
+          </div>
+          <section className="detail-block" data-testid="calendar-day-todos">
+            <h3>当日关联待办({dayTodos.length})</h3>
+            {dayTodos.length === 0 && <p className="muted-line">这一天没有关联待办。</p>}
+            {dayTodos.map((todo) => (
+              <article key={todo.id} className={`calendar-todo ${todo.done ? "done" : ""}`} data-testid={`calendar-todo-${todo.id}`}>
+                <button
+                  type="button"
+                  className="todo-toggle"
+                  data-testid={`calendar-todo-toggle-${todo.id}`}
+                  aria-pressed={todo.done}
+                  onClick={() => onToggleTodo(todo.id)}
+                >
+                  {todo.done ? "✓" : "○"}
+                </button>
+                <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
+              </article>
+            ))}
+          </section>
+          <p className="muted-line">Mock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。日程与待办关联为原型本地状态。</p>
         </div>
       )}
       {isTodo && (
@@ -398,10 +513,21 @@ function CapabilitySheet({ capability, todos, onToggleTodo, onClose }) {
               >
                 {todo.done ? "✓" : "○"}
               </button>
-              <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
+              <div>
+                <strong>{todo.title}</strong>
+                <small>{todo.meta}</small>
+                <button
+                  type="button"
+                  className="todo-day-link"
+                  data-testid={`todo-calendar-link-${todo.id}`}
+                  onClick={() => onOpenCalendarDay(todo.day)}
+                >
+                  📅 {dayLabel(todo.day)} · 在可视化日历中查看
+                </button>
+              </div>
             </article>
           ))}
-          <p className="muted-line">Mock 待办 · NOT_CONNECTED:状态仅保存在本原型本地。</p>
+          <p className="muted-line">Mock 待办 · NOT_CONNECTED:状态仅保存在本原型本地;日期关联展示在日历工作面。</p>
         </div>
       )}
       {isSkills && (
@@ -433,8 +559,25 @@ export default function App() {
   const [correcting, setCorrecting] = useState(false);
   const [todos, setTodos] = useState(TODO_MOCK);
   const [journeyState, setJourneyState] = useState("FIRST_VIEW");
+  const [calendarDay, setCalendarDay] = useState(TODAY);
+  const [sensingOn, setSensingOn] = useState(true);
+  const [senseIdx, setSenseIdx] = useState(0);
   const idCounter = useRef(100);
   const threadRef = useRef(null);
+
+  // Owner-directed: voice sensing runs continuously in the background
+  // (simulated deterministic stream; survives sheet navigation; no real ASR).
+  useEffect(() => {
+    if (!sensingOn) return undefined;
+    const timer = window.setInterval(() => {
+      setSenseIdx((prev) => (prev + 1) % SENSING_MOCK_LINES.length);
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [sensingOn]);
+
+  const toggleSensing = useCallback(() => {
+    setSensingOn((prev) => !prev);
+  }, []);
 
   const scrollThread = useCallback(() => {
     requestAnimationFrame(() => {
@@ -495,6 +638,7 @@ export default function App() {
       id,
       group: "捕获",
       updated: "刚刚",
+      day: TODAY,
       evidence: 1,
       state: "CONFIRMED",
       keywords: base.title.toLowerCase().split(/\s+/).filter((w) => w.length > 1),
@@ -547,18 +691,19 @@ export default function App() {
     if (action.kind === "capture") openSheet("capture");
   }, [openKnowledgeItem, openSheet]);
 
-  // Voice key: honest PROTOTYPE_ONLY disclosure in the Agent conversation
-  const voiceDisclosure = useCallback(() => {
-    pushMessages([{
-      role: "agent",
-      text: "语音捕获在本原型中为 PROTOTYPE_ONLY:不包含真实 ASR、声纹验证或语音写入。你可以用文本输入代替;真实语音链路属于后续 Goal。",
-      refs: [],
-      nextAction: null,
-    }]);
-  }, [pushMessages]);
-
+  // Voice key toggles the continuous background sensing (simulated stream,
+  // honestly disclosed in the persistent strip; no fake recording, no alert).
   const toggleTodo = useCallback((id) => {
     setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));
+  }, []);
+
+  // Todo → visual calendar deep link
+  const openCalendarDay = useCallback((day) => {
+    setCalendarDay(day);
+    setDetailId(null);
+    setWorkId(null);
+    setSheet("calendar");
+    setJourneyState("CAPABILITY_WORK");
   }, []);
 
   const detailItem = useMemo(
@@ -588,7 +733,8 @@ export default function App() {
         {thinking && <div className="msg msg-agent thinking" data-testid="agent-thinking"><span className="msg-avatar">懂</span><div className="msg-body"><p>正在连接知识上下文…</p></div></div>}
       </main>
 
-      <Composer onSend={askAgent} onVoiceKey={voiceDisclosure} thinking={thinking} />
+      <SensingStrip sensingOn={sensingOn} line={SENSING_MOCK_LINES[senseIdx]} />
+      <Composer onSend={askAgent} onVoiceKey={toggleSensing} sensingOn={sensingOn} thinking={thinking} />
       <BottomNav onOpen={openSheet} activeSheet={sheet} />
 
       {sheet === "capture" && (
@@ -619,7 +765,15 @@ export default function App() {
         <WorkSurface item={workItem} onBack={backFromWork} />
       )}
       {activeCapability && (
-        <CapabilitySheet capability={activeCapability} todos={todos} onToggleTodo={toggleTodo} onClose={closeSheet} />
+        <CapabilitySheet
+          capability={activeCapability}
+          todos={todos}
+          calendarDay={calendarDay}
+          onSelectDay={setCalendarDay}
+          onToggleTodo={toggleTodo}
+          onOpenCalendarDay={openCalendarDay}
+          onClose={closeSheet}
+        />
       )}
     </div>
   );
