@@ -1,0 +1,626 @@
+import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  PROTOTYPE_DISCLOSURE,
+  KNOWLEDGE_SEED,
+  KNOWLEDGE_GAPS,
+  CAPTURE_CHANNELS,
+  CAPABILITIES,
+  CALENDAR_MOCK,
+  TODO_MOCK,
+  agentReply,
+  draftCandidate,
+} from "./fixtures.js";
+
+// ---------------------------------------------------------------------------
+// Interaction state machine (mirrors INTERACTION_STATE_MAP.md):
+//   FIRST_VIEW → ASK_AGENT
+//   FIRST_VIEW → CAPTURE
+//   CAPTURE → CANDIDATE_KNOWLEDGE
+//   CANDIDATE_KNOWLEDGE → CONFIRMED
+//   CONFIRMED → KNOWLEDGE_CONTEXT_UPDATED
+//   KNOWLEDGE_CONTEXT_UPDATED → KNOWLEDGE_WORK
+//   AGENT_CONTEXT → CAPABILITY_WORK
+//   CAPABILITY_WORK → AGENT_CONTEXT_RESTORED
+// ---------------------------------------------------------------------------
+
+const STATE_CHIP_CLASS = {
+  AVAILABLE: "state-chip state-available",
+  NOT_CONNECTED: "state-chip state-not-connected",
+  PLANNED: "state-chip state-planned",
+  PROTOTYPE_ONLY: "state-chip state-prototype-only",
+  CONFIRMED: "state-chip state-available",
+  CANDIDATE: "state-chip state-planned",
+};
+
+function StateChip({ state }) {
+  return <span className={STATE_CHIP_CLASS[state] || "state-chip"} data-state={state}>{state}</span>;
+}
+
+function Header({ knowledgeCount }) {
+  return (
+    <header className="app-header" data-testid="agent-identity">
+      <span className="brand-mark" aria-hidden="true">脑</span>
+      <div className="identity-text">
+        <strong>懂我 · KnowME</strong>
+        <small>个人知识 Agent · 当前知识上下文 {knowledgeCount} 条</small>
+      </div>
+      <span className="disclosure-pill" data-testid="prototype-disclosure">{PROTOTYPE_DISCLOSURE}</span>
+    </header>
+  );
+}
+
+function ContextStrip({ knowledge, gaps, onOpenKnowledge }) {
+  return (
+    <section className="context-strip" aria-label="当前知识上下文" data-testid="knowledge-context-summary">
+      <button type="button" className="context-summary" onClick={onOpenKnowledge} data-testid="context-summary-button">
+        <strong>{knowledge.length} 条知识</strong>
+        <small>{knowledge.reduce((acc, item) => acc + item.links.length, 0)} 条连接 · 持续生长</small>
+      </button>
+      <div className="gap-row" aria-label="已知与未知">
+        {gaps.map((gap) => (
+          <span key={gap.id} className="gap-chip" data-testid={`gap-${gap.id}`}>
+            未知 · {gap.label}
+          </span>
+        ))}
+        <span className="known-chip">已知 · AOG 响应基线 30 分钟 / 4 小时</span>
+      </div>
+    </section>
+  );
+}
+
+function Message({ message, onNextAction }) {
+  if (message.role === "user") {
+    return (
+      <div className="msg msg-user" data-testid="message-user">
+        <small>你</small>
+        <p>{message.text}</p>
+      </div>
+    );
+  }
+  return (
+    <div className="msg msg-agent" data-testid="message-agent">
+      <span className="msg-avatar" aria-hidden="true">懂</span>
+      <div className="msg-body">
+        <small>懂我 · 确定性 Mock 回答{message.refs?.length ? ` · 引用 ${message.refs.length} 条知识` : ""}</small>
+        <p>{message.text}</p>
+        {message.refs?.length > 0 && (
+          <div className="msg-refs" data-testid="agent-refs">
+            {message.refs.map((ref) => <span key={ref} className="ref-chip">{ref}</span>)}
+          </div>
+        )}
+        {message.nextAction && (
+          <button
+            type="button"
+            className="next-action"
+            data-testid="agent-next-action"
+            onClick={() => onNextAction(message.nextAction)}
+          >
+            {message.nextAction.label} →
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Composer({ onSend, onVoiceKey, thinking }) {
+  const [value, setValue] = useState("");
+  const send = () => {
+    const text = value.trim();
+    if (!text || thinking) return;
+    onSend(text);
+    setValue("");
+  };
+  return (
+    <div className="composer" data-testid="ask-agent-entry">
+      <button
+        type="button"
+        className="voice-key"
+        aria-label="语音输入(原型占位)"
+        data-testid="voice-key"
+        title="语音为 PROTOTYPE_ONLY:无真实 ASR / 声纹"
+        onClick={onVoiceKey}
+      >
+        🎙
+      </button>
+      <input
+        aria-label="向懂我提问"
+        data-testid="composer-input"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onKeyDown={(event) => { if (event.key === "Enter") send(); }}
+        placeholder={thinking ? "正在连接知识上下文…" : "问懂我,或用下方捕获入口记录新信息"}
+        disabled={thinking}
+      />
+      <button type="button" className="send" data-testid="composer-send" onClick={send} disabled={thinking}>
+        发送
+      </button>
+    </div>
+  );
+}
+
+function BottomNav({ onOpen, activeSheet }) {
+  const items = [
+    { id: "capture", label: "捕获", testid: "nav-capture" },
+    { id: "knowledge", label: "知识", testid: "nav-knowledge" },
+    { id: "calendar", label: "日历", testid: "nav-calendar" },
+    { id: "todo", label: "待办", testid: "nav-todo" },
+    { id: "skills", label: "技能", testid: "nav-skills" },
+  ];
+  return (
+    <nav className="bottom-nav" aria-label="捕获与能力入口" data-testid="capability-nav">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          className={activeSheet === item.id ? "active" : ""}
+          data-testid={item.testid}
+          onClick={() => onOpen(item.id)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function Sheet({ title, testid, onClose, children, footer }) {
+  return (
+    <div className="sheet-backdrop" role="presentation" onClick={onClose}>
+      <section
+        className="sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        data-testid={testid}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className="sheet-header">
+          <h2>{title}</h2>
+          <button type="button" className="sheet-close" data-testid={`${testid}-close`} onClick={onClose} aria-label={`关闭${title}`}>✕</button>
+        </header>
+        <div className="sheet-body">{children}</div>
+        {footer && <footer className="sheet-footer">{footer}</footer>}
+      </section>
+    </div>
+  );
+}
+
+function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStart, onCorrectSave, onReject, onClose }) {
+  const [text, setText] = useState("");
+  const [fix, setFix] = useState({ title: "", summary: "" });
+  return (
+    <Sheet title="捕获 · 信息进入知识" testid="capture-sheet" onClose={onClose}>
+      <div className="channel-row" aria-label="捕获通道">
+        {CAPTURE_CHANNELS.map((channel) => (
+          <div key={channel.id} className="channel-card" data-testid={`capture-channel-${channel.id}`}>
+            <strong>{channel.label}</strong>
+            <StateChip state={channel.state} />
+            <small>{channel.note}</small>
+          </div>
+        ))}
+      </div>
+      {!candidate && (
+        <div className="capture-input-block">
+          <textarea
+            aria-label="输入要捕获的文本"
+            data-testid="capture-input"
+            rows={3}
+            placeholder="输入一段要进入知识上下文的信息(文本通道为原型可用)"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+          />
+          <button
+            type="button"
+            className="primary-action"
+            data-testid="capture-submit"
+            disabled={!text.trim()}
+            onClick={() => onDraft(text)}
+          >
+            生成候选知识
+          </button>
+        </div>
+      )}
+      {candidate && (
+        <div className="candidate-card" data-testid="candidate-card">
+          <div className="pipeline" aria-label="入库流程">
+            <span className="done">已采集</span> → <span className="active">AI 整理草稿</span> → <span>确认后入库</span>
+          </div>
+          <StateChip state="CANDIDATE" />
+          {!correcting ? (
+            <>
+              <h3 data-testid="candidate-title">{candidate.title}</h3>
+              <p data-testid="candidate-summary">{candidate.summary}</p>
+              <div className="tag-row">{candidate.tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}</div>
+              <small className="source-line">来源:{candidate.source}</small>
+              <div className="candidate-actions">
+                <button type="button" className="primary-action" data-testid="candidate-confirm" onClick={onConfirm}>确认入库</button>
+                <button
+                  type="button"
+                  className="secondary-action"
+                  data-testid="candidate-correct"
+                  onClick={() => { setFix({ title: candidate.title, summary: candidate.summary }); onCorrectStart(); }}
+                >
+                  修正
+                </button>
+                <button type="button" className="danger-action" data-testid="candidate-reject" onClick={onReject}>拒绝</button>
+              </div>
+            </>
+          ) : (
+            <div className="correct-block" data-testid="correct-block">
+              <label>
+                标题
+                <input data-testid="correct-title" value={fix.title} onChange={(e) => setFix({ ...fix, title: e.target.value })} />
+              </label>
+              <label>
+                内容
+                <textarea data-testid="correct-summary" rows={3} value={fix.summary} onChange={(e) => setFix({ ...fix, summary: e.target.value })} />
+              </label>
+              <div className="candidate-actions">
+                <button
+                  type="button"
+                  className="primary-action"
+                  data-testid="correct-save"
+                  disabled={!fix.title.trim() || !fix.summary.trim()}
+                  onClick={() => onCorrectSave(fix)}
+                >
+                  保存修正
+                </button>
+                <button type="button" className="danger-action" data-testid="correct-reject" onClick={onReject}>拒绝</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Sheet>
+  );
+}
+
+function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
+  return (
+    <Sheet title="知识 · 持续生长的上下文" testid="knowledge-sheet" onClose={onClose}>
+      <div className="knowledge-list">
+        {knowledge.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className="knowledge-item"
+            data-testid={`knowledge-item-${item.id}`}
+            onClick={() => onOpenItem(item.id)}
+          >
+            <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
+            <div>
+              <strong>{item.title}</strong>
+              <small>{item.group} · {item.updated} · 证据 {item.evidence ?? 1}</small>
+            </div>
+            <StateChip state={item.state} />
+          </button>
+        ))}
+      </div>
+    </Sheet>
+  );
+}
+
+function KnowledgeDetail({ item, knowledge, onOpenLinked, onOpenWork, onBack }) {
+  return (
+    <Sheet title={`知识详情 · ${item.title}`} testid="knowledge-detail" onClose={onBack}>
+      <p className="detail-summary">{item.summary}</p>
+      <div className="tag-row">{item.tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}</div>
+      <section className="detail-block" data-testid="knowledge-source-state">
+        <h3>来源与状态</h3>
+        <dl>
+          <div><dt>来源</dt><dd>{item.source}</dd></div>
+          <div><dt>状态</dt><dd><StateChip state={item.state} /></dd></div>
+          <div><dt>证据</dt><dd>{item.evidence ?? 1} 条(Mock)</dd></div>
+          <div><dt>更新</dt><dd>{item.updated}</dd></div>
+        </dl>
+      </section>
+      <section className="detail-block">
+        <h3>关联知识</h3>
+        <div className="related-links">
+          {item.links.length === 0 && <small>暂无关联(候选知识确认后将自动建立连接)</small>}
+          {item.links.map((id) => {
+            const linked = knowledge.find((entry) => entry.id === id);
+            if (!linked) return null;
+            return (
+              <button key={id} type="button" data-testid={`linked-${id}`} onClick={() => onOpenLinked(id)}>
+                ⛓ {linked.title}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+      <button type="button" className="primary-action" data-testid="open-work-surface" onClick={() => onOpenWork(item.id)}>
+        打开上下文工作面
+      </button>
+    </Sheet>
+  );
+}
+
+function WorkSurface({ item, onBack }) {
+  return (
+    <Sheet title={`工作面 · ${item.title}`} testid="work-surface" onClose={onBack}>
+      <header className="work-conclusion">
+        <small>当前稳定结论(Mock)</small>
+        <strong>30 分钟确认影响 · 4 小时形成方案</strong>
+        <span>🛡 来源可追溯 · 只读草案</span>
+      </header>
+      <div className="work-grid">
+        <article><small>关联知识</small><strong>{item.links.length} 条</strong></article>
+        <article><small>证据来源</small><strong>{item.evidence ?? 1} 条</strong></article>
+        <article><small>冲突</small><strong>1 项</strong></article>
+        <article><small>更新</small><strong>{item.updated}</strong></article>
+      </div>
+      <section className="detail-block">
+        <h3>可执行动作(原型)</h3>
+        <p className="muted-line">工作面为上下文化浮层:关闭后回到 Agent 对话,对话与知识上下文不丢失。</p>
+      </section>
+      <button type="button" className="secondary-action" data-testid="work-surface-back" onClick={onBack}>
+        ← 返回 Agent 对话
+      </button>
+    </Sheet>
+  );
+}
+
+function CapabilitySheet({ capability, todos, onToggleTodo, onClose }) {
+  const isCalendar = capability.id === "calendar";
+  const isTodo = capability.id === "todo";
+  const isSkills = capability.id === "skills";
+  return (
+    <Sheet title={`能力 · ${capability.label}`} testid={`capability-sheet-${capability.id}`} onClose={onClose}>
+      <div className="capability-state-row">
+        <StateChip state={capability.state} />
+        <small data-testid={`capability-note-${capability.id}`}>{capability.note}</small>
+      </div>
+      {isCalendar && (
+        <div className="plan-list" data-testid="calendar-work-surface">
+          {CALENDAR_MOCK.map((item) => (
+            <article key={item.time} className={item.state}>
+              <time>{item.time}</time>
+              <i />
+              <div><strong>{item.title}</strong><small>{item.meta}</small></div>
+              <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
+            </article>
+          ))}
+          <p className="muted-line">Mock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。</p>
+        </div>
+      )}
+      {isTodo && (
+        <div className="todo-list" data-testid="todo-work-surface">
+          {todos.map((todo) => (
+            <article key={todo.id} className={todo.done ? "done" : ""}>
+              <button
+                type="button"
+                className="todo-toggle"
+                data-testid={`todo-toggle-${todo.id}`}
+                aria-pressed={todo.done}
+                onClick={() => onToggleTodo(todo.id)}
+              >
+                {todo.done ? "✓" : "○"}
+              </button>
+              <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
+            </article>
+          ))}
+          <p className="muted-line">Mock 待办 · NOT_CONNECTED:状态仅保存在本原型本地。</p>
+        </div>
+      )}
+      {isSkills && (
+        <div className="planned-card" data-testid="skills-planned">
+          <strong>个人 Skill 工厂</strong>
+          <p>沉淀、模拟、批准与启停个人 Skill 的能力属于后续 Goal,本轮合同明确不实现。</p>
+          <StateChip state="PLANNED" />
+        </div>
+      )}
+    </Sheet>
+  );
+}
+
+export default function App() {
+  const [knowledge, setKnowledge] = useState(KNOWLEDGE_SEED);
+  const [messages, setMessages] = useState([
+    {
+      role: "agent",
+      text: "我是懂我,你的个人知识 Agent。当前知识上下文有 6 条已确认知识、2 个已知空白。你可以直接问我,也可以通过「捕获」把新信息交给我确认入库。",
+      refs: ["AOG 航材保障", "供应风险记录"],
+      nextAction: null,
+    },
+  ]);
+  const [thinking, setThinking] = useState(false);
+  const [sheet, setSheet] = useState(null); // capture | knowledge | calendar | todo | skills
+  const [detailId, setDetailId] = useState(null);
+  const [workId, setWorkId] = useState(null);
+  const [candidate, setCandidate] = useState(null);
+  const [correcting, setCorrecting] = useState(false);
+  const [todos, setTodos] = useState(TODO_MOCK);
+  const [journeyState, setJourneyState] = useState("FIRST_VIEW");
+  const idCounter = useRef(100);
+  const threadRef = useRef(null);
+
+  const scrollThread = useCallback(() => {
+    requestAnimationFrame(() => {
+      const node = threadRef.current;
+      if (node) node.scrollTop = node.scrollHeight;
+    });
+  }, []);
+
+  const pushMessages = useCallback((next) => {
+    setMessages((prev) => [...prev, ...next]);
+    scrollThread();
+  }, [scrollThread]);
+
+  // Journey B — Ask the Agent
+  const askAgent = useCallback((text) => {
+    setJourneyState("ASK_AGENT");
+    pushMessages([{ role: "user", text }]);
+    setThinking(true);
+    window.setTimeout(() => {
+      const reply = agentReply(text, knowledge);
+      pushMessages([{ role: "agent", ...reply }]);
+      setThinking(false);
+    }, 500);
+  }, [knowledge, pushMessages]);
+
+  const openSheet = useCallback((id) => {
+    setDetailId(null);
+    setWorkId(null);
+    setSheet(id);
+    if (id === "capture") setJourneyState("CAPTURE");
+    if (id === "calendar" || id === "todo" || id === "skills") setJourneyState("CAPABILITY_WORK");
+  }, []);
+
+  const closeSheet = useCallback(() => {
+    const wasCapability = sheet === "calendar" || sheet === "todo" || sheet === "skills";
+    setSheet(null);
+    setDetailId(null);
+    setWorkId(null);
+    setCandidate(null);
+    setCorrecting(false);
+    if (wasCapability) setJourneyState("AGENT_CONTEXT_RESTORED");
+  }, [sheet]);
+
+  // Journey C — capture → candidate → confirm / correct / reject
+  const draftFromText = useCallback((text) => {
+    setCandidate(draftCandidate(text));
+    setCorrecting(false);
+    setJourneyState("CANDIDATE_KNOWLEDGE");
+  }, []);
+
+  const confirmCandidate = useCallback((fixed) => {
+    const base = fixed
+      ? { ...candidate, title: fixed.title.trim(), summary: fixed.summary.trim() }
+      : candidate;
+    const id = `k-captured-${idCounter.current++}`;
+    const newItem = {
+      ...base,
+      id,
+      group: "捕获",
+      updated: "刚刚",
+      evidence: 1,
+      state: "CONFIRMED",
+      keywords: base.title.toLowerCase().split(/\s+/).filter((w) => w.length > 1),
+    };
+    setKnowledge((prev) => [...prev, newItem]);
+    setCandidate(null);
+    setCorrecting(false);
+    setSheet(null);
+    setJourneyState("KNOWLEDGE_CONTEXT_UPDATED");
+    pushMessages([{
+      role: "agent",
+      text: `已确认入库:「${newItem.title}」现在是知识上下文的第 ${knowledge.length + 1} 条已确认知识${newItem.links.length ? `,并与 ${newItem.links.length} 条既有知识建立连接` : ""}。之后你问相关问题我会引用它。`,
+      refs: [newItem.title],
+      nextAction: { kind: "knowledge", targetId: id, label: `打开「${newItem.title}」工作面` },
+    }]);
+  }, [candidate, knowledge.length, pushMessages]);
+
+  const rejectCandidate = useCallback(() => {
+    const title = candidate?.title;
+    setCandidate(null);
+    setCorrecting(false);
+    setJourneyState("CAPTURE");
+    pushMessages([{
+      role: "agent",
+      text: `已拒绝候选知识「${title}」,它没有进入知识上下文。你可以重新输入或修正后再确认。`,
+      refs: [],
+      nextAction: null,
+    }]);
+  }, [candidate, pushMessages]);
+
+  // Journey D — work from knowledge
+  const openKnowledgeItem = useCallback((id) => {
+    setSheet("knowledge");
+    setDetailId(id);
+    setWorkId(null);
+    setJourneyState("KNOWLEDGE_WORK");
+  }, []);
+
+  const openWorkSurface = useCallback((id) => {
+    setWorkId(id);
+    setJourneyState("KNOWLEDGE_WORK");
+  }, []);
+
+  const backFromWork = useCallback(() => setWorkId(null), []);
+  const backFromDetail = useCallback(() => { setDetailId(null); setWorkId(null); }, []);
+
+  // Next action from Agent responses
+  const handleNextAction = useCallback((action) => {
+    if (action.kind === "knowledge") openKnowledgeItem(action.targetId);
+    if (action.kind === "capture") openSheet("capture");
+  }, [openKnowledgeItem, openSheet]);
+
+  // Voice key: honest PROTOTYPE_ONLY disclosure in the Agent conversation
+  const voiceDisclosure = useCallback(() => {
+    pushMessages([{
+      role: "agent",
+      text: "语音捕获在本原型中为 PROTOTYPE_ONLY:不包含真实 ASR、声纹验证或语音写入。你可以用文本输入代替;真实语音链路属于后续 Goal。",
+      refs: [],
+      nextAction: null,
+    }]);
+  }, [pushMessages]);
+
+  const toggleTodo = useCallback((id) => {
+    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));
+  }, []);
+
+  const detailItem = useMemo(
+    () => knowledge.find((item) => item.id === detailId) || null,
+    [knowledge, detailId]
+  );
+  const workItem = useMemo(
+    () => knowledge.find((item) => item.id === workId) || null,
+    [knowledge, workId]
+  );
+  const activeCapability = useMemo(
+    () => (sheet === "calendar" || sheet === "todo" || sheet === "skills")
+      ? CAPABILITIES.find((cap) => cap.id === sheet) || null
+      : null,
+    [sheet]
+  );
+
+  return (
+    <div className="app-shell" data-testid="app-root" data-journey-state={journeyState}>
+      <Header knowledgeCount={knowledge.length} />
+      <ContextStrip knowledge={knowledge} gaps={KNOWLEDGE_GAPS} onOpenKnowledge={() => openSheet("knowledge")} />
+
+      <main className="conversation" ref={threadRef} aria-label="Agent 对话" data-testid="conversation">
+        {messages.map((message, index) => (
+          <Message key={index} message={message} onNextAction={handleNextAction} />
+        ))}
+        {thinking && <div className="msg msg-agent thinking" data-testid="agent-thinking"><span className="msg-avatar">懂</span><div className="msg-body"><p>正在连接知识上下文…</p></div></div>}
+      </main>
+
+      <Composer onSend={askAgent} onVoiceKey={voiceDisclosure} thinking={thinking} />
+      <BottomNav onOpen={openSheet} activeSheet={sheet} />
+
+      {sheet === "capture" && (
+        <CaptureSheet
+          candidate={candidate}
+          correcting={correcting}
+          onDraft={draftFromText}
+          onConfirm={() => confirmCandidate(null)}
+          onCorrectStart={() => setCorrecting(true)}
+          onCorrectSave={(fix) => confirmCandidate(fix)}
+          onReject={rejectCandidate}
+          onClose={closeSheet}
+        />
+      )}
+      {sheet === "knowledge" && !detailItem && (
+        <KnowledgeSheet knowledge={knowledge} onOpenItem={openKnowledgeItem} onClose={closeSheet} />
+      )}
+      {sheet === "knowledge" && detailItem && !workItem && (
+        <KnowledgeDetail
+          item={detailItem}
+          knowledge={knowledge}
+          onOpenLinked={openKnowledgeItem}
+          onOpenWork={openWorkSurface}
+          onBack={backFromDetail}
+        />
+      )}
+      {sheet === "knowledge" && detailItem && workItem && (
+        <WorkSurface item={workItem} onBack={backFromWork} />
+      )}
+      {activeCapability && (
+        <CapabilitySheet capability={activeCapability} todos={todos} onToggleTodo={toggleTodo} onClose={closeSheet} />
+      )}
+    </div>
+  );
+}
