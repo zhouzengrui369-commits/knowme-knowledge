@@ -13,6 +13,31 @@ export const DAY_LABELS = {
 };
 export const dayLabel = (day) => DAY_LABELS[day] || day;
 
+// Owner-directed (2026-09-16, KnowMe-NJX-Demo authority): knowledge navigation
+// carries the 五维知识地图 (five life-dimension map) and the 九维认知图谱
+// (nine-dimension cognitive graph). Every knowledge item is deterministically
+// attributed to one dimension of each map; captured items default to
+// 工作记录 / 09 动态与情景. Counts are computed live, never faked.
+export const KNOWLEDGE_MAP_5D = [
+  { id: "d5-work", label: "工作记录", question: "我做了什么" },
+  { id: "d5-life", label: "生活感悟", question: "我如何感受" },
+  { id: "d5-plan", label: "人生规划", question: "我想走向哪里" },
+  { id: "d5-think", label: "系统思考", question: "我如何理解" },
+  { id: "d5-industry", label: "行业洞察", question: "我看见什么变化" },
+];
+
+export const COGNITIVE_MAP_9D = [
+  { id: "d9-01", num: "01", label: "身份角色" },
+  { id: "d9-02", num: "02", label: "价值认知" },
+  { id: "d9-03", num: "03", label: "能力复用" },
+  { id: "d9-04", num: "04", label: "人物关系" },
+  { id: "d9-05", num: "05", label: "知识与工具" },
+  { id: "d9-06", num: "06", label: "行为与表达" },
+  { id: "d9-07", num: "07", label: "目标与项目" },
+  { id: "d9-08", num: "08", label: "决策与反馈" },
+  { id: "d9-09", num: "09", label: "动态与情景" },
+];
+
 export const KNOWLEDGE_SEED = [
   {
     id: "k-aog-moc",
@@ -21,6 +46,8 @@ export const KNOWLEDGE_SEED = [
     group: "工作",
     updated: "刚刚",
     day: "2026-09-16",
+    dim5: "d5-work",
+    dim9: "d9-07",
     summary: "围绕响应时限、供应风险、升级路径和复盘形成的主题入口。",
     tags: ["AOG", "保障", "MOC"],
     links: ["k-supplier-sla", "k-decision-parallel"],
@@ -36,6 +63,8 @@ export const KNOWLEDGE_SEED = [
     group: "知识",
     updated: "12 分钟前",
     day: "2026-09-16",
+    dim5: "d5-work",
+    dim9: "d9-05",
     summary: "ABC 与备用供应商的服务承诺、历史履约和切换约束。",
     tags: ["供应商", "SLA"],
     links: ["k-aog-moc", "k-risk-note"],
@@ -51,6 +80,8 @@ export const KNOWLEDGE_SEED = [
     group: "决策",
     updated: "今天 18:20",
     day: "2026-09-16",
+    dim5: "d5-think",
+    dim9: "d9-08",
     summary: "上一轮 AOG 中断的方案比较、选择依据、结果与反方证据。",
     tags: ["决策", "复盘"],
     links: ["k-aog-moc", "k-risk-note"],
@@ -66,6 +97,8 @@ export const KNOWLEDGE_SEED = [
     group: "规则",
     updated: "昨天",
     day: "2026-09-15",
+    dim5: "d5-think",
+    dim9: "d9-03",
     summary: "30 分钟确认影响,4 小时形成首个可执行处置方案。",
     tags: ["基线", "时限"],
     links: ["k-aog-moc"],
@@ -81,6 +114,8 @@ export const KNOWLEDGE_SEED = [
     group: "行动",
     updated: "刚刚",
     day: "2026-09-16",
+    dim5: "d5-work",
+    dim9: "d9-09",
     summary: "ABC 供应商通知关键件可能延迟两天,影响周四装机窗口。",
     tags: ["风险", "行动"],
     links: ["k-supplier-sla", "k-decision-parallel"],
@@ -96,6 +131,8 @@ export const KNOWLEDGE_SEED = [
     group: "个人",
     updated: "7 月 18 日",
     day: "2026-07-18",
+    dim5: "d5-plan",
+    dim9: "d9-02",
     summary: "高风险建议必须显示证据、反方观点、成本与可逆性。",
     tags: ["偏好", "个人"],
     links: ["k-decision-parallel"],
@@ -135,13 +172,20 @@ export const CAPABILITIES = [
   { id: "skills", label: "技能", state: "PLANNED", note: "个人 Skill 工厂为后续 Goal,本轮不实现" },
 ];
 
-// Owner-directed: schedule and todos live on the same visual calendar days.
+// Owner-directed: schedule and todos live on the same visual calendar.
+// The calendar has three views — 月 / 周 / 日 (month / week / day).
+// Weekday labels are astronomically correct for September 2026
+// (2026-09-16 is a Wednesday); the 装机窗口 narrative sits on 周四 09-17.
+export const CALENDAR_MONTH = { year: 2026, month: 9, label: "2026 年 9 月" };
+
 export const CALENDAR_DAYS = [
-  { day: "2026-09-15", label: "昨天 周一" },
-  { day: "2026-09-16", label: "今天 周二" },
-  { day: "2026-09-17", label: "明天 周三" },
-  { day: "2026-09-18", label: "周四" },
-  { day: "2026-09-19", label: "周五" },
+  { day: "2026-09-14", label: "周一" },
+  { day: "2026-09-15", label: "昨天 周二" },
+  { day: "2026-09-16", label: "今天 周三" },
+  { day: "2026-09-17", label: "明天 周四" },
+  { day: "2026-09-18", label: "周五" },
+  { day: "2026-09-19", label: "周六" },
+  { day: "2026-09-20", label: "周日" },
 ];
 
 export const CALENDAR_MOCK = [
@@ -149,13 +193,13 @@ export const CALENDAR_MOCK = [
   { time: "11:00", title: "比较备用供应方案", meta: "45 分钟 · 决策", state: "active", day: "2026-09-16" },
   { time: "14:00", title: "Q3 航材保障评审", meta: "60 分钟 · 会议", state: "next", day: "2026-09-16" },
   { time: "17:30", title: "KnowMe MVP 证据复核", meta: "45 分钟 · 项目", state: "next", day: "2026-09-16" },
-  { time: "10:00", title: "装机窗口复核", meta: "30 分钟 · AOG", state: "next", day: "2026-09-18" },
+  { time: "10:00", title: "装机窗口复核", meta: "30 分钟 · AOG", state: "next", day: "2026-09-17" },
 ];
 
 export const TODO_MOCK = [
   { id: "t-1", title: "补齐备用供应商成本证据", meta: "关联:供应商与 SLA", done: false, day: "2026-09-16", knowledgeRef: "k-supplier-sla" },
   { id: "t-2", title: "评审前生成一页摘要", meta: "关联:AOG 航材保障", done: false, day: "2026-09-16", knowledgeRef: "k-aog-moc" },
-  { id: "t-3", title: "确认周四装机窗口余量", meta: "关联:供应风险记录", done: true, day: "2026-09-18", knowledgeRef: "k-risk-note" },
+  { id: "t-3", title: "确认周四装机窗口余量", meta: "关联:供应风险记录", done: true, day: "2026-09-17", knowledgeRef: "k-risk-note" },
 ];
 
 // Deterministic mock Agent. Keyword-matches the current knowledge context and

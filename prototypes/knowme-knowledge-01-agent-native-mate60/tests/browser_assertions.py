@@ -184,7 +184,37 @@ def main():
         check("CAPTURED_ITEM_IN_NAV",
               "周四装机窗口剩余" in page.get_by_test_id("nav-group-note").inner_text(),
               "confirmed capture appears under 笔记与捕获 navigation")
+        # Owner-directed (KnowMe-NJX-Demo authority): 五维知识地图 + 九维认知图谱
+        dim5 = page.get_by_test_id("dim5-map")
+        check("KNOWLEDGE_NAV_FIVE_DIM_MAP",
+              dim5.is_visible()
+              and all(x in dim5.inner_text() for x in ["工作记录", "生活感悟", "人生规划", "系统思考", "行业洞察"]),
+              "five-dimension knowledge map renders all five life dimensions")
+        dim9 = page.get_by_test_id("dim9-map")
+        check("KNOWLEDGE_NAV_NINE_DIM_COGNITIVE",
+              dim9.is_visible()
+              and all(x in dim9.inner_text() for x in ["身份角色", "价值认知", "能力复用", "人物关系",
+                                                       "知识与工具", "行为与表达", "目标与项目", "决策与反馈", "动态与情景"]),
+              "nine-dimension cognitive graph renders all nine dimensions")
+        dim5_work = page.get_by_test_id("dim5-map-d5-work")
+        check("CAPTURED_ITEM_IN_FIVE_DIM",
+              dim5_work.inner_text().strip().endswith("5"),
+              "工作记录 count = 3 seeds + 2 confirmed captures = 5 (live count): " + dim5_work.inner_text().replace("\n", " "))
+        dim5_work.click()
+        page.get_by_test_id("dim5-map-items-d5-work").wait_for()
+        check("DIM_ROW_EXPAND_LISTS_REAL_ITEMS",
+              "AOG 航材保障" in page.get_by_test_id("dim5-map-items-d5-work").inner_text()
+              and "周四装机窗口剩余" in page.get_by_test_id("dim5-map-items-d5-work").inner_text(),
+              "dimension expands to its real items incl. today's capture")
         shot("P10-KNOWLEDGE-NAVIGATION")
+        # dimension item opens the same knowledge detail
+        page.get_by_test_id("dim5-map-items-d5-work").get_by_test_id("knowledge-item-k-risk-note").click()
+        page.get_by_test_id("knowledge-detail").wait_for()
+        check("DIM_ITEM_OPENS_DETAIL",
+              "供应风险记录" in page.get_by_test_id("knowledge-detail").inner_text(),
+              "dimension item opens knowledge detail")
+        page.get_by_test_id("knowledge-detail-close").click()
+        page.get_by_test_id("knowledge-sheet").wait_for()
         page.get_by_test_id("knowledge-tab-calendar").click()
         page.get_by_test_id("knowledge-calendar-view").wait_for()
         today_group = page.get_by_test_id("knowledge-day-2026-09-16").inner_text()
@@ -246,6 +276,44 @@ def main():
               "NOT_CONNECTED" in page.get_by_test_id("capability-sheet-calendar").inner_text()
               and "CONNECTED" not in page.get_by_test_id("capability-sheet-calendar").inner_text().replace("NOT_CONNECTED", ""),
               "calendar honestly NOT_CONNECTED")
+        # Owner-directed: calendar has 月/周/日 three views
+        check("CALENDAR_VIEW_SWITCHER",
+              all(page.get_by_test_id(f"calendar-view-{v}").is_visible() for v in ("day", "week", "month")),
+              "day / week / month view switcher rendered")
+        # Month view: September 2026 grid, correct weekdays, today highlighted
+        page.get_by_test_id("calendar-view-month").click()
+        page.get_by_test_id("calendar-month-view").wait_for()
+        month_text = page.get_by_test_id("calendar-month-view").inner_text()
+        check("CALENDAR_MONTH_VIEW",
+              "2026 年 9 月" in month_text
+              and page.get_by_test_id("month-day-2026-09-01").is_visible()
+              and page.get_by_test_id("month-day-2026-09-30").is_visible()
+              and "today" in (page.get_by_test_id("month-day-2026-09-16").get_attribute("class") or ""),
+              "September 2026 month grid (30 days), today 09-16 highlighted")
+        check("CALENDAR_MONTH_EVENT_DOTS",
+              page.get_by_test_id("month-day-2026-09-16").locator(".month-dot").count() == 1
+              and page.get_by_test_id("month-day-2026-09-17").locator(".month-dot").count() == 1
+              and page.get_by_test_id("month-day-2026-09-15").locator(".month-dot").count() == 0,
+              "days with schedule/todos carry dots; empty days do not")
+        shot("P11-CALENDAR-MONTH-VIEW")
+        # Month cell deep-opens the day view
+        page.get_by_test_id("month-day-2026-09-17").click()
+        page.wait_for_timeout(250)
+        check("CALENDAR_MONTH_DAY_OPENS_DAY_VIEW",
+              "装机窗口复核" in page.get_by_test_id("calendar-day-schedule").inner_text(),
+              "clicking 周四 09-17 in month view opens its day view")
+        # Week view: full Mon-Sun rows with per-day schedule and todo counts
+        page.get_by_test_id("calendar-view-week").click()
+        page.get_by_test_id("calendar-week-view").wait_for()
+        check("CALENDAR_WEEK_VIEW",
+              all(page.get_by_test_id(f"week-day-2026-09-{d}").is_visible() for d in range(14, 21))
+              and "Q3 航材保障评审" in page.get_by_test_id("week-day-2026-09-16").inner_text()
+              and "装机窗口复核" in page.get_by_test_id("week-day-2026-09-17").inner_text()
+              and "关联待办" in page.get_by_test_id("week-day-2026-09-16").inner_text(),
+              "full week rows 周一..周日 with real schedule and todo counts")
+        shot("P12-CALENDAR-WEEK-VIEW")
+        page.get_by_test_id("week-day-2026-09-16").click()
+        page.wait_for_timeout(250)
         # Owner-directed: visual calendar links schedule and todos per day
         check("CALENDAR_VISUAL_WEEK_STRIP",
               page.get_by_test_id("calendar-week-strip").is_visible()
@@ -255,7 +323,7 @@ def main():
               page.get_by_test_id("calendar-todo-t-1").is_visible()
               and "补齐备用供应商成本证据" in page.get_by_test_id("calendar-day-todos").inner_text(),
               "today's todos appear on the calendar day")
-        page.get_by_test_id("calendar-day-2026-09-18").click()
+        page.get_by_test_id("calendar-day-2026-09-17").click()
         page.wait_for_timeout(200)
         check("CALENDAR_DAY_SWITCH",
               "装机窗口复核" in page.get_by_test_id("calendar-day-schedule").inner_text()
@@ -285,7 +353,7 @@ def main():
         page.get_by_test_id("todo-calendar-link-t-3").click()
         page.get_by_test_id("capability-sheet-calendar").wait_for()
         check("TODO_DEEP_LINKS_TO_CALENDAR_DAY",
-              "active" in (page.get_by_test_id("calendar-day-2026-09-18").get_attribute("class") or "")
+              "active" in (page.get_by_test_id("calendar-day-2026-09-17").get_attribute("class") or "")
               and page.get_by_test_id("calendar-todo-t-3").is_visible(),
               "todo opened its own day on the visual calendar")
         shot("P09-TODO-CALENDAR-LINK")

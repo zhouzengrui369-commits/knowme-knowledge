@@ -7,10 +7,13 @@ import {
   CAPABILITIES,
   CALENDAR_DAYS,
   CALENDAR_MOCK,
+  CALENDAR_MONTH,
   TODO_MOCK,
   TODAY,
   dayLabel,
   SENSING_MOCK_LINES,
+  KNOWLEDGE_MAP_5D,
+  COGNITIVE_MAP_9D,
   agentReply,
   draftCandidate,
 } from "./fixtures.js";
@@ -302,10 +305,69 @@ const NAV_GROUPS = [
   { id: "note", label: "笔记与捕获 · NOTE", kinds: ["NOTE"] },
 ];
 
+// Owner-directed (KnowMe-NJX-Demo authority): the knowledge navigation carries
+// the 五维知识地图 (five life dimensions) and 九维认知图谱 (nine cognitive
+// dimensions). Counts are computed live from the knowledge context; each
+// dimension expands to its real items, which open the same knowledge detail.
+function DimensionMap({ title, testid, dims, knowledge, openDim, onToggle, onOpenItem, numbered }) {
+  return (
+    <section className="dim-map" data-testid={testid}>
+      <header className="dim-map-header">
+        <strong>{title}</strong>
+        <span>{dims.length} 维</span>
+      </header>
+      {dims.map((dim) => {
+        const items = knowledge.filter((item) => item[numbered ? "dim9" : "dim5"] === dim.id);
+        const open = openDim === dim.id;
+        return (
+          <div key={dim.id} className={`dim-row-block ${open ? "open" : ""}`}>
+            <button
+              type="button"
+              className="dim-row"
+              data-testid={`${testid}-${dim.id}`}
+              aria-expanded={open}
+              onClick={() => onToggle(open ? null : dim.id)}
+            >
+              <span className="dim-num">{numbered ? dim.num : "◆"}</span>
+              <div>
+                <strong>{dim.label}</strong>
+                {dim.question && <small>{dim.question}</small>}
+              </div>
+              <span className="dim-count">{items.length}</span>
+            </button>
+            {open && (
+              <div className="dim-items" data-testid={`${testid}-items-${dim.id}`}>
+                {items.length === 0 && <small className="muted-line">这个维度还没有知识(真实计数,不虚构)。</small>}
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="knowledge-item"
+                    data-testid={`knowledge-item-${item.id}`}
+                    onClick={() => onOpenItem(item.id)}
+                  >
+                    <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
+                    <div>
+                      <strong>{item.title}</strong>
+                      <small>{item.group} · {item.updated}</small>
+                    </div>
+                    <StateChip state={item.state} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
 // Owner-directed: knowledge is viewable both as a MOC-style navigation and by
 // calendar day. Both views open the same knowledge detail.
 function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
   const [tab, setTab] = useState("nav");
+  const [openDim, setOpenDim] = useState(null);
   const days = useMemo(
     () => [...new Set(knowledge.map((item) => item.day))].sort().reverse(),
     [knowledge]
@@ -318,6 +380,26 @@ function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
       </div>
       {tab === "nav" && (
         <div className="knowledge-nav" data-testid="knowledge-nav-view">
+          <DimensionMap
+            title="五维知识地图"
+            testid="dim5-map"
+            dims={KNOWLEDGE_MAP_5D}
+            knowledge={knowledge}
+            openDim={openDim}
+            onToggle={setOpenDim}
+            onOpenItem={onOpenItem}
+            numbered={false}
+          />
+          <DimensionMap
+            title="九维认知图谱"
+            testid="dim9-map"
+            dims={COGNITIVE_MAP_9D}
+            knowledge={knowledge}
+            openDim={openDim}
+            onToggle={setOpenDim}
+            onOpenItem={onOpenItem}
+            numbered
+          />
           {NAV_GROUPS.map((group) => {
             const items = knowledge.filter((item) => group.kinds.includes(item.kind));
             if (items.length === 0) return null;
@@ -439,14 +521,41 @@ function WorkSurface({ item, onBack }) {
   );
 }
 
-// Owner-directed: schedule and todos share one visual calendar. Selecting a
-// day filters both; todos deep-link back into the calendar day.
+// Owner-directed: the calendar has three views — 日 / 周 / 月 (day / week /
+// month) — and schedule and todos share it. Selecting a day filters both;
+// todos deep-link back into the calendar day view.
 function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggleTodo, onOpenCalendarDay, onClose }) {
   const isCalendar = capability.id === "calendar";
   const isTodo = capability.id === "todo";
   const isSkills = capability.id === "skills";
+  const [calView, setCalView] = useState("day");
   const daySchedule = CALENDAR_MOCK.filter((item) => item.day === calendarDay);
   const dayTodos = todos.filter((todo) => todo.day === calendarDay);
+
+  // September 2026 month grid, Monday-first, astronomically correct weekdays.
+  const monthCells = useMemo(() => {
+    const { year, month } = CALENDAR_MONTH;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const firstOffset = (new Date(year, month - 1, 1).getDay() + 6) % 7; // Monday-first
+    const cells = [];
+    for (let i = 0; i < firstOffset; i += 1) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d += 1) {
+      const date = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      cells.push({
+        date,
+        dayNum: d,
+        isToday: date === TODAY,
+        hasItems: CALENDAR_MOCK.some((item) => item.day === date) || todos.some((todo) => todo.day === date),
+      });
+    }
+    return cells;
+  }, [todos]);
+
+  const openDay = (date) => {
+    onSelectDay(date);
+    setCalView("day");
+  };
+
   return (
     <Sheet title={`能力 · ${capability.label}`} testid={`capability-sheet-${capability.id}`} onClose={onClose}>
       <div className="capability-state-row">
@@ -455,49 +564,115 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
       </div>
       {isCalendar && (
         <div data-testid="calendar-work-surface">
-          <div className="week-strip" role="tablist" aria-label="选择日期" data-testid="calendar-week-strip">
-            {CALENDAR_DAYS.map((d) => (
-              <button
-                key={d.day}
-                type="button"
-                className={d.day === calendarDay ? "active" : ""}
-                data-testid={`calendar-day-${d.day}`}
-                onClick={() => onSelectDay(d.day)}
-              >
-                {d.label}
-              </button>
-            ))}
+          <div className="sheet-tabs" role="tablist" aria-label="日历视图" data-testid="calendar-view-switcher">
+            <button type="button" className={calView === "day" ? "active" : ""} data-testid="calendar-view-day" onClick={() => setCalView("day")}>日</button>
+            <button type="button" className={calView === "week" ? "active" : ""} data-testid="calendar-view-week" onClick={() => setCalView("week")}>周</button>
+            <button type="button" className={calView === "month" ? "active" : ""} data-testid="calendar-view-month" onClick={() => setCalView("month")}>月</button>
           </div>
-          <div className="plan-list" data-testid="calendar-day-schedule">
-            {daySchedule.length === 0 && <p className="muted-line">这一天没有 Mock 日程。</p>}
-            {daySchedule.map((item) => (
-              <article key={`${item.day}-${item.time}`} className={item.state}>
-                <time>{item.time}</time>
-                <i />
-                <div><strong>{item.title}</strong><small>{item.meta}</small></div>
-                <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
-              </article>
-            ))}
-          </div>
-          <section className="detail-block" data-testid="calendar-day-todos">
-            <h3>当日关联待办({dayTodos.length})</h3>
-            {dayTodos.length === 0 && <p className="muted-line">这一天没有关联待办。</p>}
-            {dayTodos.map((todo) => (
-              <article key={todo.id} className={`calendar-todo ${todo.done ? "done" : ""}`} data-testid={`calendar-todo-${todo.id}`}>
-                <button
-                  type="button"
-                  className="todo-toggle"
-                  data-testid={`calendar-todo-toggle-${todo.id}`}
-                  aria-pressed={todo.done}
-                  onClick={() => onToggleTodo(todo.id)}
-                >
-                  {todo.done ? "✓" : "○"}
-                </button>
-                <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
-              </article>
-            ))}
-          </section>
-          <p className="muted-line">Mock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。日程与待办关联为原型本地状态。</p>
+
+          {calView === "month" && (
+            <div className="month-view" data-testid="calendar-month-view">
+              <header className="month-header"><strong>{CALENDAR_MONTH.label}</strong><small>点击某天进入日视图</small></header>
+              <div className="month-grid" role="grid" aria-label={`${CALENDAR_MONTH.label}月视图`}>
+                {["一", "二", "三", "四", "五", "六", "日"].map((w) => (
+                  <span key={w} className="month-weekday">{w}</span>
+                ))}
+                {monthCells.map((cell, idx) =>
+                  cell ? (
+                    <button
+                      key={cell.date}
+                      type="button"
+                      className={`month-cell ${cell.isToday ? "today" : ""} ${cell.date === calendarDay ? "selected" : ""}`}
+                      data-testid={`month-day-${cell.date}`}
+                      onClick={() => openDay(cell.date)}
+                    >
+                      {cell.dayNum}
+                      {cell.hasItems && <i className="month-dot" aria-label="当日有日程或待办" />}
+                    </button>
+                  ) : (
+                    <span key={`blank-${idx}`} className="month-cell blank" aria-hidden="true" />
+                  )
+                )}
+              </div>
+              <p className="muted-line">月视图圆点 = 当日有 Mock 日程或关联待办;「今天」为 {TODAY}。</p>
+            </div>
+          )}
+
+          {calView === "week" && (
+            <div className="week-view" data-testid="calendar-week-view">
+              {CALENDAR_DAYS.map((d) => {
+                const items = CALENDAR_MOCK.filter((item) => item.day === d.day);
+                const dayTodosCount = todos.filter((todo) => todo.day === d.day).length;
+                return (
+                  <button
+                    key={d.day}
+                    type="button"
+                    className={`week-row ${d.day === calendarDay ? "active" : ""}`}
+                    data-testid={`week-day-${d.day}`}
+                    onClick={() => openDay(d.day)}
+                  >
+                    <header><strong>{d.label}</strong><small>{d.day.slice(5)}</small></header>
+                    <div className="week-row-items">
+                      {items.length === 0 && dayTodosCount === 0 && <small className="muted-line">无日程</small>}
+                      {items.map((item) => (
+                        <span key={`${item.day}-${item.time}`} className="week-item">{item.time} {item.title}</span>
+                      ))}
+                      {dayTodosCount > 0 && <span className="week-item todo">✓ 关联待办 {dayTodosCount} 项</span>}
+                    </div>
+                  </button>
+                );
+              })}
+              <p className="muted-line">周视图点击任意一天进入对应日视图。</p>
+            </div>
+          )}
+
+          {calView === "day" && (
+            <>
+              <div className="week-strip" role="tablist" aria-label="选择日期" data-testid="calendar-week-strip">
+                {CALENDAR_DAYS.map((d) => (
+                  <button
+                    key={d.day}
+                    type="button"
+                    className={d.day === calendarDay ? "active" : ""}
+                    data-testid={`calendar-day-${d.day}`}
+                    onClick={() => onSelectDay(d.day)}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+              <div className="plan-list" data-testid="calendar-day-schedule">
+                {daySchedule.length === 0 && <p className="muted-line">这一天没有 Mock 日程。</p>}
+                {daySchedule.map((item) => (
+                  <article key={`${item.day}-${item.time}`} className={item.state}>
+                    <time>{item.time}</time>
+                    <i />
+                    <div><strong>{item.title}</strong><small>{item.meta}</small></div>
+                    <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
+                  </article>
+                ))}
+              </div>
+              <section className="detail-block" data-testid="calendar-day-todos">
+                <h3>当日关联待办({dayTodos.length})</h3>
+                {dayTodos.length === 0 && <p className="muted-line">这一天没有关联待办。</p>}
+                {dayTodos.map((todo) => (
+                  <article key={todo.id} className={`calendar-todo ${todo.done ? "done" : ""}`} data-testid={`calendar-todo-${todo.id}`}>
+                    <button
+                      type="button"
+                      className="todo-toggle"
+                      data-testid={`calendar-todo-toggle-${todo.id}`}
+                      aria-pressed={todo.done}
+                      onClick={() => onToggleTodo(todo.id)}
+                    >
+                      {todo.done ? "✓" : "○"}
+                    </button>
+                    <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
+                  </article>
+                ))}
+              </section>
+            </>
+          )}
+          <p className="muted-line">Mock 日程 · NOT_CONNECTED:无真实日历后端,不读写真实日历。月/周/日三视图与待办关联均为原型本地状态。</p>
         </div>
       )}
       {isTodo && (
@@ -639,6 +814,8 @@ export default function App() {
       group: "捕获",
       updated: "刚刚",
       day: TODAY,
+      dim5: "d5-work",
+      dim9: "d9-09",
       evidence: 1,
       state: "CONFIRMED",
       keywords: base.title.toLowerCase().split(/\s+/).filter((w) => w.length > 1),
