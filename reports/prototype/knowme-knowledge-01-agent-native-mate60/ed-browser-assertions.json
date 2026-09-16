@@ -49,6 +49,11 @@
       "detail": "FIRST_VIEW"
     },
     {
+      "assertion": "BRAND_RENAMED_LINGXI",
+      "pass": true,
+      "detail": "header + opening message use 灵犀; 懂我 fully retired"
+    },
+    {
       "assertion": "SENSING_STRIP_VISIBLE",
       "pass": true,
       "detail": "persistent sensing strip mounted"
@@ -71,7 +76,7 @@
     {
       "assertion": "ASK_AGENT_WORKS",
       "pass": true,
-      "detail": "懂\n懂我 · 确定性 Mock 回答 · 引用 3 条知识\n\n基于当前知识上下文中的「AOG 航材保障」「供应商与 SL"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 3 条知识\n\n基于当前知识上下文中的「AOG 航材保障」「供应商与 SL"
     },
     {
       "assertion": "AGENT_RESPONSE_REFERENCES_CONTEXT",
@@ -126,7 +131,7 @@
     {
       "assertion": "AGENT_EXPLAINS_CONTEXT_CHANGE",
       "pass": true,
-      "detail": "懂\n懂我 · 确定性 Mock 回答 · 引用 1 条知识\n\n已确认入库:「备用供应商 XYZ 报价(已修正)」现在是知"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n已确认入库:「备用供应商 XYZ 报价(已修正)」现在是知"
     },
     {
       "assertion": "STATE_CONTEXT_UPDATED",
@@ -136,7 +141,7 @@
     {
       "assertion": "REJECT_WORKS",
       "pass": true,
-      "detail": "懂\n懂我 · 确定性 Mock 回答\n\n已拒绝候选知识「一条将被拒绝的测试信息。」,它没有进入知识上"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答\n\n已拒绝候选知识「一条将被拒绝的测试信息。」,它没有进入知识上"
     },
     {
       "assertion": "REJECT_DOES_NOT_GROW_CONTEXT",
@@ -306,7 +311,7 @@
     {
       "assertion": "UNKNOWN_TOPIC_ACKNOWLEDGES_GAP",
       "pass": true,
-      "detail": "懂\n懂我 · 确定性 Mock 回答 · 引用 2 条知识\n\n当前知识上下文里没有直接覆盖「今晚吃什么?」的条目,这是一"
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 2 条知识\n\n当前知识上下文里没有直接覆盖「今晚吃什么?」的条目,这是一"
     },
     {
       "assertion": "UNKNOWN_TOPIC_NEXT_ACTION_CAPTURE",
@@ -346,7 +351,7 @@
   ],
   "console_errors": [],
   "page_errors": [],
-  "passed": 67,
+  "passed": 68,
   "failed": 0,
-  "issued_at": "2026-09-16T05:41:49.294202+00:00"
+  "issued_at": "2026-09-16T06:54:57.231464+00:00"
 }

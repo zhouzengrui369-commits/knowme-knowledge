@@ -1,16 +1,16 @@
-# KnowMe UI Traceability Matrix — GOAL-KK-01 Prototype (R4)
+# KnowMe UI Traceability Matrix — GOAL-KK-01 Prototype (R3)
 
 ```text
 ARTIFACT=KNOWME_UI_TRACEABILITY_MATRIX
 ACTOR_ROLE=ENGINEERING_DELIVERY
-ACTOR_CONTEXT_ID=ED-KK-GOAL01-R4-LINGXI-RENAME-20260916-1500-R4
+ACTOR_CONTEXT_ID=ED-KK-GOAL01-R3-DEMO-AUTHORITY-20260916-1320-R3
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
+CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
 UI_AUTHORITY=Owner-provided KnowMe-NJX-Demo.html (「这个才是knowme的原型」, 2026-09-16)
 UI_AUTHORITY_SHA256=3ef8605a6b74c6514ee7097d24100d5f06e258b2e6bbdb03e591a02a51fc7d9f
-UI_AUTHORITY_EVIDENCE_COPY=r3-historical-superseded/r3-ui-authority/KnowMe-NJX-Demo.html (byte-identical)
+UI_AUTHORITY_EVIDENCE_COPY=r3-ui-authority/KnowMe-NJX-Demo.html (byte-identical)
 PRIOR_AUTHORITY=zhouzengrui369-commits/knowme demo @baa61e6… (R1/R2 lineage; superseded by the Owner-provided file)
 PROTOTYPE_SOURCE=prototypes/knowme-knowledge-01-agent-native-mate60/
 ```

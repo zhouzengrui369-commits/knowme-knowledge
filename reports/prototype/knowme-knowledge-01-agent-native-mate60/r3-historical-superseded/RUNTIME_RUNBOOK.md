@@ -1,4 +1,4 @@
-# Runtime Runbook — GOAL-KK-01 Prototype (R4, final exact candidate)
+# Runtime Runbook — GOAL-KK-01 Prototype (R3, final exact candidate)
 
 ```text
 ARTIFACT=RUNTIME_RUNBOOK
@@ -6,8 +6,8 @@ ACTOR_ROLE=ENGINEERING_DELIVERY
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-OPERATED_CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
-OPERATED_CANDIDATE_TREE=625a7f471b0c723debb4a0295da3b4cd6c72a178
+OPERATED_CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+OPERATED_CANDIDATE_TREE=beeb0d6e136419036fb71fe5bd31aa8863f9227f
 PROTOTYPE_DIR=prototypes/knowme-knowledge-01-agent-native-mate60
 ```
 
@@ -22,9 +22,9 @@ PROTOTYPE_DIR=prototypes/knowme-knowledge-01-agent-native-mate60
 ```bash
 git clone https://github.com/zhouzengrui369-commits/knowme-knowledge.git
 cd knowme-knowledge
-git checkout 3c2088888a0896f9bb0149560dcfbf5412adb2f4
-git rev-parse HEAD        # 3c2088888a0896f9bb0149560dcfbf5412adb2f4
-git rev-parse HEAD^{tree} # 625a7f471b0c723debb4a0295da3b4cd6c72a178
+git checkout e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+git rev-parse HEAD        # e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+git rev-parse HEAD^{tree} # beeb0d6e136419036fb71fe5bd31aa8863f9227f
 ```
 
 ## Install / build / run
@@ -47,10 +47,10 @@ vite child, which otherwise lingers.
 ```bash
 python3 tests/browser_assertions.py \
   --url http://127.0.0.1:5173 \
-  --out <receipt.json> [--shots <screenshot_dir> --prefix R4-ED]
+  --out <receipt.json> [--shots <screenshot_dir> --prefix R3-ED]
 ```
 
-Expected: 68/68 assertions pass, empty console/page error arrays, exit
+Expected: 67/67 assertions pass, empty console/page error arrays, exit
 code 0. Viewport 360x780, recorded as MATE60_CLASS_SIMULATION.
 
 ## Journey smoke path (manual)

@@ -1,4 +1,4 @@
-# Allowed-Path Diff Receipt — GOAL-KK-01 (R4, final exact candidate)
+# Allowed-Path Diff Receipt — GOAL-KK-01 (R3, final exact candidate)
 
 ```text
 ARTIFACT=ALLOWED_PATH_DIFF_RECEIPT
@@ -7,14 +7,14 @@ EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
 PREIMAGE_SHA=563997a0eca61800c8c72d23a83888821a6e0841
-OPERATED_CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
+OPERATED_CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
 ```
 
 Full diff of the operated final exact candidate against the exact frozen
 preimage:
 
 ```text
-$ git diff --name-only 563997a0eca61800c8c72d23a83888821a6e0841 3c2088888a0896f9bb0149560dcfbf5412adb2f4
+$ git diff --name-only 563997a0eca61800c8c72d23a83888821a6e0841 e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
 prototypes/knowme-knowledge-01-agent-native-mate60/.gitignore
 prototypes/knowme-knowledge-01-agent-native-mate60/index.html
 prototypes/knowme-knowledge-01-agent-native-mate60/package-lock.json
@@ -34,17 +34,17 @@ Verifiable:
 
 ```bash
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1
-# must equal 3c2088888a0896f9bb0149560dcfbf5412adb2f4
+# must equal e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1^{tree}
-# must equal 625a7f471b0c723debb4a0295da3b4cd6c72a178
+# must equal beeb0d6e136419036fb71fe5bd31aa8863f9227f
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1:prototypes/knowme-knowledge-01-agent-native-mate60
-# must equal 5f9045aba9a53650f7e59201fe171a3e80c6a0ba
+# must equal 0641d2e4ee000aac79f9ef2f4f36d1d8c61a53f9
 ```
 
 Forbidden paths untouched: AGENTS.md, README.md, PROJECT_STATUS.md,
 .github/**, governance/**, formal_product_source/**, any other
-project/repository. The UI authority (Owner-provided KnowMe-NJX-Demo.html)
+project/repository. The R3 UI authority (Owner-provided KnowMe-NJX-Demo.html)
 was read-only for ED; a byte-identical copy is stored on this evidence branch
-at `r3-historical-superseded/r3-ui-authority/` (allowed evidence path), not in the candidate. A working
+at `r3-ui-authority/` (allowed evidence path), not in the candidate. A working
 copy also exists untracked at `references/` in the ED workspace (excluded via
 .git/info/exclude, never committed).

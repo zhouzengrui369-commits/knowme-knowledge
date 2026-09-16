@@ -1,4 +1,4 @@
-# Browser Assertion Receipt — GOAL-KK-01 (R4, final exact candidate)
+# Browser Assertion Receipt — GOAL-KK-01 (R3, final exact candidate)
 
 ```text
 ARTIFACT=BROWSER_ASSERTION_RECEIPT
@@ -6,16 +6,16 @@ ACTOR_ROLE=ENGINEERING_DELIVERY
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
+CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
 RUNTIME_URL=http://127.0.0.1:5173 (ED) / http://127.0.0.1:5174 (Local Executor)
 VIEWPORT=360x780 MATE60_CLASS_SIMULATION
 SUITE=prototypes/knowme-knowledge-01-agent-native-mate60/tests/browser_assertions.py
-RESULT=68/68 PASSED (Local Executor independent run) · 68/68 PASSED (ED personal run)
+RESULT=67/67 PASSED (Local Executor independent run) · 67/67 PASSED (ED personal run)
 CONSOLE_ERRORS=[] (both runs)
 PAGE_ERRORS=[] (both runs)
-MACHINE_RECEIPTS=le-assertions.json (sha256 d81faa5992fa65f1503fad35bdab3c327e10697180243794d5ef0e55bfad6bf2)
-                 ed-browser-assertions.json (sha256 cddc8e8e7304f69e6e2a4eb355d38e4c8ac1e043aeb992e79ec892a230343b06)
-SUITE_GROWTH=41 (R1) -> 57 (R2) -> 67 (R3) -> 68 (R4): +10 at R3 for 五维/九维 maps and calendar 月/周/日 views; +1 at R4 for BRAND_RENAMED_LINGXI
+MACHINE_RECEIPTS=le-assertions.json (sha256 e1c9cc5e55becb4dad2ae2c4cb39fb5207706b4b7515227ad86c6b59a7a19878)
+                 ed-browser-assertions.json (sha256 0340a66c52b55f30aeb056b3dd1b6e70ea494832788892ed6059cf0e7c499a0e)
+SUITE_GROWTH=41 (R1) -> 57 (R2) -> 67 (R3): +10 for 五维/九维 maps and calendar 月/周/日 views
 ```
 
 Full assertion list (all PASS in both runs):
@@ -29,7 +29,6 @@ FIRST_VIEW_CAPTURE_ENTRY
 FIRST_VIEW_ASK_ENTRY
 FIRST_VIEW_CAPABILITIES
 STATE_FIRST_VIEW
-BRAND_RENAMED_LINGXI                    ← R4: 懂我 renamed to 灵犀 (Owner-directed)
 SENSING_STRIP_VISIBLE
 SENSING_CONTINUOUS_BY_DEFAULT
 SENSING_HONESTLY_MOCK
