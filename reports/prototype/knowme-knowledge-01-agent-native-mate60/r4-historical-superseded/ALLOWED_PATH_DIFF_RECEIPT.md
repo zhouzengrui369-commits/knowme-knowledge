@@ -1,4 +1,4 @@
-# Allowed-Path Diff Receipt — GOAL-KK-01 (R5, final exact candidate)
+# Allowed-Path Diff Receipt — GOAL-KK-01 (R4, final exact candidate)
 
 ```text
 ARTIFACT=ALLOWED_PATH_DIFF_RECEIPT
@@ -6,15 +6,15 @@ ACTOR_ROLE=ENGINEERING_DELIVERY
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-PREIMAGE_SHA=978ed0608bda8e278c348ad2987f6a25fa3c3c2f
-OPERATED_CANDIDATE_SHA=40063afd16a36674e8660f6b4a05315d51f4e546
+PREIMAGE_SHA=563997a0eca61800c8c72d23a83888821a6e0841
+OPERATED_CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
 ```
 
 Full diff of the operated final exact candidate against the exact frozen
 preimage:
 
 ```text
-$ git diff --name-only 978ed0608bda8e278c348ad2987f6a25fa3c3c2f 40063afd16a36674e8660f6b4a05315d51f4e546
+$ git diff --name-only 563997a0eca61800c8c72d23a83888821a6e0841 3c2088888a0896f9bb0149560dcfbf5412adb2f4
 prototypes/knowme-knowledge-01-agent-native-mate60/.gitignore
 prototypes/knowme-knowledge-01-agent-native-mate60/index.html
 prototypes/knowme-knowledge-01-agent-native-mate60/package-lock.json
@@ -34,11 +34,11 @@ Verifiable:
 
 ```bash
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1
-# must equal 40063afd16a36674e8660f6b4a05315d51f4e546
+# must equal 3c2088888a0896f9bb0149560dcfbf5412adb2f4
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1^{tree}
-# must equal 72464ee6727af4837cb24b77238f7ddadeca02ed
+# must equal 625a7f471b0c723debb4a0295da3b4cd6c72a178
 git rev-parse origin/engineering/goal-kk-01-agent-native-mate60-prototype-r1:prototypes/knowme-knowledge-01-agent-native-mate60
-# must equal 02557fa953c9ce8ae5643acc28efba86f5d4fdac
+# must equal 5f9045aba9a53650f7e59201fe171a3e80c6a0ba
 ```
 
 Forbidden paths untouched: AGENTS.md, README.md, PROJECT_STATUS.md,

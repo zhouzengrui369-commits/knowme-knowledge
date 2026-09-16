@@ -1,10 +1,10 @@
-# Candidate Manifest — GOAL-KK-01 (R5, final exact candidate)
+# Candidate Manifest — GOAL-KK-01 (R4, final exact candidate)
 
 ```yaml
 protocol_version: DELIVERY-LIFECYCLE-1.0
 artifact: CANDIDATE_MANIFEST
 actor_role: ENGINEERING_DELIVERY
-actor_context_id: ED-KK-GOAL01-R5-NAVCAL-QUICKACTION-20260916-1610-R5
+actor_context_id: ED-KK-GOAL01-R4-LINGXI-RENAME-20260916-1500-R4
 
 evidence_channel_role: NON_CANDIDATE_EVIDENCE
 evidence_branch: evidence/goal-kk-01-non-candidate-r2
@@ -15,14 +15,11 @@ goal_id: GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE
 milestone_id: MILESTONE-GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE
 relationship: ONE_GOAL_EQUALS_ONE_MILESTONE
 
-product_baseline: PRODUCT-BASELINE-KNOWME-KNOWLEDGE-20260916-v2
-
 product_contract:
-  revision: R2
-  commit: 978ed0608bda8e278c348ad2987f6a25fa3c3c2f
-  tree: db0be0e4ac22b9780cf5cf3c80998d3cfd15731d
-  blob: 05bc2ca7cce5e8645301994b348f702f2286d3f3
-  path: governance/milestones/GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE/CONTRACT-R2.md
+  commit: 563997a0eca61800c8c72d23a83888821a6e0841
+  tree: 2b3c70f106b0b96f724af315955f2a859a1994c0
+  blob: 02b75109f12cac49a3a996a57993d4d0b5ddb091
+  path: governance/milestones/GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE/CONTRACT.md
 
 ui_authority:
   source: Owner-provided KnowMe-NJX-Demo.html (supplied in conversation 2026-09-16, "这个才是knowme的原型")
@@ -34,51 +31,44 @@ repository: zhouzengrui369-commits/knowme-knowledge
 branch: engineering/goal-kk-01-agent-native-mate60-prototype-r1
 pr: 9 (Draft, base governance/goal-kk-01-agent-native-mate60-prototype-r1)
 
-candidate_sha: 40063afd16a36674e8660f6b4a05315d51f4e546
-candidate_tree: 72464ee6727af4837cb24b77238f7ddadeca02ed
-candidate_parent: 3c2088888a0896f9bb0149560dcfbf5412adb2f4
-operated_candidate_sha: 40063afd16a36674e8660f6b4a05315d51f4e546
-operated_candidate_tree: 72464ee6727af4837cb24b77238f7ddadeca02ed
-prototype_subtree_tree: 02557fa953c9ce8ae5643acc28efba86f5d4fdac
+candidate_sha: 3c2088888a0896f9bb0149560dcfbf5412adb2f4
+candidate_tree: 625a7f471b0c723debb4a0295da3b4cd6c72a178
+candidate_parent: e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+operated_candidate_sha: 3c2088888a0896f9bb0149560dcfbf5412adb2f4
+operated_candidate_tree: 625a7f471b0c723debb4a0295da3b4cd6c72a178
+prototype_subtree_tree: 5f9045aba9a53650f7e59201fe171a3e80c6a0ba
 
 evidence_binding: >-
-  ALL R5 operation evidence (Local Executor + ED personal, assertions and
-  screenshots) was produced against the FINAL EXACT candidate 40063af…
+  ALL R4 operation evidence (Local Executor + ED personal, assertions and
+  screenshots) was produced against the FINAL EXACT candidate 3c20888…
   itself — the same commit that is the engineering branch head and PR #9
   head. No parent-commit evidence transfer. Candidate = code + tests only;
   every evidence byte lives on this NON_CANDIDATE_EVIDENCE branch.
 
 branch_head_match: YES (verified via git ls-remote 2026-09-16)
-pr_head_match: YES (gh pr view 9 headRefOid = 40063afd16a36674e8660f6b4a05315d51f4e546)
+pr_head_match: YES (gh pr view 9 headRefOid = 3c2088888a0896f9bb0149560dcfbf5412adb2f4)
 worktree_clean: YES
 
 implemented_scope:
   - Everything in R2 (Journeys A–E, continuous background sensing strip, knowledge calendar view, knowledge navigation, visual calendar/todo linking, 9-state machine)
-  - R3 Owner-directed product iteration (still present):
+  - R3 Owner-directed product iteration (still present, unchanged by R4):
       - 知识导航 includes 五维知识地图: 工作记录·我做了什么 / 生活感悟·我如何感受 / 人生规划·我想走向哪里 / 系统思考·我如何理解 / 行业洞察·我看见什么变化, live-computed counts, each dimension expands to its real items which open the same knowledge detail
       - 知识导航 includes 九维认知图谱: 01 身份角色 … 09 动态与情景, same expansion semantics
       - 日历 has 月/周/日 three views: September 2026 month grid (astronomically correct Monday-first weekdays, today highlighted, event dots, cell deep-opens day view), full Mon–Sun week view with per-day schedule and linked-todo counts, and the day view (schedule + 当日关联待办)
       - Weekday labels corrected to real weekdays (2026-09-16 = Wednesday); 装机窗口 narrative aligned to 周四 2026-09-17 (schedule + todo t-3 moved accordingly)
-  - R4 Owner-directed product iteration (still present; classified NON_MATERIAL_UI_AUTHORITY_ALIGNMENT by Product Governance, no new CR required):
-      - Brand rename 懂我 → 灵犀 across the whole UI surface, consistent with the authoritative Demo's "灵犀 · Digital Brain"; source grep "懂" = 0
-  - R5 Owner-directed product iteration (Owner directed, 2026-09-16):
-      - 知识导航 IS exactly the 五维知识地图 + 九维认知图谱 — the legacy 主题入口·MOC / 知识文档·WIKI / 笔记与捕获·NOTE groupings below the maps are removed; every item remains reachable via dimension expansion
-      - 按日历查看 gains 日/周/月 three views mirroring the schedule calendar: day view (week strip + day group, defaults to 今天), week view (Mon–Sun rows with knowledge items + counts, row deep-opens day view), month view (September 2026 grid, dots only on days holding knowledge, today highlighted, cell deep-opens day view; out-of-month knowledge honestly reachable via 本月之外 list)
-      - 日程/待办 quick actions: schedule items get 完成/重做 + 顺延一天 (prototype-local state, day view/week/month all reflect moves); todos get 顺延一天 (complete toggle preexisting)
-      - 引用对话: every schedule/todo item has 引用到对话 — the sheet closes, a quote card lands in the conversation, and 灵犀 answers referencing the item's linked knowledge with a contextual next action (deterministic mock)
-  - 80-assertion Playwright browser suite at 360x780 (MATE60_CLASS_SIMULATION); +12 vs R4
+  - R4 Owner-directed product iteration (Owner directed, 2026-09-16, with the authoritative Demo attached):
+      - Brand rename 懂我 → 灵犀 across the whole UI surface (7 source occurrences): header "灵犀 · KnowME", avatar glyph "灵", answer label "灵犀 · 确定性 Mock 回答", aria-label "向灵犀提问", input placeholder "问灵犀，…", opening line "我是灵犀，你的个人知识 Agent", thinking-state avatar "灵" — consistent with the authoritative Demo's "灵犀 · Digital Brain"
+      - Source verification: grep for "懂" in prototype source = 0 matches
+  - 68-assertion Playwright browser suite at 360x780 (MATE60_CLASS_SIMULATION); +1 vs R3: BRAND_RENAMED_LINGXI
 
 owner_directed_changes_disclosure: >-
-  The R5 changes above were directed by the Human Owner in conversation
-  (2026-09-16). They are deterministic-mock UI realizations inside the frozen
-  Contract R2's allowed limitations (DETERMINISTIC_MOCK_RUNTIME,
-  NO_REAL_CALENDAR_TODO_BACKEND); they do not change Journeys A–E, acceptance
-  outcomes, or NOT_IMPLEMENTED_BY_CONTRACT boundaries. R2/R3 changes are
-  covered by APPROVED CR-KK-01-OWNER-DIRECTED-R2-R3; R4 was classified by
-  Product Governance as NON_MATERIAL_UI_AUTHORITY_ALIGNMENT (no new CR). R5
-  is disclosed factually as OWNER_DIRECTED; whether it requires a formal
-  Change Request is a Product Governance adjudication, not an Engineering
-  claim.
+  The R4 change (懂我 → 灵犀 rename) was directed by the Human Owner in
+  conversation with the authoritative Demo attached. It is a deterministic-mock
+  UI wording change inside the frozen contract's allowed limitations
+  (DETERMINISTIC_MOCK_RUNTIME); it does not change Journeys A–E, acceptance
+  outcomes, or NOT_IMPLEMENTED_BY_CONTRACT boundaries. Engineering Delivery
+  reports it factually as OWNER_DIRECTED; whether it requires a formal Change
+  Request is a Product Governance adjudication, not an Engineering claim.
 
 not_implemented:
   - id: NOT_IMPLEMENTED_BY_CONTRACT
@@ -105,9 +95,8 @@ defects_found_and_fixed_in_loop:
   - "R1: D-01 overlay stacking collision; D-02 alert() voice disclosure (both fixed, still fixed)"
   - "R2: none (57/57 first loop)"
   - "R3: none (67/67 first loop)"
-  - "R4: none (68/68 first loop ×2 operators)"
-  - "R5: two layout defects found by ED visual review of smoke screenshots and fixed before the evidence runs: (1) 日/周/月 switcher wrapped to two rows (.sheet-tabs was 2-column; added .three variant); (2) quick-action buttons squeezed vertical by the schedule-item grid (qa-row now spans full width). Then 80/80 first full loop ×2 operators, zero console/page errors"
-  - "R5 observation (not a defect): deterministic rendering makes several ED/LE frames byte-identical across operators; R5-P06 ≠ R5-P09 (P06 carries quick-action buttons, P09 follows the postpone quick action); recorded, not hidden"
+  - "R4: none (68/68 first loop ×2 operators; ED visual review of renamed-surface screenshots clean)"
+  - "R4 observation (not a defect): deterministic rendering makes several ED/LE frames byte-identical across operators, and R4-P06 == R4-P09 (same 周四 day surface via two paths); recorded, not hidden"
 
 known_limitations:
   - BROWSER_PROTOTYPE_ONLY / DETERMINISTIC_MOCK_RUNTIME / NO_REAL_MODEL
@@ -118,14 +107,13 @@ known_limitations:
 
 known_deviations: []
 unapproved_deviations: []
-approved_change_requests:
-  - CR-KK-01-OWNER-DIRECTED-R2-R3 (APPROVED by Product Governance 2026-09-16; R4 rename classified NON_MATERIAL_UI_AUTHORITY_ALIGNMENT, no new CR)
+approved_change_requests: []
 
 evidence_ownership:
   engineering_required:
     status: COMPLETE
     refs:
-      - exact_candidate_sha_tree_parent: this manifest + Issue #3 R5 terminal receipt
+      - exact_candidate_sha_tree_parent: this manifest + Issue #3 R4 terminal receipt
       - candidate_manifest: CANDIDATE_MANIFEST.md
       - technical_receipt: TECHNICAL_RECEIPT.md
       - allowed_path_diff_receipt: ALLOWED_PATH_DIFF_RECEIPT.md
@@ -165,5 +153,5 @@ forbidden_claims:
   - RELEASE_AUTHORIZED
   - GOAL_MILESTONE_CLOSED
 
-issued_at: "2026-09-16T16:20:00Z"
+issued_at: "2026-09-16T15:10:00Z"
 ```

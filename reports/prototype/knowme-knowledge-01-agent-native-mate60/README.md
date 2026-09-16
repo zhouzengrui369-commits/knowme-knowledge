@@ -1,11 +1,11 @@
-# GOAL-KK-01 Evidence Package (NON_CANDIDATE_EVIDENCE) — R4 current
+# GOAL-KK-01 Evidence Package (NON_CANDIDATE_EVIDENCE) — R5 current
 
 ```text
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_BRANCH=evidence/goal-kk-01-non-candidate-r2
-CANDIDATE_SHA=3c2088888a0896f9bb0149560dcfbf5412adb2f4
-CANDIDATE_TREE=625a7f471b0c723debb4a0295da3b4cd6c72a178
-CANDIDATE_PARENT=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+CANDIDATE_SHA=40063afd16a36674e8660f6b4a05315d51f4e546
+CANDIDATE_TREE=72464ee6727af4837cb24b77238f7ddadeca02ed
+CANDIDATE_PARENT=3c2088888a0896f9bb0149560dcfbf5412adb2f4
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
 ```
@@ -18,18 +18,22 @@ The engineering candidate lives on
 
 ## Layout
 
-- `*.md` at this level: **R4 (current)** evidence receipts binding to
-  candidate `3c20888…`, produced 2026-09-16 after the Owner directed the
-  brand rename 懂我 → 灵犀 (consistent with the authoritative Demo's
-  「灵犀 · Digital Brain」). R3's Owner-directed surfaces (五维知识地图 +
-  九维认知图谱 in knowledge navigation; calendar 月/周/日 three views) are
-  unchanged and re-verified.
-- `screenshots/local-executor/`: R4 Local Executor screenshots (R4-LE-P01..P12).
-- `screenshots/ed-personal/`: R4 ED personal operation screenshots (R4-ED-P01..P12).
+- `*.md` at this level: **R5 (current)** evidence receipts binding to
+  candidate `40063af…`, produced 2026-09-16 after the Owner directed three
+  product changes: knowledge navigation simplified to 五维知识地图 +
+  九维认知图谱 only (extra MOC/WIKI/NOTE groups removed); knowledge
+  「按日历查看」 now has 月/周/日 three views matching the schedule calendar;
+  schedule/todo entries gained quick actions (完成 / 顺延一天) and
+  引用对话 (quote card into the conversation). R4's brand rename (灵犀) and
+  R3's Owner-directed surfaces are unchanged and re-verified.
+- `screenshots/local-executor/`: R5 Local Executor screenshots (R5-LE-P01..P12).
+- `screenshots/ed-personal/`: R5 ED personal operation screenshots (R5-ED-P01..P12).
 - `le-assertions.json` / `ed-browser-assertions.json`: machine-readable
-  68/68 assertion receipts of the two independent runs on the final exact SHA.
-- `r3-historical-superseded/`: R3 evidence (bound to `e6e9c3d…`), superseded
-  by R4, preserved unmodified (HISTORICAL_RECEIPT_REWRITE=NO); also holds
+  80/80 assertion receipts of the two independent runs on the final exact SHA.
+- `r4-historical-superseded/`: R4 evidence (bound to `3c20888…`), superseded
+  by R5, preserved unmodified (HISTORICAL_RECEIPT_REWRITE=NO).
+- `r3-historical-superseded/`: R3 evidence (bound to `e6e9c3d…`), superseded,
+  preserved unmodified; also holds
   `r3-ui-authority/KnowMe-NJX-Demo.html`, the byte-identical copy of the
   Owner-provided UI authority (sha256
   3ef8605a6b74c6514ee7097d24100d5f06e258b2e6bbdb03e591a02a51fc7d9f).

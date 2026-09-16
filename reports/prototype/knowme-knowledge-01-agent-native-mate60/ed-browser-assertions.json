@@ -156,12 +156,12 @@
     {
       "assertion": "KNOWLEDGE_NAVIGATION_VIEW",
       "pass": true,
-      "detail": "MOC/WIKI/NOTE navigation groups render real items"
+      "detail": "navigation view renders the two Owner-defined maps"
     },
     {
-      "assertion": "CAPTURED_ITEM_IN_NAV",
+      "assertion": "KNOWLEDGE_NAV_NO_LEGACY_GROUPS",
       "pass": true,
-      "detail": "confirmed capture appears under 笔记与捕获 navigation"
+      "detail": "R5: no extra MOC/WIKI/NOTE groups beyond 五维/九维 maps"
     },
     {
       "assertion": "KNOWLEDGE_NAV_FIVE_DIM_MAP",
@@ -184,14 +184,24 @@
       "detail": "dimension expands to its real items incl. today's capture"
     },
     {
+      "assertion": "CAPTURED_ITEM_IN_NAV",
+      "pass": true,
+      "detail": "confirmed capture appears under 九维 09 动态与情景"
+    },
+    {
       "assertion": "DIM_ITEM_OPENS_DETAIL",
       "pass": true,
       "detail": "dimension item opens knowledge detail"
     },
     {
+      "assertion": "KNOWLEDGE_CAL_VIEW_SWITCHER",
+      "pass": true,
+      "detail": "knowledge calendar day / week / month view switcher rendered"
+    },
+    {
       "assertion": "KNOWLEDGE_CALENDAR_VIEW",
       "pass": true,
-      "detail": "knowledge grouped under 今天 (2026-09-16)"
+      "detail": "knowledge day view defaults to 今天 (2026-09-16)"
     },
     {
       "assertion": "VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR",
@@ -201,7 +211,27 @@
     {
       "assertion": "KNOWLEDGE_CALENDAR_OTHER_DAYS",
       "pass": true,
-      "detail": "昨天 group holds its item"
+      "detail": "昨天 day view holds its item"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_MONTH_VIEW",
+      "pass": true,
+      "detail": "September 2026 knowledge month grid, dot only where knowledge exists, today highlighted"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_MONTH_CELL_OPENS_DAY",
+      "pass": true,
+      "detail": "clicking 09-15 in knowledge month view opens its day view"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_OTHER_MONTH_DAY",
+      "pass": true,
+      "detail": "knowledge on 2026-07-18 reachable via 本月之外 list"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_WEEK_VIEW",
+      "pass": true,
+      "detail": "full week rows 周一..周日 with real knowledge items and counts"
     },
     {
       "assertion": "KNOWLEDGE_DETAIL_HAS_DAY",
@@ -289,6 +319,26 @@
       "detail": "CAPABILITY_WORK"
     },
     {
+      "assertion": "SCHEDULE_QUICK_ACTION_COMPLETE",
+      "pass": true,
+      "detail": "装机窗口复核 marked done via quick action"
+    },
+    {
+      "assertion": "SCHEDULE_QUICK_ACTION_POSTPONE",
+      "pass": true,
+      "detail": "postponed item leaves 周四 day view"
+    },
+    {
+      "assertion": "SCHEDULE_POSTPONED_VISIBLE_ON_NEXT_DAY",
+      "pass": true,
+      "detail": "postponed item appears on 周五 09-18"
+    },
+    {
+      "assertion": "SCHEDULE_REFERENCE_TO_CHAT",
+      "pass": true,
+      "detail": "schedule item quoted into conversation; 灵犀 answers with linked knowledge"
+    },
+    {
       "assertion": "STATE_CONTEXT_RESTORED",
       "pass": true,
       "detail": "AGENT_CONTEXT_RESTORED"
@@ -299,9 +349,19 @@
       "detail": "aria-pressed false -> true"
     },
     {
+      "assertion": "TODO_QUICK_ACTION_POSTPONE",
+      "pass": true,
+      "detail": "○ 评审前生成一页摘要 关联:AOG 航材保障 📅 2026-09-17 · 在可视化日历中查看 ⏭ 顺延一天 💬 引用"
+    },
+    {
       "assertion": "TODO_DEEP_LINKS_TO_CALENDAR_DAY",
       "pass": true,
       "detail": "todo opened its own day on the visual calendar"
+    },
+    {
+      "assertion": "TODO_REFERENCE_TO_CHAT",
+      "pass": true,
+      "detail": "todo item quoted into conversation; 灵犀 answers with linked knowledge"
     },
     {
       "assertion": "SKILLS_PLANNED_DISCLOSED",
@@ -351,7 +411,7 @@
   ],
   "console_errors": [],
   "page_errors": [],
-  "passed": 68,
+  "passed": 80,
   "failed": 0,
-  "issued_at": "2026-09-16T06:54:57.231464+00:00"
+  "issued_at": "2026-09-16T08:05:13.545582+00:00"
 }

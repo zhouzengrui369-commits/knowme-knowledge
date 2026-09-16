@@ -1,7 +1,7 @@
 {
   "protocol_version": "DELIVERY-LIFECYCLE-1.0",
   "artifact": "BROWSER_TECHNICAL_ASSERTIONS",
-  "url": "http://127.0.0.1:5174",
+  "url": "file:///Users/njx/Project/KnowME%20knowledge/KnowME%20knowledge/knowme-knowledge/KnowME-Knowledge-01-Prototype.html",
   "viewport": {
     "width": 360,
     "height": 780,
@@ -413,5 +413,5 @@
   "page_errors": [],
   "passed": 80,
   "failed": 0,
-  "issued_at": "2026-09-16T08:18:19.827939+00:00"
+  "issued_at": "2026-09-16T08:42:31.242552+00:00"
 }
