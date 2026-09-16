@@ -1,0 +1,30 @@
+{
+  "verified_at": "2026-09-16T16:04:25.398382+00:00",
+  "pr": {
+    "number": 12,
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "html_url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/pull/12"
+  },
+  "pr_head": "0e859d93960e630965a5b71a3ff4c07e631d8570",
+  "branch_head": "0e859d93960e630965a5b71a3ff4c07e631d8570",
+  "candidate_commit": "0e859d93960e630965a5b71a3ff4c07e631d8570",
+  "candidate_tree": "f93f4cfa9c539c22873e228df2738a21cb2bd1b9",
+  "candidate_parents": [
+    "40063afd16a36674e8660f6b4a05315d51f4e546"
+  ],
+  "artifact_sha256": "9db96a26a6821c134d2ca543ebd5016f0654ac60bc6eb48976ceb4e3cd6a2a02",
+  "artifact_blob": "199df60b62cde53fe7be03c10b44fc412618a99c",
+  "artifact_commit": "672b971ca4df3dcecbc3e67e4928c10122aad344",
+  "contract_commit": "978ed0608bda8e278c348ad2987f6a25fa3c3c2f",
+  "contract_blob": "05bc2ca7cce5e8645301994b348f702f2286d3f3",
+  "reviewer_skill_commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56\n",
+  "arch": "arm64",
+  "review_viewport": {
+    "width": 360,
+    "height": 780
+  },
+  "review_url": "http://127.0.0.1:18764/KnowME-Knowledge-01-Prototype.html"
+}
