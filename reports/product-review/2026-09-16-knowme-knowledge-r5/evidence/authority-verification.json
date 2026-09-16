@@ -1,0 +1,12 @@
+{
+  "candidate_sha": "40063afd16a36674e8660f6b4a05315d51f4e546",
+  "tree": "72464ee6727af4837cb24b77238f7ddadeca02ed",
+  "parent": "3c2088888a0896f9bb0149560dcfbf5412adb2f4",
+  "pr_state": "open",
+  "draft": true,
+  "pr_head_match": true,
+  "branch_head_match": true,
+  "artifact_evidence_commit": "c51f7b3d4a0c5d7afdce9e9849b734321c86674f",
+  "artifact_blob": "910bb08194c1a42bd8f1ad945709119d99495786",
+  "artifact_sha256": "60feb609628659a0a5fcecc9d0fd2ed7d64dc6b765753a0d25dae5190d09afdf"
+}
