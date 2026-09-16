@@ -30,6 +30,18 @@ The engineering candidate lives on
 - `screenshots/ed-personal/`: R5 ED personal operation screenshots (R5-ED-P01..P12).
 - `le-assertions.json` / `ed-browser-assertions.json`: machine-readable
   80/80 assertion receipts of the two independent runs on the final exact SHA.
+- `deliverable/`: durable self-contained single-file HTML review artifact
+  (`KnowME-Knowledge-01-Prototype.html`, built from candidate `40063af…`,
+  JS/CSS inlined, opens via `file://`) plus its `file://` 80/80 assertion
+  receipt. GitHub-durable since evidence commit `8298491…`:
+
+```text
+HTML_GITHUB_REF=evidence/goal-kk-01-non-candidate-r2@82984911ff11cf6ae80e255126fd1f59145da254:reports/prototype/knowme-knowledge-01-agent-native-mate60/deliverable/KnowME-Knowledge-01-Prototype.html
+HTML_GITHUB_BLOB=910bb08194c1a42bd8f1ad945709119d99495786
+HTML_SHA256=60feb609628659a0a5fcecc9d0fd2ed7d64dc6b765753a0d25dae5190d09afdf
+HTML_SHA256_VERIFIED_FROM_GITHUB_BYTES=YES (fresh download 2026-09-16)
+```
+
 - `r4-historical-superseded/`: R4 evidence (bound to `3c20888…`), superseded
   by R5, preserved unmodified (HISTORICAL_RECEIPT_REWRITE=NO).
 - `r3-historical-superseded/`: R3 evidence (bound to `e6e9c3d…`), superseded,

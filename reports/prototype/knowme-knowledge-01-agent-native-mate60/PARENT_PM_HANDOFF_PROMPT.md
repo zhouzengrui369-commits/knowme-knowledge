@@ -107,3 +107,12 @@ r4-historical-superseded/ · r2-historical-superseded/ · r1-historical-supersed
 只推荐:`PRODUCT_GOVERNANCE_CANDIDATE_ADMISSION`。
 
 Admission 要点:PR head = branch head = candidate identity(三者同为 40063af,操作证据直接产于它);candidate 源自冻结 preimage;合同覆盖完整;engineering_required 证据完整;无 forbidden path 改动;known limitations 全部在合同内;R2/R3 已有 APPROVED CR-KK-01-OWNER-DIRECTED-R2-R3,R4 已被你方裁定 NON_MATERIAL_UI_AUTHORITY_ALIGNMENT;**R5 的 Owner-directed 修改是否需要新的正式 Change Request,由你在 admission 时裁定**(Engineering 已如实披露,未自行宣称批准)。
+
+## H. Durable self-contained HTML artifact(GitHub-verified)
+
+```text
+HTML_GITHUB_REF=evidence/goal-kk-01-non-candidate-r2@82984911ff11cf6ae80e255126fd1f59145da254:reports/prototype/knowme-knowledge-01-agent-native-mate60/deliverable/KnowME-Knowledge-01-Prototype.html
+HTML_GITHUB_BLOB=910bb08194c1a42bd8f1ad945709119d99495786
+HTML_SHA256=60feb609628659a0a5fcecc9d0fd2ed7d64dc6b765753a0d25dae5190d09afdf
+HTML_SHA256_VERIFIED_FROM_GITHUB_BYTES=YES (fresh download from GitHub 2026-09-16)
+```

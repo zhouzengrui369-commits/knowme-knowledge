@@ -167,3 +167,14 @@ forbidden_claims:
 
 issued_at: "2026-09-16T16:20:00Z"
 ```
+
+## Durable self-contained HTML artifact (GitHub-verified)
+
+```text
+HTML_GITHUB_REF=evidence/goal-kk-01-non-candidate-r2@82984911ff11cf6ae80e255126fd1f59145da254:reports/prototype/knowme-knowledge-01-agent-native-mate60/deliverable/KnowME-Knowledge-01-Prototype.html
+HTML_GITHUB_BLOB=910bb08194c1a42bd8f1ad945709119d99495786
+HTML_SHA256=60feb609628659a0a5fcecc9d0fd2ed7d64dc6b765753a0d25dae5190d09afdf
+HTML_SHA256_VERIFIED_FROM_GITHUB_BYTES=YES (fresh download from GitHub 2026-09-16)
+SOURCE_CANDIDATE_SHA=40063afd16a36674e8660f6b4a05315d51f4e546
+SOURCE_CANDIDATE_TREE=72464ee6727af4837cb24b77238f7ddadeca02ed
+```
