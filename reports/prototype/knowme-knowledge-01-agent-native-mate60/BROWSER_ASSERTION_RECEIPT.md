@@ -1,4 +1,4 @@
-# Browser Assertion Receipt — GOAL-KK-01 (R2, final exact candidate)
+# Browser Assertion Receipt — GOAL-KK-01 (R3, final exact candidate)
 
 ```text
 ARTIFACT=BROWSER_ASSERTION_RECEIPT
@@ -6,16 +6,16 @@ ACTOR_ROLE=ENGINEERING_DELIVERY
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-CANDIDATE_SHA=9f3071e22def4f99cbf3a4589349e628e9e15a97
-RUNTIME_URL=http://127.0.0.1:5173 (both runs)
+CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+RUNTIME_URL=http://127.0.0.1:5173 (ED) / http://127.0.0.1:5174 (Local Executor)
 VIEWPORT=360x780 MATE60_CLASS_SIMULATION
 SUITE=prototypes/knowme-knowledge-01-agent-native-mate60/tests/browser_assertions.py
-RESULT=57/57 PASSED (Local Executor independent run) · 57/57 PASSED (ED personal run)
+RESULT=67/67 PASSED (Local Executor independent run) · 67/67 PASSED (ED personal run)
 CONSOLE_ERRORS=[] (both runs)
 PAGE_ERRORS=[] (both runs)
-MACHINE_RECEIPTS=le-assertions.json (sha256 cf0766f0720d896940214ca872ca6b411a32cf4fa5303e1e446d5b70b985ad7a)
-                 ed-browser-assertions.json (sha256 1cf418cfacbb45ca90030e71be8fc43ee543291f15e49ea245bf02c8768bc29e)
-SUITE_GROWTH=41 (R1) -> 57 (R2), +16 for Owner-directed R2 surfaces
+MACHINE_RECEIPTS=le-assertions.json (sha256 e1c9cc5e55becb4dad2ae2c4cb39fb5207706b4b7515227ad86c6b59a7a19878)
+                 ed-browser-assertions.json (sha256 0340a66c52b55f30aeb056b3dd1b6e70ea494832788892ed6059cf0e7c499a0e)
+SUITE_GROWTH=41 (R1) -> 57 (R2) -> 67 (R3): +10 for 五维/九维 maps and calendar 月/周/日 views
 ```
 
 Full assertion list (all PASS in both runs):
@@ -29,10 +29,10 @@ FIRST_VIEW_CAPTURE_ENTRY
 FIRST_VIEW_ASK_ENTRY
 FIRST_VIEW_CAPABILITIES
 STATE_FIRST_VIEW
-SENSING_STRIP_VISIBLE                  ← R2: continuous background sensing
-SENSING_CONTINUOUS_BY_DEFAULT          ← R2
-SENSING_HONESTLY_MOCK                  ← R2 (「模拟感知 · 无真实 ASR」)
-SENSING_STREAM_TICKS                   ← R2 (simulated stream advances)
+SENSING_STRIP_VISIBLE
+SENSING_CONTINUOUS_BY_DEFAULT
+SENSING_HONESTLY_MOCK
+SENSING_STREAM_TICKS
 ASK_AGENT_WORKS
 AGENT_RESPONSE_REFERENCES_CONTEXT
 STATE_ASK_AGENT
@@ -49,31 +49,41 @@ STATE_CONTEXT_UPDATED
 REJECT_WORKS
 REJECT_DOES_NOT_GROW_CONTEXT
 CONFIRM_WORKS
-KNOWLEDGE_NAVIGATION_VIEW              ← R2: MOC/WIKI/NOTE navigation
-CAPTURED_ITEM_IN_NAV                   ← R2: confirmed capture visible in navigation
-KNOWLEDGE_CALENDAR_VIEW                ← R2: knowledge by calendar
-VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR← R2: just-confirmed item under 今天 2026-09-16
-KNOWLEDGE_CALENDAR_OTHER_DAYS          ← R2: 昨天 / 7月18日 groups
-KNOWLEDGE_DETAIL_HAS_DAY               ← R2: day attribution in detail
+KNOWLEDGE_NAVIGATION_VIEW
+CAPTURED_ITEM_IN_NAV
+KNOWLEDGE_NAV_FIVE_DIM_MAP               ← R3: five-dimension knowledge map
+KNOWLEDGE_NAV_NINE_DIM_COGNITIVE         ← R3: nine-dimension cognitive graph
+CAPTURED_ITEM_IN_FIVE_DIM                ← R3: live count 3 seeds + 2 captures = 5
+DIM_ROW_EXPAND_LISTS_REAL_ITEMS          ← R3: dimension expands to real items
+DIM_ITEM_OPENS_DETAIL                    ← R3: dimension item opens knowledge detail
+KNOWLEDGE_CALENDAR_VIEW
+VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR
+KNOWLEDGE_CALENDAR_OTHER_DAYS
+KNOWLEDGE_DETAIL_HAS_DAY
 KNOWLEDGE_ITEM_OPENS
 SOURCE_STATE_VISIBLE
 WORK_SURFACE_OPENS
 RETURN_PRESERVES_CONTEXT
 CAPABILITY_OPENS_CONTEXTUAL_WORK
 NOT_CONNECTED_NOT_CONNECTED
-CALENDAR_VISUAL_WEEK_STRIP             ← R2: 5-day week strip
-CALENDAR_TODO_LINKED_ON_DAY            ← R2: 当日关联待办 on day view
-CALENDAR_DAY_SWITCH                    ← R2: day switching works
-SENSING_RUNS_IN_BACKGROUND             ← R2: strip survives sheet open/close
+CALENDAR_VIEW_SWITCHER                   ← R3: 日/周/月 switcher
+CALENDAR_MONTH_VIEW                      ← R3: September 2026 grid, correct weekdays, today highlighted
+CALENDAR_MONTH_EVENT_DOTS                ← R3: dots on days with schedule/todos only
+CALENDAR_MONTH_DAY_OPENS_DAY_VIEW        ← R3: month cell deep-opens day view
+CALENDAR_WEEK_VIEW                       ← R3: full Mon–Sun rows with schedule + todo counts
+CALENDAR_VISUAL_WEEK_STRIP
+CALENDAR_TODO_LINKED_ON_DAY
+CALENDAR_DAY_SWITCH
+SENSING_RUNS_IN_BACKGROUND
 STATE_CAPABILITY_WORK
 STATE_CONTEXT_RESTORED
 TODO_STATE_CHANGES
-TODO_DEEP_LINKS_TO_CALENDAR_DAY        ← R2: todo-calendar-link-t-3
+TODO_DEEP_LINKS_TO_CALENDAR_DAY
 SKILLS_PLANNED_DISCLOSED
 UNKNOWN_TOPIC_ACKNOWLEDGES_GAP
 UNKNOWN_TOPIC_NEXT_ACTION_CAPTURE
-VOICE_KEY_PAUSES_SENSING               ← R2: mic key pauses continuous sensing
-VOICE_KEY_RESUMES_SENSING              ← R2: mic key resumes continuous sensing
+VOICE_KEY_PAUSES_SENSING
+VOICE_KEY_RESUMES_SENSING
 NO_HORIZONTAL_BLOCKING_OVERFLOW
 NO_UNCAUGHT_PAGE_ERROR
 NO_BLOCKING_CONSOLE_ERROR

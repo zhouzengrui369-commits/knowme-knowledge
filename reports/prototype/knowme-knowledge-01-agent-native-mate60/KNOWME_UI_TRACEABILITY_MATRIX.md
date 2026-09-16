@@ -1,47 +1,43 @@
-# KnowMe UI Traceability Matrix — GOAL-KK-01 Prototype (R2)
+# KnowMe UI Traceability Matrix — GOAL-KK-01 Prototype (R3)
 
 ```text
 ARTIFACT=KNOWME_UI_TRACEABILITY_MATRIX
 ACTOR_ROLE=ENGINEERING_DELIVERY
-ACTOR_CONTEXT_ID=ED-KK-GOAL01-EXACT-CANDIDATE-EVIDENCE-REBIND-20260916-1155-R2
+ACTOR_CONTEXT_ID=ED-KK-GOAL01-R3-DEMO-AUTHORITY-20260916-1320-R3
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 EVIDENCE_COMMIT_IS_CANDIDATE=NO
 MOVE_PR9_HEAD=NO
-CANDIDATE_SHA=9f3071e22def4f99cbf3a4589349e628e9e15a97
-UI_AUTHORITY_REPOSITORY=zhouzengrui369-commits/knowme
-UI_AUTHORITY_COMMIT=baa61e693c4681445b8ef0f34c2113292f68e8c7
-UI_AUTHORITY_TREE=3bad5f228b47c8e76ccd4203744e5e40b2f30fe4
-UI_AUTHORITY_ROOT=tasks/pm/20260721-knowme-cognitive-surface-demo-r5/
-APP_BLOB=4523e61d60017d63e99b2a58cff763f1a82d6b49 (verified fresh, R1)
-STYLES_BLOB=9667f012df8e03496395ee176a93ea2db976a697 (verified fresh, R1)
-OFFLINE_HTML_BLOB=2b00d2e158619f5c20380cbf06b90236c33eb55b (verified fresh, R1)
+CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+UI_AUTHORITY=Owner-provided KnowMe-NJX-Demo.html (「这个才是knowme的原型」, 2026-09-16)
+UI_AUTHORITY_SHA256=3ef8605a6b74c6514ee7097d24100d5f06e258b2e6bbdb03e591a02a51fc7d9f
+UI_AUTHORITY_EVIDENCE_COPY=r3-ui-authority/KnowMe-NJX-Demo.html (byte-identical)
+PRIOR_AUTHORITY=zhouzengrui369-commits/knowme demo @baa61e6… (R1/R2 lineage; superseded by the Owner-provided file)
 PROTOTYPE_SOURCE=prototypes/knowme-knowledge-01-agent-native-mate60/
 ```
 
-KnowMe Demo was read-only; nothing was written back. The prototype inherits
-the Demo's dark contextual-workbench lineage and translates its desktop
-three-column structure into a Mate60-class portrait, Agent-first layout.
-R2 adds four Owner-directed surfaces; each is traced to its Demo lineage
-below (rows marked R2).
+The authority Demo was opened and operated read-only in a real browser
+(desktop three-column workbench: 神经感知 left / knowledge navigation center
+/ 我的下一步 right; brand 灵犀 · Digital Brain; dark tokens). Nothing was
+written back. The prototype translates its structure into a Mate60-class
+portrait, Agent-first layout.
 
-| Lineage element | KnowMe Demo (authority) | Prototype realization | Adaptation |
+| Lineage element | KnowMe-NJX-Demo (authority) | Prototype realization | Adaptation |
 |---|---|---|---|
-| Agent center | Desktop center column: knowledge surface + composer (`问懂我` input, voice key, orange send `#ee8a15`) | Central conversation thread + composer with voice key and orange send; Agent is the first and persistent surface | Desktop center becomes the mobile main view; conversation never replaced by navigation |
-| **R2: 声音流 (continuous sensing)** | Left `sensory-panel`: 声音流 with live transcript, always-ticking sense feed | **Sensing strip** pinned above the conversation: 「后台持续感知中」 + simulated tick lines + mic key pause/resume; survives across sheet open/close; honestly labeled 「模拟感知 · 无真实 ASR」 | The Demo's left-column 声音流 becomes an always-on mobile strip; Owner-directed requirement 「语音录入要持续后台运行」 realized as continuous background state, not a per-tap action |
-| Context field | Center `knowledge-surface` (WIKI/MOC navigation, freshness `81 条知识 · 更新于 12 秒前`) | `ContextStrip`: tappable knowledge-context summary (`N 条知识 · M 条连接 · 持续生长`) + known/unknown chips (已知 green / 未知 amber) | Graph visualizations (2D/3D) not copied (out of 0.1 scope); the *evolving context* semantics kept via live counts that really change on confirm |
-| **R2: 知识导航 (MOC map)** | Center `knowledge-surface` WIKI/MOC navigation grouping | Knowledge sheet tab **知识导航**: entries grouped 主题入口 · MOC / 知识文档 · WIKI / 笔记与捕获 · NOTE with evidence counts and CONFIRMED chips | Demo's WIKI/MOC navigation becomes the knowledge sheet's first tab; Owner-directed 「可查看知识导航」 |
-| **R2: 按日历查看 (daily notes lineage)** | Demo freshness timestamps + daily knowledge flow semantics | Knowledge sheet tab **按日历查看**: knowledge grouped by day (今天 2026-09-16 / 昨天 / 7 月 18 日); session-confirmed items land under today | Owner-directed 「知识要可按日历查看」; deterministic mock day attribution, no real persistence |
-| Capture surface | Left `sensory-panel`: capture drawer with pipeline 已采集→AI 整理草稿→确认后入库 and sensing roadmap with honest per-channel status | Bottom-sheet Capture: channel cards Text/Voice/Files/Website with honest state chips, same pipeline row, candidate card with 确认入库/修正/拒绝 | Left column becomes summonable bottom sheet; pipeline and confirm-gate semantics preserved verbatim |
-| Capability surface | Right `intelligence-panel`: system metrics, 计划/轨迹/助手 tabs, capability panels | Bottom nav 知识/日历/待办/技能 + capability sheets with explicit state chips (AVAILABLE / NOT_CONNECTED / PLANNED) | Right column becomes bottom navigation + sheets; per-capability honesty made mandatory UI |
-| **R2: 可视化日历 (schedule/todo linkage)** | Right-panel 计划 tab: plan-list rows with time and state | Calendar sheet: **5-day week strip** (昨天/今天/明天/周四/周五), per-day schedule rows, **当日关联待办** section linking todos to the viewed day; todo sheet deep link jumps calendar to the linked day | Owner-directed 「日程/待办需要关联可视化日历」; NOT_CONNECTED honesty preserved |
-| Contextual overlay / work surface | `capability-panel` modal and `document-preview` overlay | Knowledge detail sheet + 上下文工作面 sheet that float over the conversation | Same overlay pattern: backdrop + sheet, conversation DOM never unmounted |
-| Visual hierarchy | Dark workbench tokens: `--bg #09121b`, `--panel #111d29`, `--amber #ff9d1c`, `--blue #57a8e6`, `--green #55ce91`, `--violet #9a7bf7`, `--radius 16px`, mono state labels | Identical CSS custom properties and component treatments in `src/styles.css` | Tokens copied 1:1; layout rules rewritten for portrait |
-| Interaction return | Overlays close back to the workbench without losing center state | Every sheet closes back to the identical Agent conversation; `AGENT_CONTEXT_RESTORED` explicitly tracked; sensing strip survives | Same mental model, single-column |
-| State disclosure | `DEMO · 只读` badge, `尚未激活` skill gates, sensing roadmap per-channel status | Persistent header pill `0.1 PROTOTYPE · 确定性 Mock · 非真实数据`, per-channel/per-capability chips, `模拟感知 · 无真实 ASR` strip label, `MOCK_SOURCE` labels | Strengthened: disclosure is always-on |
-| Mobile translation | Desktop-only demo (min widths, three columns, hover cues) | Portrait-first 360–520px shell, ≥38–46px tap targets, no hover-dependent actions (asserted), no horizontal overflow (asserted) | New translation layer; the Goal's core product question |
+| **五维知识地图** | Center-left column: 五维知识地图 with 工作记录·我做了什么 / 生活感悟·我如何感受 / 人生规划·我想走向哪里 / 系统思考·我如何理解 / 行业洞察·我看见什么变化, each with entry count | 知识导航 tab section 五维知识地图: identical five dimensions and subtitles, live-computed counts, expandable to real items | Same dimension model; counts are real (including zero-count dimensions shown honestly, never faked) |
+| **九维认知图谱** | Center-right column: 九维认知图谱 01 身份角色 … 09 动态与情景 with counts | 知识导航 tab section 九维认知图谱: identical nine numbered dimensions, live counts, expandable | Same cognitive-dimension model |
+| WIKI/MOC navigation | 知识导航 · WIKI MOC header + NOTE/MOC/WIKI knowledge cards | MOC/WIKI/NOTE groups kept below the two maps; kind badges preserved | Coexists with the two maps |
+| **日历月/周/日** | Demo organizes by 日记 (9 月 9 日 · 我的知识日记 / 日记回顾); Owner directed explicit three views for the prototype | Calendar capability sheet with 日/周/月 switcher: month grid (correct weekdays, today, event dots, deep-open), full week rows, day schedule + linked todos | Owner-directed extension beyond the Demo; NOT_CONNECTED honesty preserved |
+| 神经感知 (sensing) | Left panel 神经感知: 开启语音, 体验感知动效 · 不录音, waveform placeholder, honest "等待你开启语音采集" | Persistent sensing strip (R2): continuous background simulated stream, mic key pause/resume, 模拟感知 · 无真实 ASR | Same honesty standard: the Demo never fakes recording; the prototype never fakes ASR |
+| 我的下一步 (next steps) | Right panel: dated plan list (9 月 9 日) with 计划/轨迹/助手 tabs and numbered actions | 待办 capability sheet + calendar 当日关联待办 + todo→calendar deep link | Plan items become operable todos linked to calendar days |
+| Agent | Center-bottom 灵犀 AGENT composer (展开对话 / 发送) | Central conversation thread + composer; Agent first and persistent | Desktop bottom composer becomes the mobile main conversation |
+| Context field | Header stats (知识 16 · 五维 5 · 九维 9), breadcrumb of knowledge base | ContextStrip: tappable summary (N 条知识 · M 条连接 · 持续生长) + known/unknown chips | Live counts that really change on confirm |
+| Capture | Left 附件知识 / 感知 panel with capture drawer | Bottom-sheet Capture: channel cards with honest state chips, pipeline 已采集→AI 整理草稿→确认后入库, candidate 确认/修正/拒绝 | Same confirm-gate semantics |
+| Contextual overlay | Center cards open detail flows | Knowledge detail sheet + 上下文工作面 float over the conversation | Conversation DOM never unmounted |
+| Visual hierarchy | Dark workbench tokens (deep navy bg, amber accents, mono state labels, rounded cards) | Same token set in `src/styles.css` (--bg/--panel/--amber/--green/--blue/--violet, radius, chips) | Tokens inherited; layout rewritten for portrait |
+| Mobile translation | Desktop-only demo (three columns, 1440px design) | Portrait-first 360–520px shell, ≥38px tap targets, no hover dependency, no horizontal overflow (asserted) | The Goal's core product question |
 
-Intentional non-inheritance (contract-compliant): neural brain canvas, audio
-waveform, 2D/3D knowledge graphs, and multi-column grid were not ported —
-they are desktop-parlor visuals, not required by the frozen contract, and
-Journey/AO coverage does not depend on them. R2 surfaces are deterministic
-mock realizations; no real ASR, calendar, or todo backend exists.
+Intentional non-inheritance (contract-compliant): the Demo's 2D 关系 / 3D 星海
+graph renderings and Galaxy-style canvas were not ported — they are
+desktop-parlor visuals, not required by the frozen contract; Journey/AO
+coverage does not depend on them. This is a technical simplification, not a
+product-boundary change.

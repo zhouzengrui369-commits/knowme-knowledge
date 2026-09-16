@@ -159,31 +159,6 @@
       "detail": "confirmed capture appears under 笔记与捕获 navigation"
     },
     {
-      "assertion": "KNOWLEDGE_NAV_FIVE_DIM_MAP",
-      "pass": true,
-      "detail": "five-dimension knowledge map renders all five life dimensions"
-    },
-    {
-      "assertion": "KNOWLEDGE_NAV_NINE_DIM_COGNITIVE",
-      "pass": true,
-      "detail": "nine-dimension cognitive graph renders all nine dimensions"
-    },
-    {
-      "assertion": "CAPTURED_ITEM_IN_FIVE_DIM",
-      "pass": true,
-      "detail": "工作记录 count = 3 seeds + 2 confirmed captures = 5 (live count): ◆ 工作记录 我做了什么 5"
-    },
-    {
-      "assertion": "DIM_ROW_EXPAND_LISTS_REAL_ITEMS",
-      "pass": true,
-      "detail": "dimension expands to its real items incl. today's capture"
-    },
-    {
-      "assertion": "DIM_ITEM_OPENS_DETAIL",
-      "pass": true,
-      "detail": "dimension item opens knowledge detail"
-    },
-    {
       "assertion": "KNOWLEDGE_CALENDAR_VIEW",
       "pass": true,
       "detail": "knowledge grouped under 今天 (2026-09-16)"
@@ -232,31 +207,6 @@
       "assertion": "NOT_CONNECTED_NOT_CONNECTED",
       "pass": true,
       "detail": "calendar honestly NOT_CONNECTED"
-    },
-    {
-      "assertion": "CALENDAR_VIEW_SWITCHER",
-      "pass": true,
-      "detail": "day / week / month view switcher rendered"
-    },
-    {
-      "assertion": "CALENDAR_MONTH_VIEW",
-      "pass": true,
-      "detail": "September 2026 month grid (30 days), today 09-16 highlighted"
-    },
-    {
-      "assertion": "CALENDAR_MONTH_EVENT_DOTS",
-      "pass": true,
-      "detail": "days with schedule/todos carry dots; empty days do not"
-    },
-    {
-      "assertion": "CALENDAR_MONTH_DAY_OPENS_DAY_VIEW",
-      "pass": true,
-      "detail": "clicking 周四 09-17 in month view opens its day view"
-    },
-    {
-      "assertion": "CALENDAR_WEEK_VIEW",
-      "pass": true,
-      "detail": "full week rows 周一..周日 with real schedule and todo counts"
     },
     {
       "assertion": "CALENDAR_VISUAL_WEEK_STRIP",
@@ -346,7 +296,7 @@
   ],
   "console_errors": [],
   "page_errors": [],
-  "passed": 67,
+  "passed": 57,
   "failed": 0,
-  "issued_at": "2026-09-16T05:41:49.294202+00:00"
+  "issued_at": "2026-09-16T04:16:10.526999+00:00"
 }

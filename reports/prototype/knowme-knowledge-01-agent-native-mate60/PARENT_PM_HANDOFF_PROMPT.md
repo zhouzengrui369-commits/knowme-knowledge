@@ -1,4 +1,4 @@
-# Parent PM Handoff Prompt — GOAL-KK-01 R2 (from Engineering Delivery)
+# Parent PM Handoff Prompt — GOAL-KK-01 R3 (from Engineering Delivery)
 
 ```text
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
@@ -29,43 +29,40 @@ PRODUCT_CONTRACT_PATH=governance/milestones/GOAL-KK-01-AGENT-NATIVE-MATE60-PROTO
 
 ENGINEERING_BRANCH=engineering/goal-kk-01-agent-native-mate60-prototype-r1
 ENGINEERING_PR=#9 (Draft, OPEN, UNMERGED)
-CANDIDATE_SHA=9f3071e22def4f99cbf3a4589349e628e9e15a97
-CANDIDATE_TREE=b165a075f4e6a3784c6fc7794fc8c5581dc539c0
-CANDIDATE_PARENT=d8290e7a216b647ec2853f9f4522d97f77129281
-OPERATED_CANDIDATE_SHA=9f3071e22def4f99cbf3a4589349e628e9e15a97
-PROTOTYPE_SUBTREE_TREE=e0c147e48aa6407dcf7b6da323ef01e00492659b
+CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+CANDIDATE_TREE=beeb0d6e136419036fb71fe5bd31aa8863f9227f
+CANDIDATE_PARENT=9f3071e22def4f99cbf3a4589349e628e9e15a97
+OPERATED_CANDIDATE_SHA=e6e9c3d87a1c87fa0614aa1a4ec44e354117adde
+PROTOTYPE_SUBTREE_TREE=0641d2e4ee000aac79f9ef2f4f36d1d8c61a53f9
 
 EVIDENCE_BRANCH=evidence/goal-kk-01-non-candidate-r2 (NON_CANDIDATE_EVIDENCE)
-SUPERSEDES=Issue #3 comment 5691532300 (R1 receipt, candidate d8290e7,
-           blocked by comment 5691624112
-           FINAL_EXACT_CANDIDATE_OPERATION_EVIDENCE_IDENTITY_MISMATCH)
+UI_AUTHORITY=KnowMe-NJX-Demo.html (Owner-provided 2026-09-16, sha256 3ef8605a…fc7d9f, copy at r3-ui-authority/)
+SUPERSEDES=Issue #3 comment 5692104046 (R2 receipt, candidate 9f3071e)
 ```
 
 ## A. 完成了什么
 
-- R1 已完成合同范围原型(React 18 + Vite 5,portrait-first,KnowMe Demo 深色 contextual workbench 血统 1:1 token 继承),Journeys A–E 全部真实可操作。
-- **R2(本轮)**:Owner 亲自操作 R1 原型后,在对话中直接指示四项产品修改,全部实现并验证:
-  1. **语音录入持续后台运行**:Agent 主面常驻感知条(后台持续感知中 + 模拟感知流跳动),麦克风键暂停/恢复持续感知,跨 sheet 开关存活;全程诚实标注「模拟感知 · 无真实 ASR」(无麦克风访问)。
-  2. **知识可按日历查看**:知识 sheet 新增「按日历查看」tab,按天分组;本会话确认入库的知识落在「今天 2026-09-16」。
-  3. **知识导航**:知识 sheet 首个 tab「知识导航」,MOC/WIKI/NOTE 分组(Map-of-Content 血统)。
-  4. **日程/待办关联可视化日历**:日历 sheet 5 天 week strip + 当日日程 + 当日关联待办;待办深链 `todo-calendar-link-t-3` 跳到日历对应日。
-- 四项修改全部为 deterministic mock、在冻结合同 allowed_known_limitations 内(NO_REAL_VOICE / NO_REAL_CALENDAR_TODO_BACKEND 等),未改 Journeys A–E、验收结果或 NOT_IMPLEMENTED_BY_CONTRACT 边界。**是否需正式 Change Request 由 Governance 裁定**,Engineering 如实披露为 OWNER_DIRECTED。
-- 技术测试:57 条 Playwright 断言(R1 41 条 + R2 新增 16 条),360x780 MATE60_CLASS_SIMULATION,**Local Executor 与 ED 各自在最终精确 candidate 9f3071e 上独立运行均 57/57**,console/page error 均为空。
-- ED 以用户视角完成价值闭环验证:捕获→确认入库→知识增长(计数+Agent 解释)→知识导航与按日历查看立即可见→Agent 引用→知识详情→上下文工作面→日历(周四装机窗口)+当日关联待办→待办深链回日历→返回 Agent,对话与感知条全程不丢。
-- 缺陷:R1 修复 D-01/D-02 仍保持修复;R2 首轮 57/57 通过,无新缺陷。
+- R1:合同范围原型(Journeys A–E,KnowMe Demo 深色 workbench 血统,41 断言)。
+- R2:Owner 亲自操作后指示四项修改(持续后台感知条 / 知识按日历查看 / 知识导航 / 日程待办关联可视化日历),57 断言。
+- **R3(本轮)**:Owner 提供权威原型 KnowMe-NJX-Demo.html(「这个才是knowme的原型」)并指示:
+  1. **知识导航包括五维知识地图和九维认知图谱** — 知识导航 tab 顶部现为五维知识地图(工作记录/生活感悟/人生规划/系统思考/行业洞察,真实计数,可展开真实条目)与九维认知图谱(01 身份角色…09 动态与情景,同上),下方保留 MOC/WIKI/NOTE 分组;计数全部实时计算,零维度诚实标注。
+  2. **日历有月/周/日三种视图** — 日历 sheet 日/周/月切换:月视图(2026 年 9 月网格,星期一起始的真实星期,今天高亮,有日程/待办的日子带圆点,点格子深开日视图)、周视图(周一至周日整周行,每日日程+关联待办计数,点行进日视图)、日视图(原有日程+当日关联待办)。
+  3. 顺带修正:R2 fixture 把 2026-09-16 错标为周二(实为周三),已按真实星期修正并把「周四装机窗口」叙事对齐到 09-17。
+- 技术测试:67 条 Playwright 断言(360x780 MATE60_CLASS_SIMULATION),Local Executor(全新 clone 精确 SHA,端口 5174)与 ED 本人(提交后 HEAD 复核,端口 5173)各自独立运行均 **67/67**,console/page error 均为空。
+- ED 用户视角价值闭环复验:捕获→入库→知识增长→五维/九维地图与日历立即可见→Agent 引用→工作面→日历三视图→待办深链→返回不丢上下文。
+- 缺陷:R1 D-01/D-02 保持修复;R2/R3 均无新缺陷(首轮全过)。
 
 ## B. Exact identity(以 GitHub 实时事实为准)
 
 ```bash
-gh repo view zhouzengrui369-commits/knowme-knowledge
 gh pr view 9 --repo zhouzengrui369-commits/knowme-knowledge --json headRefOid,state,isDraft
 git ls-remote https://github.com/zhouzengrui369-commits/knowme-knowledge.git engineering/goal-kk-01-agent-native-mate60-prototype-r1 evidence/goal-kk-01-non-candidate-r2
 ```
 
-- Engineering branch head = PR #9 head = `9f3071e22def4f99cbf3a4589349e628e9e15a97`
-- **Candidate 只含 code+tests**(reports/ 已从 candidate 中移除);全部运行证据在 evidence 分支,与 candidate bytes 完全分离。
-- 证据绑定:两套操作证据(LE + ED)均产于最终精确 candidate `9f3071e` 本身,**无父 commit 证据转移**。
-- R1 历史证据(fb43216/d8290e7)原样保留于 evidence 分支 `r1-historical-superseded/`,已 supersede,不可用于本 candidate admission。
+- Engineering branch head = PR #9 head = `e6e9c3d87a1c87fa0614aa1a4ec44e354117adde`
+- Candidate 只含 code+tests;全部证据在 evidence 分支。
+- 两套操作证据均产于最终精确 candidate 本身,无父 commit 证据转移。
+- R2/R1 历史证据在 evidence 分支 `r2-historical-superseded/` 与 `r1-historical-superseded/`,原样保留,不可用于本 candidate admission。
 
 ## C. 证据在哪里(GitHub,evidence 分支)
 
@@ -78,31 +75,29 @@ BROWSER_ASSERTION_RECEIPT.md · KNOWME_UI_TRACEABILITY_MATRIX.md
 INTERACTION_STATE_MAP.md · ALLOWED_PATH_DIFF_RECEIPT.md · MOCK_DATA_DISCLOSURE.md
 LOCAL_EXECUTION_REQUEST.md · LOCAL_EXECUTION_RECEIPT.md
 ED_PERSONAL_PRODUCT_OPERATION_RECEIPT.md · SCREENSHOT_INDEX.md
-le-assertions.json (57/57) · ed-browser-assertions.json (57/57)
-screenshots/local-executor/R2-LE-P01..P10 + le-run-metadata.json (sha256 表在 receipt 内)
-screenshots/ed-personal/R2-ED-P01..P10 (sha256 表在 receipt 内)
-r1-historical-superseded/ (R1 全量历史证据 + SUPERSEDED_NOTICE.md)
+le-assertions.json (67/67) · ed-browser-assertions.json (67/67)
+screenshots/local-executor/R3-LE-P01..P12 · screenshots/ed-personal/R3-ED-P01..P12 (sha256 表在 receipt 内)
+r3-ui-authority/KnowMe-NJX-Demo.html (Owner 权威原型,sha256 3ef8605a…fc7d9f)
+r2-historical-superseded/ · r1-historical-superseded/
 ```
 
-截图因 ChatGPT Parent PM 无法查看本地浏览器而按 Owner 要求上传 GitHub;两组 20 张均可在 evidence 分支直接查看,sha256 与 receipt 内表一一对应。
-
-CI/tests: 仓库无 CI workflow;技术测试为本地 Playwright 套件,两套独立运行记录见上。
+截图按 Owner 要求上传 GitHub(ChatGPT Parent PM 无法查看本地浏览器);两组 24 张均可在 evidence 分支直接查看。
 
 ## D. 为什么卡
 
-无 blocker。Engineering 范围无未决阻塞。R1 的 identity-mismatch blocker(5691624112)已由本轮 R2 的"最终精确 SHA 双操作 + 证据外置"结构闭环。
+无 blocker。Engineering 范围无未决阻塞。
 
 ## E. 哪些没有完成
 
-- NOT_IMPLEMENTED_BY_CONTRACT(合法 out-of-scope):HarmonyOS 正式实现、真实 Harness/Provider/Agent runtime/长期记忆/RAG/向量库/Wiki 索引、真实 ASR/声纹(感知条为模拟)、真实导入管线、真实 Calendar/Todo 后端、Skills 能力、真实持久化、真实 Owner 数据、生产部署。
+- NOT_IMPLEMENTED_BY_CONTRACT:HarmonyOS 正式实现、真实 Harness/Provider/Agent runtime/长期记忆/RAG/向量库/Wiki 索引、真实 ASR/声纹、真实导入管线、真实 Calendar/Todo 后端、Demo 的 2D 关系/3D 星海图谱渲染(desktop-parlor 视觉,合同未要求)、Skills 能力、真实持久化、真实 Owner 数据、生产部署。
 - UNRESOLVED_WITHIN_CONTRACT: 无。
 
 ## F. 已知限制
 
-全部在冻结合同 allowed_known_limitations 内:BROWSER_PROTOTYPE_ONLY、DETERMINISTIC_MOCK_RUNTIME、NO_REAL_MODEL/HARNESS/PROVIDER、NO_REAL_PERSISTENCE_REQUIRED(刷新重置)、NO_REAL_VOICE/SPEAKER_VERIFICATION/IMPORT_PIPELINE/RAG、NO_REAL_CALENDAR_TODO_BACKEND、NO_REAL_OWNER_DATA。视口证据为 360x780 MATE60_CLASS_SIMULATION(浏览器模拟,非真机测量)。
+全部在冻结合同 allowed_known_limitations 内:BROWSER_PROTOTYPE_ONLY、DETERMINISTIC_MOCK_RUNTIME、NO_REAL_MODEL/HARNESS/PROVIDER、NO_REAL_PERSISTENCE_REQUIRED、NO_REAL_VOICE/SPEAKER_VERIFICATION/IMPORT_PIPELINE/RAG、NO_REAL_CALENDAR_TODO_BACKEND、NO_REAL_OWNER_DATA。视口证据为 360x780 MATE60_CLASS_SIMULATION。
 
 ## G. 下一 Gate
 
 只推荐:`PRODUCT_GOVERNANCE_CANDIDATE_ADMISSION`。
 
-Admission 要点(contract evidence_ownership.admission_required):PR head = branch head = candidate identity(本轮三者同为 9f3071e,且操作证据直接产于它);candidate 源自冻结 preimage;冻结合同覆盖完整;engineering_required 证据完整;无 forbidden path 改动;known limitations 全部在合同内;**Owner-directed R2 四项修改是否需要正式 Change Request,由你在 admission 时裁定**(Engineering 已如实披露,未自行宣称批准)。
+Admission 要点:PR head = branch head = candidate identity(三者同为 e6e9c3d,操作证据直接产于它);candidate 源自冻结 preimage;合同覆盖完整;engineering_required 证据完整;无 forbidden path 改动;known limitations 全部在合同内;**R2/R3 的 Owner-directed 修改是否需要正式 Change Request,由你在 admission 时裁定**(Engineering 已如实披露,未自行宣称批准)。
