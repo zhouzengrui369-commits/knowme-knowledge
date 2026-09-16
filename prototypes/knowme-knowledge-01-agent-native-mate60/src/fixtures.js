@@ -189,11 +189,11 @@ export const CALENDAR_DAYS = [
 ];
 
 export const CALENDAR_MOCK = [
-  { time: "09:30", title: "确认 ABC 延误影响", meta: "25 分钟 · AOG", state: "done", day: "2026-09-16" },
-  { time: "11:00", title: "比较备用供应方案", meta: "45 分钟 · 决策", state: "active", day: "2026-09-16" },
-  { time: "14:00", title: "Q3 航材保障评审", meta: "60 分钟 · 会议", state: "next", day: "2026-09-16" },
-  { time: "17:30", title: "KnowMe MVP 证据复核", meta: "45 分钟 · 项目", state: "next", day: "2026-09-16" },
-  { time: "10:00", title: "装机窗口复核", meta: "30 分钟 · AOG", state: "next", day: "2026-09-17" },
+  { id: "s-1", time: "09:30", title: "确认 ABC 延误影响", meta: "25 分钟 · AOG", state: "done", day: "2026-09-16", knowledgeRef: "k-risk-note" },
+  { id: "s-2", time: "11:00", title: "比较备用供应方案", meta: "45 分钟 · 决策", state: "active", day: "2026-09-16", knowledgeRef: "k-supplier-sla" },
+  { id: "s-3", time: "14:00", title: "Q3 航材保障评审", meta: "60 分钟 · 会议", state: "next", day: "2026-09-16", knowledgeRef: "k-aog-moc" },
+  { id: "s-4", time: "17:30", title: "KnowMe MVP 证据复核", meta: "45 分钟 · 项目", state: "next", day: "2026-09-16", knowledgeRef: null },
+  { id: "s-5", time: "10:00", title: "装机窗口复核", meta: "30 分钟 · AOG", state: "next", day: "2026-09-17", knowledgeRef: "k-risk-note" },
 ];
 
 export const TODO_MOCK = [
@@ -240,4 +240,35 @@ export function draftCandidate(text) {
     links: related.slice(0, 3),
     source: "Owner 文本捕获 · 原型本地状态",
   };
+}
+
+// Owner-directed (R5): schedule/todo items support quick actions (complete /
+// postpone one day) and 引用对话 (reference into the Agent conversation).
+// All mutations are prototype-local deterministic state; no real backend.
+export function nextDay(day) {
+  const d = new Date(`${day}T00:00:00`);
+  d.setDate(d.getDate() + 1);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+// Deterministic Agent reply when a schedule/todo item is referenced into the
+// conversation. References the linked knowledge when one exists.
+export function referenceReply(quote, knowledge) {
+  const linked = quote.knowledgeRef ? knowledge.find((item) => item.id === quote.knowledgeRef) : null;
+  const when = `${dayLabel(quote.day)}(${quote.day})${quote.time ? ` ${quote.time}` : ""}`;
+  let text;
+  let refs = [];
+  let nextAction = null;
+  if (linked) {
+    text = `已收到你引用的${quote.kind}「${quote.title}」(${when})。它关联知识「${linked.title}」:${linked.summary}按「AOG 响应基线」,建议先确认影响再行动。`;
+    refs = [linked.title];
+    nextAction = { kind: "knowledge", targetId: linked.id, label: `打开「${linked.title}」工作面` };
+  } else {
+    text = `已收到你引用的${quote.kind}「${quote.title}」(${when})。当前知识上下文里没有直接关联的条目;如果你捕获相关背景,确认后我会把它和它连接起来。`;
+    nextAction = { kind: "capture", label: "捕获相关背景信息" };
+  }
+  return { text, refs, nextAction };
 }

@@ -183,14 +183,17 @@ def main():
         # --- Owner-directed: knowledge navigation + knowledge by calendar ---
         page.get_by_test_id("nav-knowledge").click()
         page.get_by_test_id("knowledge-sheet").wait_for()
+        # R5: navigation IS the two maps — no extra MOC/WIKI/NOTE groupings
         check("KNOWLEDGE_NAVIGATION_VIEW",
               page.get_by_test_id("knowledge-nav-view").is_visible()
-              and "AOG 航材保障" in page.get_by_test_id("nav-group-moc").inner_text()
-              and "供应商与 SLA" in page.get_by_test_id("nav-group-wiki").inner_text(),
-              "MOC/WIKI/NOTE navigation groups render real items")
-        check("CAPTURED_ITEM_IN_NAV",
-              "周四装机窗口剩余" in page.get_by_test_id("nav-group-note").inner_text(),
-              "confirmed capture appears under 笔记与捕获 navigation")
+              and page.get_by_test_id("dim5-map").is_visible()
+              and page.get_by_test_id("dim9-map").is_visible(),
+              "navigation view renders the two Owner-defined maps")
+        check("KNOWLEDGE_NAV_NO_LEGACY_GROUPS",
+              page.get_by_test_id("nav-group-moc").count() == 0
+              and page.get_by_test_id("nav-group-wiki").count() == 0
+              and page.get_by_test_id("nav-group-note").count() == 0,
+              "R5: no extra MOC/WIKI/NOTE groups beyond 五维/九维 maps")
         # Owner-directed (KnowMe-NJX-Demo authority): 五维知识地图 + 九维认知图谱
         dim5 = page.get_by_test_id("dim5-map")
         check("KNOWLEDGE_NAV_FIVE_DIM_MAP",
@@ -214,8 +217,14 @@ def main():
               and "周四装机窗口剩余" in page.get_by_test_id("dim5-map-items-d5-work").inner_text(),
               "dimension expands to its real items incl. today's capture")
         shot("P10-KNOWLEDGE-NAVIGATION")
+        # R5: captured item also reachable via the nine-dim cognitive graph
+        page.get_by_test_id("dim9-map-d9-09").click()
+        page.get_by_test_id("dim9-map-items-d9-09").wait_for()
+        check("CAPTURED_ITEM_IN_NAV",
+              "周四装机窗口剩余" in page.get_by_test_id("dim9-map-items-d9-09").inner_text(),
+              "confirmed capture appears under 九维 09 动态与情景")
         # dimension item opens the same knowledge detail
-        page.get_by_test_id("dim5-map-items-d5-work").get_by_test_id("knowledge-item-k-risk-note").click()
+        page.get_by_test_id("dim9-map-items-d9-09").get_by_test_id("knowledge-item-k-risk-note").click()
         page.get_by_test_id("knowledge-detail").wait_for()
         check("DIM_ITEM_OPENS_DETAIL",
               "供应风险记录" in page.get_by_test_id("knowledge-detail").inner_text(),
@@ -224,15 +233,57 @@ def main():
         page.get_by_test_id("knowledge-sheet").wait_for()
         page.get_by_test_id("knowledge-tab-calendar").click()
         page.get_by_test_id("knowledge-calendar-view").wait_for()
+        # R5: knowledge calendar has 日/周/月 three views like the schedule calendar
+        check("KNOWLEDGE_CAL_VIEW_SWITCHER",
+              all(page.get_by_test_id(f"knowledge-cal-view-{v}").is_visible() for v in ("day", "week", "month")),
+              "knowledge calendar day / week / month view switcher rendered")
         today_group = page.get_by_test_id("knowledge-day-2026-09-16").inner_text()
         check("KNOWLEDGE_CALENDAR_VIEW",
               "AOG 航材保障" in today_group and "供应风险记录" in today_group,
-              "knowledge grouped under 今天 (2026-09-16)")
+              "knowledge day view defaults to 今天 (2026-09-16)")
         check("VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR",
               "周四装机窗口剩余" in today_group and "备用供应商 XYZ 报价" in today_group,
               "both confirmed captures land on today's calendar view")
+        page.get_by_test_id("knowledge-cal-day-2026-09-15").click()
+        page.wait_for_timeout(200)
         yesterday = page.get_by_test_id("knowledge-day-2026-09-15").inner_text()
-        check("KNOWLEDGE_CALENDAR_OTHER_DAYS", "AOG 响应基线" in yesterday, "昨天 group holds its item")
+        check("KNOWLEDGE_CALENDAR_OTHER_DAYS", "AOG 响应基线" in yesterday, "昨天 day view holds its item")
+        # month view: grid, dots on days with knowledge, today highlighted
+        page.get_by_test_id("knowledge-cal-view-month").click()
+        page.get_by_test_id("knowledge-cal-month-view").wait_for()
+        kmonth_text = page.get_by_test_id("knowledge-cal-month-view").inner_text()
+        check("KNOWLEDGE_CAL_MONTH_VIEW",
+              "2026 年 9 月" in kmonth_text
+              and page.get_by_test_id("knowledge-month-day-2026-09-01").is_visible()
+              and page.get_by_test_id("knowledge-month-day-2026-09-30").is_visible()
+              and "today" in (page.get_by_test_id("knowledge-month-day-2026-09-16").get_attribute("class") or "")
+              and page.get_by_test_id("knowledge-month-day-2026-09-16").locator(".month-dot").count() == 1
+              and page.get_by_test_id("knowledge-month-day-2026-09-17").locator(".month-dot").count() == 0,
+              "September 2026 knowledge month grid, dot only where knowledge exists, today highlighted")
+        # month cell deep-opens that day's knowledge view
+        page.get_by_test_id("knowledge-month-day-2026-09-15").click()
+        page.wait_for_timeout(250)
+        check("KNOWLEDGE_CAL_MONTH_CELL_OPENS_DAY",
+              "AOG 响应基线" in page.get_by_test_id("knowledge-day-2026-09-15").inner_text(),
+              "clicking 09-15 in knowledge month view opens its day view")
+        # knowledge outside the month stays honestly reachable
+        page.get_by_test_id("knowledge-cal-view-month").click()
+        page.get_by_test_id("knowledge-cal-other-2026-07-18").click()
+        page.wait_for_timeout(250)
+        check("KNOWLEDGE_CAL_OTHER_MONTH_DAY",
+              "我的决策偏好" in page.get_by_test_id("knowledge-day-2026-07-18").inner_text(),
+              "knowledge on 2026-07-18 reachable via 本月之外 list")
+        # week view: full Mon-Sun rows with per-day knowledge
+        page.get_by_test_id("knowledge-cal-view-week").click()
+        page.get_by_test_id("knowledge-cal-week-view").wait_for()
+        check("KNOWLEDGE_CAL_WEEK_VIEW",
+              all(page.get_by_test_id(f"knowledge-week-day-2026-09-{d}").is_visible() for d in range(14, 21))
+              and "AOG 航材保障" in page.get_by_test_id("knowledge-week-day-2026-09-16").inner_text()
+              and "知识" in page.get_by_test_id("knowledge-week-day-2026-09-16").inner_text(),
+              "full week rows 周一..周日 with real knowledge items and counts")
+        # back to day view on 昨天 for the detail-open check below
+        page.get_by_test_id("knowledge-week-day-2026-09-15").click()
+        page.wait_for_timeout(250)
         shot("P08-KNOWLEDGE-CALENDAR-VIEW")
         # open an item from the calendar view into the same detail surface
         page.get_by_test_id("knowledge-day-2026-09-15").get_by_test_id("knowledge-item-k-sla-baseline").click()
@@ -249,7 +300,10 @@ def main():
         msg_count_before = page.get_by_test_id("message-user").count()
         page.get_by_test_id("nav-knowledge").click()
         page.get_by_test_id("knowledge-sheet").wait_for()
-        page.get_by_test_id("knowledge-item-k-risk-note").click()
+        # R5: navigation is the two maps — expand the dimension to reach the item
+        page.get_by_test_id("dim5-map-d5-work").click()
+        page.get_by_test_id("dim5-map-items-d5-work").wait_for()
+        page.get_by_test_id("dim5-map-items-d5-work").get_by_test_id("knowledge-item-k-risk-note").click()
         page.get_by_test_id("knowledge-detail").wait_for()
         check("KNOWLEDGE_ITEM_OPENS", "供应风险记录" in page.get_by_test_id("knowledge-detail").inner_text(),
               "knowledge detail opened")
@@ -344,8 +398,35 @@ def main():
         check("STATE_CAPABILITY_WORK",
               page.get_by_test_id("app-root").get_attribute("data-journey-state") == "CAPABILITY_WORK",
               page.get_by_test_id("app-root").get_attribute("data-journey-state"))
-        page.get_by_test_id("capability-sheet-calendar-close").click()
-        page.wait_for_timeout(300)
+
+        # --- R5 Owner-directed: schedule quick actions + 引用对话 ---
+        # Quick action 1: complete/undo toggle on the 周四 schedule item
+        page.get_by_test_id("schedule-toggle-s-5").click()
+        page.wait_for_timeout(200)
+        check("SCHEDULE_QUICK_ACTION_COMPLETE",
+              page.get_by_test_id("schedule-toggle-s-5").get_attribute("aria-pressed") == "true"
+              and "done" in (page.get_by_test_id("schedule-item-s-5").get_attribute("class") or ""),
+              "装机窗口复核 marked done via quick action")
+        # Quick action 2: postpone one day (周四 09-17 -> 周五 09-18)
+        page.get_by_test_id("schedule-postpone-s-5").click()
+        page.wait_for_timeout(250)
+        check("SCHEDULE_QUICK_ACTION_POSTPONE",
+              "装机窗口复核" not in page.get_by_test_id("calendar-day-schedule").inner_text()
+              and "没有 Mock 日程" in page.get_by_test_id("calendar-day-schedule").inner_text(),
+              "postponed item leaves 周四 day view")
+        page.get_by_test_id("calendar-day-2026-09-18").click()
+        page.wait_for_timeout(200)
+        check("SCHEDULE_POSTPONED_VISIBLE_ON_NEXT_DAY",
+              "装机窗口复核" in page.get_by_test_id("calendar-day-schedule").inner_text(),
+              "postponed item appears on 周五 09-18")
+        # 引用对话: reference the schedule item into the Agent conversation
+        page.get_by_test_id("schedule-reference-s-5").click()
+        page.wait_for_timeout(900)
+        check("SCHEDULE_REFERENCE_TO_CHAT",
+              page.get_by_test_id("capability-sheet-calendar").count() == 0
+              and "装机窗口复核" in page.get_by_test_id("message-quote").last.inner_text()
+              and "供应风险记录" in page.get_by_test_id("message-agent").last.inner_text(),
+              "schedule item quoted into conversation; 灵犀 answers with linked knowledge")
         check("STATE_CONTEXT_RESTORED",
               page.get_by_test_id("app-root").get_attribute("data-journey-state") == "AGENT_CONTEXT_RESTORED",
               page.get_by_test_id("app-root").get_attribute("data-journey-state"))
@@ -356,6 +437,13 @@ def main():
         page.get_by_test_id("todo-toggle-t-1").click()
         after = page.get_by_test_id("todo-toggle-t-1").get_attribute("aria-pressed")
         check("TODO_STATE_CHANGES", before != after, f"aria-pressed {before} -> {after}")
+        # R5 quick action: postpone todo one day (09-16 -> 09-17)
+        page.get_by_test_id("todo-postpone-t-2").click()
+        page.wait_for_timeout(200)
+        check("TODO_QUICK_ACTION_POSTPONE",
+              "2026-09-17" in page.get_by_test_id("todo-item-t-2").inner_text()
+              or "周四" in page.get_by_test_id("todo-item-t-2").inner_text(),
+              page.get_by_test_id("todo-item-t-2").inner_text().replace("\n", " ")[:60])
         # Owner-directed: todo deep-links into the visual calendar day
         page.get_by_test_id("todo-calendar-link-t-3").click()
         page.get_by_test_id("capability-sheet-calendar").wait_for()
@@ -366,6 +454,17 @@ def main():
         shot("P09-TODO-CALENDAR-LINK")
         page.get_by_test_id("capability-sheet-calendar-close").click()
         page.wait_for_timeout(300)
+
+        # R5 引用对话 from a todo item
+        page.get_by_test_id("nav-todo").click()
+        page.get_by_test_id("capability-sheet-todo").wait_for()
+        page.get_by_test_id("todo-reference-t-1").click()
+        page.wait_for_timeout(900)
+        check("TODO_REFERENCE_TO_CHAT",
+              page.get_by_test_id("capability-sheet-todo").count() == 0
+              and "补齐备用供应商成本证据" in page.get_by_test_id("message-quote").last.inner_text()
+              and "供应商与 SLA" in page.get_by_test_id("message-agent").last.inner_text(),
+              "todo item quoted into conversation; 灵犀 answers with linked knowledge")
 
         page.get_by_test_id("nav-skills").click()
         page.get_by_test_id("capability-sheet-skills").wait_for()

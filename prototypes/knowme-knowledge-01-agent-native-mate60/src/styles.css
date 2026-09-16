@@ -590,3 +590,26 @@ button { font-family: inherit; touch-action: manipulation; }
   color: #9fc8e8; font-size: 10px;
 }
 .week-item.todo { background: rgba(85, 206, 145, .12); color: #9fe0bd; }
+
+/* R5 Owner-directed: quick actions (complete / postpone / reference) */
+.qa-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.qa-btn {
+  padding: 4px 10px; border: 1px solid rgba(137, 161, 183, .25); border-radius: 8px;
+  background: rgba(87, 168, 230, .08); color: #9fc8e8; font-size: 10px;
+  cursor: pointer; min-height: 28px;
+}
+.qa-btn:active { background: rgba(87, 168, 230, .2); }
+
+/* R5 Owner-directed: quoted schedule/todo reference inside conversation */
+.msg-quote {
+  margin: 2px 0 6px; padding: 5px 8px; border-left: 2px solid var(--amber, #ff9d1c);
+  border-radius: 6px; background: rgba(255, 157, 28, .08);
+  color: #e8c89f; font-size: 10px;
+}
+
+/* R5: three-way view switchers (日/周/月) need three columns */
+.sheet-tabs.three { grid-template-columns: 1fr 1fr 1fr; }
+
+/* R5: quick-action rows span the full grid width of their item card */
+.plan-list article .qa-row { grid-column: 1 / -1; margin-top: 2px; }
+.calendar-todo .qa-row { grid-column: 1 / -1; }

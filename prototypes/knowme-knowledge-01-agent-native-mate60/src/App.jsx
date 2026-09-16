@@ -16,6 +16,8 @@ import {
   COGNITIVE_MAP_9D,
   agentReply,
   draftCandidate,
+  nextDay,
+  referenceReply,
 } from "./fixtures.js";
 
 // ---------------------------------------------------------------------------
@@ -80,6 +82,11 @@ function Message({ message, onNextAction }) {
     return (
       <div className="msg msg-user" data-testid="message-user">
         <small>你</small>
+        {message.quote && (
+          <div className="msg-quote" data-testid="message-quote">
+            📎 引用{message.quote.kind}「{message.quote.title}」 · {message.quote.when}
+          </div>
+        )}
         <p>{message.text}</p>
       </div>
     );
@@ -299,12 +306,6 @@ function CaptureSheet({ candidate, correcting, onDraft, onConfirm, onCorrectStar
   );
 }
 
-const NAV_GROUPS = [
-  { id: "moc", label: "主题入口 · MOC", kinds: ["MOC"] },
-  { id: "wiki", label: "知识文档 · WIKI", kinds: ["WIKI"] },
-  { id: "note", label: "笔记与捕获 · NOTE", kinds: ["NOTE"] },
-];
-
 // Owner-directed (KnowMe-NJX-Demo authority): the knowledge navigation carries
 // the 五维知识地图 (five life dimensions) and 九维认知图谱 (nine cognitive
 // dimensions). Counts are computed live from the knowledge context; each
@@ -363,15 +364,67 @@ function DimensionMap({ title, testid, dims, knowledge, openDim, onToggle, onOpe
   );
 }
 
-// Owner-directed: knowledge is viewable both as a MOC-style navigation and by
-// calendar day. Both views open the same knowledge detail.
+// Owner-directed: knowledge navigation IS the 五维知识地图 + 九维认知图谱
+// (R5: no extra MOC/WIKI groupings — the two maps are the navigation).
+// Knowledge is also viewable by calendar with 月/周/日 three views (R5),
+// mirroring the schedule calendar. Both views open the same knowledge detail.
 function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
   const [tab, setTab] = useState("nav");
   const [openDim, setOpenDim] = useState(null);
-  const days = useMemo(
-    () => [...new Set(knowledge.map((item) => item.day))].sort().reverse(),
+  const [calView, setCalView] = useState("day");
+  const [kDay, setKDay] = useState(TODAY);
+
+  // September 2026 month grid, Monday-first, astronomically correct weekdays.
+  const monthCells = useMemo(() => {
+    const { year, month } = CALENDAR_MONTH;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const firstOffset = (new Date(year, month - 1, 1).getDay() + 6) % 7; // Monday-first
+    const cells = [];
+    for (let i = 0; i < firstOffset; i += 1) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d += 1) {
+      const date = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      cells.push({
+        date,
+        dayNum: d,
+        isToday: date === TODAY,
+        hasItems: knowledge.some((item) => item.day === date),
+      });
+    }
+    return cells;
+  }, [knowledge]);
+
+  // Days holding knowledge outside the current month (honest reachability).
+  const otherDays = useMemo(
+    () => [...new Set(knowledge.map((item) => item.day))]
+      .filter((day) => !day.startsWith(`${CALENDAR_MONTH.year}-${String(CALENDAR_MONTH.month).padStart(2, "0")}`))
+      .sort(),
     [knowledge]
   );
+
+  const openDay = (date) => {
+    setKDay(date);
+    setCalView("day");
+  };
+
+  const dayItems = knowledge.filter((item) => item.day === kDay);
+
+  const renderItem = (item) => (
+    <button
+      key={item.id}
+      type="button"
+      className="knowledge-item"
+      data-testid={`knowledge-item-${item.id}`}
+      onClick={() => onOpenItem(item.id)}
+    >
+      <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
+      <div>
+        <strong>{item.title}</strong>
+        <small>{item.group} · {item.updated}</small>
+      </div>
+      <StateChip state={item.state} />
+    </button>
+  );
+
   return (
     <Sheet title="知识 · 持续生长的上下文" testid="knowledge-sheet" onClose={onClose}>
       <div className="sheet-tabs" role="tablist" aria-label="知识视图">
@@ -400,59 +453,109 @@ function KnowledgeSheet({ knowledge, onOpenItem, onClose }) {
             onOpenItem={onOpenItem}
             numbered
           />
-          {NAV_GROUPS.map((group) => {
-            const items = knowledge.filter((item) => group.kinds.includes(item.kind));
-            if (items.length === 0) return null;
-            return (
-              <section key={group.id} className="nav-group" data-testid={`nav-group-${group.id}`}>
-                <header>{group.label}<span>{items.length}</span></header>
-                {items.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className="knowledge-item"
-                    data-testid={`knowledge-item-${item.id}`}
-                    onClick={() => onOpenItem(item.id)}
-                  >
-                    <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
-                    <div>
-                      <strong>{item.title}</strong>
-                      <small>{item.group} · {item.updated} · 证据 {item.evidence ?? 1}</small>
-                    </div>
-                    <StateChip state={item.state} />
-                  </button>
-                ))}
-              </section>
-            );
-          })}
         </div>
       )}
       {tab === "calendar" && (
         <div className="knowledge-calendar" data-testid="knowledge-calendar-view">
-          {days.map((day) => {
-            const items = knowledge.filter((item) => item.day === day);
-            return (
-              <section key={day} className="day-group" data-testid={`knowledge-day-${day}`}>
-                <header><strong>{dayLabel(day)}</strong><span>{day} · {items.length} 条</span></header>
-                {items.map((item) => (
+          <div className="sheet-tabs three" role="tablist" aria-label="知识日历视图" data-testid="knowledge-cal-view-switcher">
+            <button type="button" className={calView === "day" ? "active" : ""} data-testid="knowledge-cal-view-day" onClick={() => setCalView("day")}>日</button>
+            <button type="button" className={calView === "week" ? "active" : ""} data-testid="knowledge-cal-view-week" onClick={() => setCalView("week")}>周</button>
+            <button type="button" className={calView === "month" ? "active" : ""} data-testid="knowledge-cal-view-month" onClick={() => setCalView("month")}>月</button>
+          </div>
+
+          {calView === "month" && (
+            <div className="month-view" data-testid="knowledge-cal-month-view">
+              <header className="month-header"><strong>{CALENDAR_MONTH.label}</strong><small>点击某天进入日视图</small></header>
+              <div className="month-grid" role="grid" aria-label={`${CALENDAR_MONTH.label}知识月视图`}>
+                {["一", "二", "三", "四", "五", "六", "日"].map((w) => (
+                  <span key={w} className="month-weekday">{w}</span>
+                ))}
+                {monthCells.map((cell, idx) =>
+                  cell ? (
+                    <button
+                      key={cell.date}
+                      type="button"
+                      className={`month-cell ${cell.isToday ? "today" : ""} ${cell.date === kDay ? "selected" : ""}`}
+                      data-testid={`knowledge-month-day-${cell.date}`}
+                      onClick={() => openDay(cell.date)}
+                    >
+                      {cell.dayNum}
+                      {cell.hasItems && <i className="month-dot" aria-label="当日有知识" />}
+                    </button>
+                  ) : (
+                    <span key={`blank-${idx}`} className="month-cell blank" aria-hidden="true" />
+                  )
+                )}
+              </div>
+              <p className="muted-line">月视图圆点 = 当日有知识入库;「今天」为 {TODAY}。</p>
+              {otherDays.length > 0 && (
+                <section className="detail-block" data-testid="knowledge-cal-other-days">
+                  <h3>本月之外有知识的日期</h3>
+                  {otherDays.map((day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      className="todo-day-link"
+                      data-testid={`knowledge-cal-other-${day}`}
+                      onClick={() => openDay(day)}
+                    >
+                      📅 {dayLabel(day)}({day}) · {knowledge.filter((item) => item.day === day).length} 条
+                    </button>
+                  ))}
+                </section>
+              )}
+            </div>
+          )}
+
+          {calView === "week" && (
+            <div className="week-view" data-testid="knowledge-cal-week-view">
+              {CALENDAR_DAYS.map((d) => {
+                const items = knowledge.filter((item) => item.day === d.day);
+                return (
                   <button
-                    key={item.id}
+                    key={d.day}
                     type="button"
-                    className="knowledge-item"
-                    data-testid={`knowledge-item-${item.id}`}
-                    onClick={() => onOpenItem(item.id)}
+                    className={`week-row ${d.day === kDay ? "active" : ""}`}
+                    data-testid={`knowledge-week-day-${d.day}`}
+                    onClick={() => openDay(d.day)}
                   >
-                    <span className={`kind-badge kind-${item.kind.toLowerCase()}`}>{item.kind}</span>
-                    <div>
-                      <strong>{item.title}</strong>
-                      <small>{item.group} · {item.updated}</small>
+                    <header><strong>{d.label}</strong><small>{d.day.slice(5)}</small></header>
+                    <div className="week-row-items">
+                      {items.length === 0 && <small className="muted-line">无知识入库</small>}
+                      {items.map((item) => (
+                        <span key={item.id} className="week-item">{item.title}</span>
+                      ))}
+                      {items.length > 0 && <span className="week-item todo">✎ 知识 {items.length} 条</span>}
                     </div>
-                    <StateChip state={item.state} />
+                  </button>
+                );
+              })}
+              <p className="muted-line">周视图点击任意一天进入对应日视图。</p>
+            </div>
+          )}
+
+          {calView === "day" && (
+            <>
+              <div className="week-strip" role="tablist" aria-label="选择知识日期" data-testid="knowledge-cal-week-strip">
+                {CALENDAR_DAYS.map((d) => (
+                  <button
+                    key={d.day}
+                    type="button"
+                    className={d.day === kDay ? "active" : ""}
+                    data-testid={`knowledge-cal-day-${d.day}`}
+                    onClick={() => setKDay(d.day)}
+                  >
+                    {d.label}
                   </button>
                 ))}
+              </div>
+              <section className="day-group" data-testid={`knowledge-day-${kDay}`}>
+                <header><strong>{dayLabel(kDay)}</strong><span>{kDay} · {dayItems.length} 条</span></header>
+                {dayItems.length === 0 && <p className="muted-line">这一天没有知识入库(真实计数,不虚构)。</p>}
+                {dayItems.map(renderItem)}
               </section>
-            );
-          })}
+            </>
+          )}
         </div>
       )}
     </Sheet>
@@ -523,13 +626,15 @@ function WorkSurface({ item, onBack }) {
 
 // Owner-directed: the calendar has three views — 日 / 周 / 月 (day / week /
 // month) — and schedule and todos share it. Selecting a day filters both;
-// todos deep-link back into the calendar day view.
-function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggleTodo, onOpenCalendarDay, onClose }) {
+// todos deep-link back into the calendar day view. R5: schedule and todo
+// items carry quick actions (complete / postpone one day) and 引用对话
+// (reference the item into the Agent conversation).
+function CapabilitySheet({ capability, todos, schedule, calendarDay, onSelectDay, onToggleTodo, onPostponeTodo, onToggleSchedule, onPostponeSchedule, onReference, onOpenCalendarDay, onClose }) {
   const isCalendar = capability.id === "calendar";
   const isTodo = capability.id === "todo";
   const isSkills = capability.id === "skills";
   const [calView, setCalView] = useState("day");
-  const daySchedule = CALENDAR_MOCK.filter((item) => item.day === calendarDay);
+  const daySchedule = schedule.filter((item) => item.day === calendarDay);
   const dayTodos = todos.filter((todo) => todo.day === calendarDay);
 
   // September 2026 month grid, Monday-first, astronomically correct weekdays.
@@ -545,11 +650,11 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
         date,
         dayNum: d,
         isToday: date === TODAY,
-        hasItems: CALENDAR_MOCK.some((item) => item.day === date) || todos.some((todo) => todo.day === date),
+        hasItems: schedule.some((item) => item.day === date) || todos.some((todo) => todo.day === date),
       });
     }
     return cells;
-  }, [todos]);
+  }, [schedule, todos]);
 
   const openDay = (date) => {
     onSelectDay(date);
@@ -564,7 +669,7 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
       </div>
       {isCalendar && (
         <div data-testid="calendar-work-surface">
-          <div className="sheet-tabs" role="tablist" aria-label="日历视图" data-testid="calendar-view-switcher">
+          <div className="sheet-tabs three" role="tablist" aria-label="日历视图" data-testid="calendar-view-switcher">
             <button type="button" className={calView === "day" ? "active" : ""} data-testid="calendar-view-day" onClick={() => setCalView("day")}>日</button>
             <button type="button" className={calView === "week" ? "active" : ""} data-testid="calendar-view-week" onClick={() => setCalView("week")}>周</button>
             <button type="button" className={calView === "month" ? "active" : ""} data-testid="calendar-view-month" onClick={() => setCalView("month")}>月</button>
@@ -601,7 +706,7 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
           {calView === "week" && (
             <div className="week-view" data-testid="calendar-week-view">
               {CALENDAR_DAYS.map((d) => {
-                const items = CALENDAR_MOCK.filter((item) => item.day === d.day);
+                const items = schedule.filter((item) => item.day === d.day);
                 const dayTodosCount = todos.filter((todo) => todo.day === d.day).length;
                 return (
                   <button
@@ -644,11 +749,38 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
               <div className="plan-list" data-testid="calendar-day-schedule">
                 {daySchedule.length === 0 && <p className="muted-line">这一天没有 Mock 日程。</p>}
                 {daySchedule.map((item) => (
-                  <article key={`${item.day}-${item.time}`} className={item.state}>
+                  <article key={item.id} className={item.state} data-testid={`schedule-item-${item.id}`}>
                     <time>{item.time}</time>
                     <i />
                     <div><strong>{item.title}</strong><small>{item.meta}</small></div>
                     <span>{item.state === "done" ? "已完成" : item.state === "active" ? "进行中" : "已准备"}</span>
+                    <div className="qa-row" aria-label="日程快速操作">
+                      <button
+                        type="button"
+                        className="qa-btn"
+                        data-testid={`schedule-toggle-${item.id}`}
+                        aria-pressed={item.state === "done"}
+                        onClick={() => onToggleSchedule(item.id)}
+                      >
+                        {item.state === "done" ? "↩ 重做" : "✓ 完成"}
+                      </button>
+                      <button
+                        type="button"
+                        className="qa-btn"
+                        data-testid={`schedule-postpone-${item.id}`}
+                        onClick={() => onPostponeSchedule(item.id)}
+                      >
+                        ⏭ 顺延一天
+                      </button>
+                      <button
+                        type="button"
+                        className="qa-btn"
+                        data-testid={`schedule-reference-${item.id}`}
+                        onClick={() => onReference({ kind: "日程", title: item.title, day: item.day, time: item.time, knowledgeRef: item.knowledgeRef || null })}
+                      >
+                        💬 引用到对话
+                      </button>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -667,6 +799,24 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
                       {todo.done ? "✓" : "○"}
                     </button>
                     <div><strong>{todo.title}</strong><small>{todo.meta}</small></div>
+                    <div className="qa-row" aria-label="待办快速操作">
+                      <button
+                        type="button"
+                        className="qa-btn"
+                        data-testid={`calendar-todo-postpone-${todo.id}`}
+                        onClick={() => onPostponeTodo(todo.id)}
+                      >
+                        ⏭ 顺延一天
+                      </button>
+                      <button
+                        type="button"
+                        className="qa-btn"
+                        data-testid={`calendar-todo-reference-${todo.id}`}
+                        onClick={() => onReference({ kind: "待办", title: todo.title, day: todo.day, time: null, knowledgeRef: todo.knowledgeRef || null })}
+                      >
+                        💬 引用到对话
+                      </button>
+                    </div>
                   </article>
                 ))}
               </section>
@@ -678,7 +828,7 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
       {isTodo && (
         <div className="todo-list" data-testid="todo-work-surface">
           {todos.map((todo) => (
-            <article key={todo.id} className={todo.done ? "done" : ""}>
+            <article key={todo.id} className={todo.done ? "done" : ""} data-testid={`todo-item-${todo.id}`}>
               <button
                 type="button"
                 className="todo-toggle"
@@ -699,10 +849,28 @@ function CapabilitySheet({ capability, todos, calendarDay, onSelectDay, onToggle
                 >
                   📅 {dayLabel(todo.day)} · 在可视化日历中查看
                 </button>
+                <div className="qa-row" aria-label="待办快速操作">
+                  <button
+                    type="button"
+                    className="qa-btn"
+                    data-testid={`todo-postpone-${todo.id}`}
+                    onClick={() => onPostponeTodo(todo.id)}
+                  >
+                    ⏭ 顺延一天
+                  </button>
+                  <button
+                    type="button"
+                    className="qa-btn"
+                    data-testid={`todo-reference-${todo.id}`}
+                    onClick={() => onReference({ kind: "待办", title: todo.title, day: todo.day, time: null, knowledgeRef: todo.knowledgeRef || null })}
+                  >
+                    💬 引用到对话
+                  </button>
+                </div>
               </div>
             </article>
           ))}
-          <p className="muted-line">Mock 待办 · NOT_CONNECTED:状态仅保存在本原型本地;日期关联展示在日历工作面。</p>
+          <p className="muted-line">Mock 待办 · NOT_CONNECTED:状态仅保存在本原型本地;日期关联展示在日历工作面。快速操作(完成/顺延)与引用对话均为原型本地状态。</p>
         </div>
       )}
       {isSkills && (
@@ -733,6 +901,7 @@ export default function App() {
   const [candidate, setCandidate] = useState(null);
   const [correcting, setCorrecting] = useState(false);
   const [todos, setTodos] = useState(TODO_MOCK);
+  const [schedule, setSchedule] = useState(CALENDAR_MOCK);
   const [journeyState, setJourneyState] = useState("FIRST_VIEW");
   const [calendarDay, setCalendarDay] = useState(TODAY);
   const [sensingOn, setSensingOn] = useState(true);
@@ -874,6 +1043,44 @@ export default function App() {
     setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)));
   }, []);
 
+  // R5 Owner-directed quick actions (prototype-local deterministic state):
+  // complete/undo for schedule items, postpone one day for schedule + todos.
+  const toggleSchedule = useCallback((id) => {
+    setSchedule((prev) => prev.map((item) =>
+      item.id === id ? { ...item, state: item.state === "done" ? "next" : "done" } : item));
+  }, []);
+
+  const postponeSchedule = useCallback((id) => {
+    setSchedule((prev) => prev.map((item) =>
+      item.id === id ? { ...item, day: nextDay(item.day) } : item));
+  }, []);
+
+  const postponeTodo = useCallback((id) => {
+    setTodos((prev) => prev.map((todo) =>
+      todo.id === id ? { ...todo, day: nextDay(todo.day) } : todo));
+  }, []);
+
+  // R5 Owner-directed: 引用对话 — reference a schedule/todo item into the
+  // Agent conversation; the sheet closes and the Agent answers with the
+  // linked knowledge context (deterministic mock).
+  const referenceToConversation = useCallback((quote) => {
+    const when = `${dayLabel(quote.day)}${quote.time ? ` ${quote.time}` : ""}`;
+    setSheet(null);
+    setDetailId(null);
+    setWorkId(null);
+    setJourneyState("AGENT_CONTEXT_RESTORED");
+    pushMessages([{
+      role: "user",
+      text: `关于这个${quote.kind},帮我看看要注意什么。`,
+      quote: { kind: quote.kind, title: quote.title, when },
+    }]);
+    setThinking(true);
+    window.setTimeout(() => {
+      pushMessages([{ role: "agent", ...referenceReply(quote, knowledge) }]);
+      setThinking(false);
+    }, 500);
+  }, [knowledge, pushMessages]);
+
   // Todo → visual calendar deep link
   const openCalendarDay = useCallback((day) => {
     setCalendarDay(day);
@@ -945,9 +1152,14 @@ export default function App() {
         <CapabilitySheet
           capability={activeCapability}
           todos={todos}
+          schedule={schedule}
           calendarDay={calendarDay}
           onSelectDay={setCalendarDay}
           onToggleTodo={toggleTodo}
+          onPostponeTodo={postponeTodo}
+          onToggleSchedule={toggleSchedule}
+          onPostponeSchedule={postponeSchedule}
+          onReference={referenceToConversation}
           onOpenCalendarDay={openCalendarDay}
           onClose={closeSheet}
         />
