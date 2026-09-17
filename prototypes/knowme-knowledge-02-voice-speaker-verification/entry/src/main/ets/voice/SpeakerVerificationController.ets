@@ -1,6 +1,7 @@
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { common } from '@kit.AbilityKit';
 import { fileIo } from '@kit.CoreFileKit';
+import { util } from '@kit.ArkTS';
 import {
   averageEmbedding,
   cosineSimilarity,
@@ -209,7 +210,10 @@ export class SpeakerVerificationController {
       const buffer = new ArrayBuffer(1024 * 1024);
       const len = fileIo.readSync(file.fd, buffer);
       fileIo.closeSync(file);
-      const text = String.fromCharCode(...new Uint8Array(buffer.slice(0, len)));
+      // D2 fix: TextDecoder instead of String.fromCharCode(...) spread, which
+      // can throw RangeError on large payloads (restart/re-entry journey).
+      const decoder = util.TextDecoder.create('utf-8');
+      const text = decoder.decodeToString(new Uint8Array(buffer.slice(0, len)));
       this.profile = JSON.parse(text) as EnrollmentProfile;
     } catch (e) {
       hilog.warn(DOMAIN, TAG, `profile load warn: ${JSON.stringify(e)}`);

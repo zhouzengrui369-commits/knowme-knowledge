@@ -78,7 +78,9 @@ export class VoiceSessionController {
       this.stt.pushFrame(frame);
     };
     this.capture.onError = (message) => {
-      this.sttEngineNote = message;
+      // D3 fix: keep error attribution honest — a microphone failure must not
+      // be displayed as an STT/engine problem.
+      this.sttEngineNote = `麦克风:${message}`;
     };
   }
 
@@ -114,6 +116,11 @@ export class VoiceSessionController {
 
   /** Start capture. Returns false (with honest state) when it cannot. */
   async startSession(purpose: SessionPurpose): Promise<boolean> {
+    // D4 fix: no re-entry while a session is live — a second start would
+    // silently reset buffers of the in-flight recording.
+    if (this.micState === MicState.RECORDING) {
+      return false;
+    }
     this.purpose = purpose;
     if (!this.permission.isGranted()) {
       this.micState = MicState.PERMISSION_REQUIRED;
@@ -139,7 +146,12 @@ export class VoiceSessionController {
       return false;
     }
     if (sttReady) {
-      this.stt.beginSession();
+      // D5 fix: surface a beginSession failure honestly instead of recording
+      // on with no transcript while the note still claims the engine is ready.
+      const begun = this.stt.beginSession();
+      if (!begun) {
+        this.sttEngineNote = 'STT 会话启动失败(本地引擎拒绝开始,无云端回退)';
+      }
     }
     this.micState = MicState.RECORDING;
     this.recordingStartedAt = Date.now();

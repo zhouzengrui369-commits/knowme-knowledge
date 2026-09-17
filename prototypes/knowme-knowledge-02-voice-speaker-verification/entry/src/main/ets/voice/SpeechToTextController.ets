@@ -43,6 +43,11 @@ export class SpeechToTextController {
 
   /** Create the offline engine; false ⇒ treat as NOT_AVAILABLE. */
   async init(): Promise<boolean> {
+    // D1 fix: reuse a living engine — repeated createEngine without shutdown
+    // exhausts native recognizer resources across repeated captures.
+    if (this.engine) {
+      return true;
+    }
     if (!SpeechToTextController.capabilityAvailable()) {
       return false;
     }
