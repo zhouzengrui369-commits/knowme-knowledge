@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-09-17T08:41:02.653876+00:00",
+  "pr": {
+    "number": 15,
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "head": "f89fe6695ebdbfa69e6b569447247120fab0c360"
+  },
+  "branch_head": "f89fe6695ebdbfa69e6b569447247120fab0c360",
+  "candidate_sha": "f89fe6695ebdbfa69e6b569447247120fab0c360",
+  "tree": "3b1d2a678d945d886df9185459fca6a76f332bf6",
+  "parent": "0e859d93960e630965a5b71a3ff4c07e631d8570",
+  "artifact_evidence_commit": "54a1124138ce442cf57568f9934a0d183f4a4145",
+  "artifact_bytes": 202847,
+  "artifact_sha256": "fff5fe152c204471263a97d9753a09317dea2d08e4aec585ab25dff5b5eaf539",
+  "artifact_git_blob": "44a53ab0c36787e3ece9f93adccee7db0229b8da",
+  "os": "macOS 26.2 (25C56) arm64",
+  "skill_commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
+  "skill_tree": "eaa62967737b17cc8ad07e46e297e0a52b2c3092"
+}

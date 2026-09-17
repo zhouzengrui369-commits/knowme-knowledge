@@ -1,0 +1,212 @@
+[
+  {
+    "name": "01-first-encounter",
+    "time": "2026-09-17T08:33:55.481Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "02-knowledge-on",
+    "time": "2026-09-17T08:34:05.072Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t17 text 09:18 模拟感知:环境安静,无语音片段 模拟感知 · 无真实 ASR\n~\t\t\t34 text 09:18 模拟感知:环境安静,无语音片段\nThe focused UI element is 23 button 知识"
+  },
+  {
+    "name": "03-knowledge-paused",
+    "time": "2026-09-17T08:34:05.678Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 恢复后台语音感知"
+  },
+  {
+    "name": "04-knowledge-resumed",
+    "time": "2026-09-17T08:34:15.790Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 暂停后台语音感知"
+  },
+  {
+    "name": "05-detail-on",
+    "time": "2026-09-17T08:34:23.083Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "06-detail-paused",
+    "time": "2026-09-17T08:34:34.568Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 恢复后台语音感知"
+  },
+  {
+    "name": "07-detail-resumed",
+    "time": "2026-09-17T08:34:47.209Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 暂停后台语音感知"
+  },
+  {
+    "name": "08-work-on",
+    "time": "2026-09-17T08:34:58.363Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t17 text 09:14 模拟感知:检测到一段语音(演示),未写入知识 模拟感知 · 无真实 ASR\n~\t\t\t34 text 09:14 模拟感知:检测到一段语音(演示),未写入知识\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "09-work-paused",
+    "time": "2026-09-17T08:34:58.909Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 恢复后台语音感知"
+  },
+  {
+    "name": "10-work-resumed",
+    "time": "2026-09-17T08:34:59.625Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 暂停后台语音感知"
+  },
+  {
+    "name": "11-knowledge-path-one-click-return",
+    "time": "2026-09-17T08:35:00.326Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "12-calendar-on",
+    "time": "2026-09-17T08:35:10.042Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 24 button 日历"
+  },
+  {
+    "name": "13-calendar-paused",
+    "time": "2026-09-17T08:35:10.741Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 恢复后台语音感知"
+  },
+  {
+    "name": "14-calendar-resumed",
+    "time": "2026-09-17T08:35:11.541Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 暂停后台语音感知"
+  },
+  {
+    "name": "15-todo-on",
+    "time": "2026-09-17T08:35:25.093Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 25 button 待办"
+  },
+  {
+    "name": "16-todo-paused",
+    "time": "2026-09-17T08:35:25.813Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 恢复后台语音感知"
+  },
+  {
+    "name": "17-todo-resumed",
+    "time": "2026-09-17T08:35:26.530Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 7 button 暂停后台语音感知"
+  },
+  {
+    "name": "18-todo-complete",
+    "time": "2026-09-17T08:35:36.923Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 11 checkbox ✓, Value: 1"
+  },
+  {
+    "name": "19-todo-calendar-link",
+    "time": "2026-09-17T08:35:37.541Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "20-calendar-week",
+    "time": "2026-09-17T08:35:38.348Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 13 button 周"
+  },
+  {
+    "name": "21-calendar-month",
+    "time": "2026-09-17T08:35:50.029Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t8 text 09:12 模拟感知:环境安静,无语音片段 NOT_CONNECTED\nThe focused UI element is 13 button 月"
+  },
+  {
+    "name": "22-calendar-selected-day",
+    "time": "2026-09-17T08:35:56.716Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "23-calendar-completed",
+    "time": "2026-09-17T08:36:07.520Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 66 checkbox ↩ 重做, Value: 1"
+  },
+  {
+    "name": "24-mint-candidate",
+    "time": "2026-09-17T08:36:18.046Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t8 text 09:18 模拟感知:环境安静,无语音片段\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "25-correction-still-candidate",
+    "time": "2026-09-17T08:36:39.335Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "26-explicit-confirm-ingested",
+    "time": "2026-09-17T08:36:40.052Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "27-mint-natural-query",
+    "time": "2026-09-17T08:36:48.935Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThe following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.\n~\t\t\t34 text 灵犀 · 确定性 Mock 回答  · 引用 1 条知识\n~\t\t\t35 text 阳台薄荷养护\n+\t\t\t36 button 打开「阳台薄荷养护」工作面 →\n~\t\t24 text field (settable) 向灵犀提问\n~\t\t25 button 发送\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "28-mint-answer",
+    "time": "2026-09-17T08:37:00.848Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "29-agent-next-action-work",
+    "time": "2026-09-17T08:37:16.799Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 36 button 打开「阳台薄荷养护」工作面 →"
+  },
+  {
+    "name": "30-agent-work-surface",
+    "time": "2026-09-17T08:37:31.869Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "31-agent-path-one-click-return",
+    "time": "2026-09-17T08:37:32.694Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "32-pottery-candidate",
+    "time": "2026-09-17T08:37:47.071Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "33-pottery-answer",
+    "time": "2026-09-17T08:38:09.662Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "34-knowledge-zero-state",
+    "time": "2026-09-17T08:38:20.658Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 20 button (expanded) ◆ 生活感悟 我如何感受 0, Secondary Actions: Collapse"
+  },
+  {
+    "name": "35-nine-dimension-expanded",
+    "time": "2026-09-17T08:38:21.305Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 75 button (expanded) 09 动态与情景 3, Secondary Actions: Collapse"
+  },
+  {
+    "name": "36-nine-dimension-new-items",
+    "time": "2026-09-17T08:38:38.689Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 75 button (expanded) 09 动态与情景 3, Secondary Actions: Collapse"
+  },
+  {
+    "name": "37-paused-sync-detail",
+    "time": "2026-09-17T08:38:39.773Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "38-paused-sync-work",
+    "time": "2026-09-17T08:38:40.240Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "39-knowledge-return-context-paused",
+    "time": "2026-09-17T08:38:58.845Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  },
+  {
+    "name": "40-paused-sync-calendar",
+    "time": "2026-09-17T08:38:59.368Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 51 button 日历"
+  },
+  {
+    "name": "41-paused-sync-todo",
+    "time": "2026-09-17T08:39:00.573Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 52 button 待办"
+  },
+  {
+    "name": "42-resumed-agent-context",
+    "time": "2026-09-17T08:39:01.876Z",
+    "state": "Browser tab: 1, Title: \"KnowME Knowledge · 0.1 Prototype\", URL: \"http://127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html\".\nThere has been no change in the accessibility tree.\nThe focused UI element is 0 AXWebArea KnowME Knowledge · 0.1 Prototype, URL: 127.0.0.1:48765/KnowME-Knowledge-01-Prototype.html"
+  }
+]
