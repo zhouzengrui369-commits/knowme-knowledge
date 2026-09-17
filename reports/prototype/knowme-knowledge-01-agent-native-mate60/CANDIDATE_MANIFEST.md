@@ -1,15 +1,15 @@
-# Candidate Manifest — GOAL-KK-01 (PX Findings Correction R1, final exact successor candidate)
+# Candidate Manifest — GOAL-KK-01 (PX02 Disclosure Correction R1, exact successor candidate)
 
 ```yaml
 protocol_version: DELIVERY-LIFECYCLE-1.0
 artifact: CANDIDATE_MANIFEST
 actor_role: ENGINEERING_DELIVERY
-actor_context_id: ED-KK-GOAL01-PX-FINDINGS-CORRECTION-R1-20260916-2100-4F8C
+actor_context_id: ED-KK-GOAL01-PX02-DISCLOSURE-CORRECTION-R1-20260917-0925-D7A2
 
 evidence_channel_role: NON_CANDIDATE_EVIDENCE
 evidence_branch: evidence/goal-kk-01-non-candidate-r2
 evidence_commit_is_candidate: NO
-move_pr12_head: NO
+move_pr15_head: NO
 
 goal_id: GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE
 milestone_id: MILESTONE-GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE
@@ -21,42 +21,33 @@ product_contract_blob: 05bc2ca7cce5e8645301994b348f702f2286d3f3
 product_contract_path: governance/milestones/GOAL-KK-01-AGENT-NATIVE-MATE60-PROTOTYPE/CONTRACT-R2.md
 approved_change_requests:
   - CR-KK-01-OWNER-DIRECTED-R2-R3
-new_change_request_required: NO   # PG adjudicated, Issue #3 comment 5698309228
-correction_authority: Issue #3 comment 5698309228 (ENGINEERING_CORRECTION_AUTHORIZED)
+new_change_request_required: NO   # PG adjudicated, Issue #3 comment 5706266611
+correction_authority: Issue #3 comment 5706266611 (ENGINEERING_CORRECTION_AUTHORIZED, scope frozen to KK-PX-R5-02 residual + regression protection)
+failed_px_ref: Issue #3 comment 5700717563 / PR #14 (PX1 candidate 0e859d9 judged PRODUCT_EXPERIENCE FAIL)
 exploratory_findings_source: PR #11 @ e095af1fa6bfc988360c252bd16e6dbdef2262ee (evidence only)
 
-candidate_sha: 0e859d93960e630965a5b71a3ff4c07e631d8570
-candidate_tree: f93f4cfa9c539c22873e228df2738a21cb2bd1b9
-candidate_parent: 40063afd16a36674e8660f6b4a05315d51f4e546   # exact preimage, forward-only
-engineering_branch: engineering/goal-kk-01-px-findings-correction-r1
-engineering_pr: "#12 (Draft, OPEN, UNMERGED)"
+candidate_sha: f89fe6695ebdbfa69e6b569447247120fab0c360
+candidate_tree: 3b1d2a678d945d886df9185459fca6a76f332bf6
+candidate_parent: 0e859d93960e630965a5b71a3ff4c07e631d8570   # exact preimage, forward-only
+engineering_branch: engineering/goal-kk-01-px02-disclosure-correction-r1
+engineering_pr: "#15 (Draft, OPEN, UNMERGED)"
 branch_head_match: YES
 pr_head_match: YES
 candidate_composition: CODE_AND_TESTS_ONLY
-previous_candidate: 40063afd16a36674e8660f6b4a05315d51f4e546  # PR #9, historical, unmoved
+previous_candidate: 0e859d93960e630965a5b71a3ff4c07e631d8570  # PR #12, failed-PX history, unmoved
 lifecycle_inheritance: NONE (prior ENGINEERING_READY / CANDIDATE_ADMITTED / PRODUCT_REVIEW_ELIGIBLE do not transfer)
 
 implemented_scope:
-  - KK-PX-R5-01 (P1) knowledge semantic consistency:
-      Agent replies render only matched items' own title/summary/conclusion;
-      honest note when no deterministic conclusion exists; unknown topics get an
-      honest gap with zero unrelated references; work surfaces render the
-      item's own content; conflict counts no longer fabricated.
-  - KK-PX-R5-02 (P1) continuous sensing visible under overlays:
-      in-sheet sensing bar (status + 模拟·无真实 ASR disclosure + 暂停/恢复,
-      synced with global strip) in Knowledge / Knowledge Detail / Work Surface /
-      Calendar / Todo; verified SENSING=ON and PAUSED at 360x780.
-  - KK-PX-R5-03 (P2) correction/confirmation semantics — model A:
-      保存修正 updates the candidate draft and returns to the candidate card
-      (predictability hint shown); ingestion only via explicit 确认入库;
-      confirmed items drop the 待确认 tag — one trustworthy state.
-  - KK-PX-R5-04 (P2) return-target consistency — option A:
-      「返回 Agent 对话」 returns DIRECTLY to the Agent conversation from both
-      entry paths (knowledge navigation; Agent next action); conversation and
-      knowledge context preserved.
-  - P3 (local, low-risk, within authorization):
-      postponed schedule stays time-ordered (day + week views);
-      reference reply no longer duplicates the date label.
+  - KK-PX-R5-02 residual (the ONLY PX1 blocking residual per failed-PX adjudication):
+      in-sheet sensing bar restructured into two rows — row 1 carries the signal,
+      state text (后台持续感知中 / 感知已暂停), a dedicated non-truncated disclosure
+      chip 「模拟 · 无真实 ASR」 (data-testid="sheet-sensing-disclosure",
+      flex-shrink: 0), and the 暂停/恢复 toggle; row 2 carries the dynamic sensing
+      line (ellipsis allowed). The disclosure is now fully readable at 360x780
+      on all five sheet surfaces, in both SENSING=ON and PAUSED states.
+  - Regression protection only: no other product behavior was changed;
+    KK-PX-R5-01 / R5-03 / R5-04 and the two P3 fixes remain exactly as in
+    candidate 0e859d9 and are covered by the unchanged assertion set.
 
 regression_protected:
   - 灵犀 Agent-first identity; capture confirm/correct/reject journey
@@ -64,26 +55,32 @@ regression_protected:
   - knowledge calendar 日/周/月; Calendar 日/周/月; Todo → Calendar day deep link
   - schedule/todo quick actions (完成/顺延) + 引用对话
   - honest NOT_CONNECTED / PROTOTYPE_ONLY / PLANNED states
+  - KK-PX-R5-01 semantic consistency; R5-03 correction model A; R5-04 return-target option A
   - 360x780 portrait usability; no real AI/RAG/ASR/backend claims
 
 verification:
-  browser_assertion_suite: 115 assertions (80 -> 115, +35 PX acceptance/regression)
-  local_executor_run: 115/115 — fresh clone at exact SHA, port 5174, console/page errors empty, post-run git status clean
-  ed_personal_run: 115/115 — post-commit HEAD re-verified, port 5173, console/page errors empty, screenshots visually reviewed
-  file_protocol_run: 115/115 — self-contained HTML via file:// URL
+  browser_assertion_suite: 125 assertions (115 -> 125, +10 PX02 disclosure-full assertions:
+      PX02_DISCLOSURE_FULL_<ON|PAUSED>_<surface> × 5 surfaces × 2 states, each asserting
+      scrollWidth <= clientWidth + 1 AND full disclosure text present)
+  local_executor_run: 125/125 — exact-SHA materialization, port 5174, console/page errors empty
+  ed_personal_run: 125/125 — post-commit HEAD re-verified, port 5173, console/page errors empty, screenshots visually reviewed
+  file_protocol_run: 125/125 — self-contained HTML via file:// URL
   no_parent_commit_evidence_transfer: YES
 
 self_contained_html:
   path: deliverable/KnowME-Knowledge-01-Prototype.html
-  sha256: 9db96a26a6821c134d2ca543ebd5016f0654ac60bc6eb48976ceb4e3cd6a2a02
-  source_candidate_sha: 0e859d93960e630965a5b71a3ff4c07e631d8570
-  file_protocol_assertions: deliverable/file-protocol-assertions.json (115/115)
+  sha256: fff5fe152c204471263a97d9753a09317dea2d08e4aec585ab25dff5b5eaf539
+  source_candidate_sha: f89fe6695ebdbfa69e6b569447247120fab0c360
+  file_protocol_assertions: deliverable/file-protocol-assertions.json (125/125)
 
 defects:
   round_defects_fixed:
-    - KK-PX-R5-01, KK-PX-R5-02, KK-PX-R5-03, KK-PX-R5-04 (acceptance PASS)
-    - P3 postponed-schedule ordering; P3 reference-reply date duplication
-  new_defects_found_this_round: none (115/115 first full loop on final SHA ×2 operators; smoke screenshot review clean)
+    - KK-PX-R5-02 residual: disclosure chip truncated on ON-state sheets
+      (reviewer-measured clientWidth=254 / scrollWidth=404) — now a dedicated
+      non-truncated chip, verified fully visible in both sensing states.
+  regression_status:
+    - KK-PX-R5-01 / R5-03 / R5-04: CLOSED, regression-protected (unchanged assertions all PASS)
+  new_defects_found_this_round: none (125/125 first full loop on final SHA ×2 operators; smoke screenshot review clean)
 
 known_limitations: all within Contract R2 allowed_known_limitations
   (BROWSER_PROTOTYPE_ONLY, DETERMINISTIC_MOCK_RUNTIME, NO_REAL_MODEL/HARNESS/PROVIDER,
@@ -108,5 +105,5 @@ forbidden_claims:
   - RELEASE
   - GOAL_MILESTONE_CLOSED
 
-issued_at: "2026-09-16T22:45:00Z"
+issued_at: "2026-09-17T10:05:00Z"
 ```

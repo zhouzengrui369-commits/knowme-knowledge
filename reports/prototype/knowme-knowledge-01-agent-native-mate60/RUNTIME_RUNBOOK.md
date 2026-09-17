@@ -1,16 +1,16 @@
-# Runtime Runbook — GOAL-KK-01 PX Findings Correction R1 candidate
+# Runtime Runbook — GOAL-KK-01 PX02 Disclosure Correction R1 candidate
 
 ```text
-CANDIDATE_SHA=0e859d93960e630965a5b71a3ff4c07e631d8570
-ENGINEERING_BRANCH=engineering/goal-kk-01-px-findings-correction-r1
+CANDIDATE_SHA=f89fe6695ebdbfa69e6b569447247120fab0c360
+ENGINEERING_BRANCH=engineering/goal-kk-01-px02-disclosure-correction-r1
 ```
 
 ## Materialize and run
 
 ```bash
-git clone --branch engineering/goal-kk-01-px-findings-correction-r1 --single-branch \
+git clone --branch engineering/goal-kk-01-px02-disclosure-correction-r1 --single-branch \
   https://github.com/zhouzengrui369-commits/knowme-knowledge.git <dir>
-cd <dir> && git rev-parse HEAD        # must equal 0e859d93960e630965a5b71a3ff4c07e631d8570
+cd <dir> && git rev-parse HEAD        # must equal f89fe6695ebdbfa69e6b569447247120fab0c360
 cd prototypes/knowme-knowledge-01-agent-native-mate60
 npm ci
 npm run build                          # vite build, ~0.5–1s
@@ -26,10 +26,10 @@ vite child.
 ```bash
 python3 tests/browser_assertions.py \
   --url http://127.0.0.1:5173 \
-  --out <receipt.json> [--shots <screenshot_dir> --prefix PX1-ED]
+  --out <receipt.json> [--shots <screenshot_dir> --prefix PX2-ED]
 ```
 
-Expected: 115/115 assertions pass, empty console/page error arrays, exit
+Expected: 125/125 assertions pass, empty console/page error arrays, exit
 code 0. Viewport 360x780, recorded as MATE60_CLASS_SIMULATION.
 
 ## Self-contained review artifact
@@ -40,7 +40,7 @@ code 0. Viewport 360x780, recorded as MATE60_CLASS_SIMULATION.
 ```bash
 python3 tests/browser_assertions.py --url "file://<absolute path>/KnowME-Knowledge-01-Prototype.html" --out <receipt.json>
 shasum -a 256 KnowME-Knowledge-01-Prototype.html
-# expect 9db96a26a6821c134d2ca543ebd5016f0654ac60bc6eb48976ceb4e3cd6a2a02
+# expect fff5fe152c204471263a97d9753a09317dea2d08e4aec585ab25dff5b5eaf539
 ```
 
 ## PX acceptance smoke path (manual)
@@ -49,8 +49,9 @@ shasum -a 256 KnowME-Knowledge-01-Prototype.html
    ask each by exact title and natural wording → answers bind to own item,
    honest no-conclusion note, no AOG/ABC leakage (KK-PX-R5-01).
 2. Open Knowledge / detail / work surface / Calendar / Todo → in-sheet
-   sensing bar visible with 模拟·无真实 ASR; 暂停/恢复 works and syncs with
-   the global strip (KK-PX-R5-02).
+   two-row sensing bar: dedicated 「模拟 · 无真实 ASR」 disclosure chip fully
+   readable (untruncated) in both ON and PAUSED states; 暂停/恢复 works and
+   syncs with the global strip (KK-PX-R5-02 residual fixed in PX2).
 3. Capture → 修正 → 保存修正 → returns to candidate card (count unchanged)
    → 确认入库 → ingests; confirmed item shows 已确认, never 待确认; reject
    does not grow knowledge (KK-PX-R5-03).

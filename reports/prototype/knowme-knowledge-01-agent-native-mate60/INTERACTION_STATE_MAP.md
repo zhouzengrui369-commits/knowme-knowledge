@@ -1,7 +1,7 @@
-# Interaction State Map — GOAL-KK-01 PX Findings Correction R1
+# Interaction State Map — GOAL-KK-01 PX02 Disclosure Correction R1
 
-Contract §28 transition coverage plus R2/R3/R4/R5 additions, updated for the
-PX correction. Machine-verified by tests/browser_assertions.py (115/115).
+Contract §28 transition coverage plus R2/R3/R4/R5/PX1 additions, updated for the
+PX02 disclosure correction. Machine-verified by tests/browser_assertions.py (125/125).
 
 ```text
 FIRST_VIEW → ASK_AGENT                                   ASK_AGENT_WORKS, STATE_ASK_AGENT
@@ -16,10 +16,12 @@ AGENT_CONTEXT → CAPABILITY_WORK                          CAPABILITY_OPENS_CONT
 CAPABILITY_WORK → AGENT_CONTEXT_RESTORED                 STATE_CONTEXT_RESTORED
 KNOWLEDGE_WORK → AGENT_CONTEXT_RESTORED (direct)         WORK_BACK_LABEL_MATCHES_TARGET_NAV_PATH,
                                                          PX04_AGENT_PATH_BACK_MATCHES_LABEL  ← PX1 option A
-SENSING=ON/PAUSED × all sheets                           PX02_* (15 assertions)               ← PX1
+SENSING=ON/PAUSED × all sheets                           PX02_* (15 sensing assertions, PX1)
+Sensing disclosure chip fully readable × 5 surfaces × 2 states
+                                                         PX02_DISCLOSURE_FULL_* (10 assertions)  ← PX2
 ```
 
-## PX1 semantic changes
+## PX1 semantic changes (unchanged in PX2, regression-protected)
 
 - `保存修正` no longer transitions CANDIDATE_KNOWLEDGE → CONFIRMED. It stays
   in CANDIDATE_KNOWLEDGE with updated draft content; only the explicit
@@ -32,3 +34,13 @@ SENSING=ON/PAUSED × all sheets                           PX02_* (15 assertions)
   control; the global strip remains the same underlying state (KK-PX-R5-02).
 - Agent replies and work surfaces are functions of the selected/matched item's
   own recorded content; no cross-topic template state exists (KK-PX-R5-01).
+
+## PX02 semantic changes (this correction)
+
+- The in-sheet sensing bar is now two rows: row 1 carries the signal, state
+  text, the dedicated disclosure chip 「模拟 · 无真实 ASR」
+  (data-testid="sheet-sensing-disclosure", never truncated), and the
+  暂停/恢复 toggle; row 2 carries the dynamic sensing line (ellipsis allowed).
+  The disclosure is fully readable at 360x780 on all five sheet surfaces in
+  both SENSING=ON and PAUSED states — fixing the sole PX1 blocking residual
+  (KK-PX-R5-02).

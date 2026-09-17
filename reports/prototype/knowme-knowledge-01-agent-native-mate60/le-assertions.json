@@ -461,12 +461,22 @@
     {
       "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE",
       "pass": true,
-      "detail": "sensing status + disclosure visible inside KNOWLEDGE"
+      "detail": "sensing status visible inside KNOWLEDGE"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_ON_KNOWLEDGE",
+      "pass": true,
+      "detail": "ON-state disclosure fully readable inside KNOWLEDGE (no truncation)"
     },
     {
       "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE",
       "pass": true,
       "detail": "pause reachable inside KNOWLEDGE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_PAUSED_KNOWLEDGE",
+      "pass": true,
+      "detail": "PAUSED-state disclosure fully readable inside KNOWLEDGE (no truncation)"
     },
     {
       "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE",
@@ -476,12 +486,22 @@
     {
       "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE_DETAIL",
       "pass": true,
-      "detail": "sensing status + disclosure visible inside KNOWLEDGE_DETAIL"
+      "detail": "sensing status visible inside KNOWLEDGE_DETAIL"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_ON_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "ON-state disclosure fully readable inside KNOWLEDGE_DETAIL (no truncation)"
     },
     {
       "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE_DETAIL",
       "pass": true,
       "detail": "pause reachable inside KNOWLEDGE_DETAIL; global strip in sync"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_PAUSED_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "PAUSED-state disclosure fully readable inside KNOWLEDGE_DETAIL (no truncation)"
     },
     {
       "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE_DETAIL",
@@ -491,12 +511,22 @@
     {
       "assertion": "PX02_SENSING_VISIBLE_WORK_SURFACE",
       "pass": true,
-      "detail": "sensing status + disclosure visible inside WORK_SURFACE"
+      "detail": "sensing status visible inside WORK_SURFACE"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_ON_WORK_SURFACE",
+      "pass": true,
+      "detail": "ON-state disclosure fully readable inside WORK_SURFACE (no truncation)"
     },
     {
       "assertion": "PX02_PAUSE_REACHABLE_WORK_SURFACE",
       "pass": true,
       "detail": "pause reachable inside WORK_SURFACE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_PAUSED_WORK_SURFACE",
+      "pass": true,
+      "detail": "PAUSED-state disclosure fully readable inside WORK_SURFACE (no truncation)"
     },
     {
       "assertion": "PX02_RESUME_REACHABLE_WORK_SURFACE",
@@ -506,12 +536,22 @@
     {
       "assertion": "PX02_SENSING_VISIBLE_CALENDAR",
       "pass": true,
-      "detail": "sensing status + disclosure visible inside CALENDAR"
+      "detail": "sensing status visible inside CALENDAR"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_ON_CALENDAR",
+      "pass": true,
+      "detail": "ON-state disclosure fully readable inside CALENDAR (no truncation)"
     },
     {
       "assertion": "PX02_PAUSE_REACHABLE_CALENDAR",
       "pass": true,
       "detail": "pause reachable inside CALENDAR; global strip in sync"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_PAUSED_CALENDAR",
+      "pass": true,
+      "detail": "PAUSED-state disclosure fully readable inside CALENDAR (no truncation)"
     },
     {
       "assertion": "PX02_RESUME_REACHABLE_CALENDAR",
@@ -521,12 +561,22 @@
     {
       "assertion": "PX02_SENSING_VISIBLE_TODO",
       "pass": true,
-      "detail": "sensing status + disclosure visible inside TODO"
+      "detail": "sensing status visible inside TODO"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_ON_TODO",
+      "pass": true,
+      "detail": "ON-state disclosure fully readable inside TODO (no truncation)"
     },
     {
       "assertion": "PX02_PAUSE_REACHABLE_TODO",
       "pass": true,
       "detail": "pause reachable inside TODO; global strip in sync"
+    },
+    {
+      "assertion": "PX02_DISCLOSURE_FULL_PAUSED_TODO",
+      "pass": true,
+      "detail": "PAUSED-state disclosure fully readable inside TODO (no truncation)"
     },
     {
       "assertion": "PX02_RESUME_REACHABLE_TODO",
@@ -586,7 +636,7 @@
   ],
   "console_errors": [],
   "page_errors": [],
-  "passed": 115,
+  "passed": 125,
   "failed": 0,
-  "issued_at": "2026-09-16T14:08:46.548859+00:00"
+  "issued_at": "2026-09-17T01:17:38.973805+00:00"
 }

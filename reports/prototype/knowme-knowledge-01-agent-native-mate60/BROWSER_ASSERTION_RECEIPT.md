@@ -1,17 +1,40 @@
-# Browser Assertion Receipt — GOAL-KK-01 PX Findings Correction R1
+# Browser Assertion Receipt — GOAL-KK-01 PX02 Disclosure Correction R1
 
 ```text
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
-CANDIDATE_SHA=0e859d93960e630965a5b71a3ff4c07e631d8570
+CANDIDATE_SHA=f89fe6695ebdbfa69e6b569447247120fab0c360
 VIEWPORT=360x780 MATE60_CLASS_SIMULATION
-SUITE_GROWTH=41 (R1) -> 57 (R2) -> 67 (R3) -> 68 (R4) -> 80 (R5) -> 115 (PX1)
-LOCAL_EXECUTOR=115/115 (le-assertions.json, sha256 df5c4151fedfb1c898d00b4bbaf9130ff61ae2ebfea8eb8870a5932d81b384c5)
-ED_PERSONAL=115/115 (ed-browser-assertions.json, sha256 49af4cfea4652bc4de86de2ed0eab723372a7790f1bb21ab29fbced47ca89000)
-FILE_PROTOCOL_HTML=115/115 (deliverable/file-protocol-assertions.json, sha256 91fe0d8fa3dffa5e98a90ca50e20fb0daa8b323461166d8e4960c5ddba0a4260)
+SUITE_GROWTH=41 (R1) -> 57 (R2) -> 67 (R3) -> 68 (R4) -> 80 (R5) -> 115 (PX1) -> 125 (PX2)
+LOCAL_EXECUTOR=125/125 (le-assertions.json, sha256 933f02945d8e7e1f8a1c0e81cfc2b88f97ca0862200585bbe5e164f2c7fc9f9b)
+ED_PERSONAL=125/125 (ed-browser-assertions.json, sha256 cf68a656c675c80219c404b1e65ea4120923a8821fbfc439325a758da4e58737)
+FILE_PROTOCOL_HTML=125/125 (deliverable/file-protocol-assertions.json, sha256 51d53d3ae414cfcdd8d9bb32bc5702e231957665347944608d10d80e8839b4f0)
 CONSOLE_ERRORS=[] PAGE_ERRORS=[] (all three runs)
 ```
 
-## Assertions added/changed for the PX correction (+35)
+## Assertions added/changed for PX02 (+10)
+
+KK-PX-R5-02 residual — disclosure chip fully readable (5 surfaces × 2 states):
+
+```text
+PX02_DISCLOSURE_FULL_ON_{KNOWLEDGE,KNOWLEDGE_DETAIL,WORK_SURFACE,CALENDAR,TODO}
+PX02_DISCLOSURE_FULL_PAUSED_{KNOWLEDGE,KNOWLEDGE_DETAIL,WORK_SURFACE,CALENDAR,TODO}
+   ← each asserts on data-testid="sheet-sensing-disclosure":
+     scrollWidth <= clientWidth + 1 (no truncation) AND the complete
+     「模拟 · 无真实 ASR」 text is present
+```
+
+Changed semantics of pre-existing PX02 assertions:
+
+```text
+PX02_SENSING_VISIBLE_{…}   ← no longer requires the disclosure text inside the
+                             dynamic sensing line; the disclosure moved to the
+                             dedicated chip and is checked by DISCLOSURE_FULL_*
+```
+
+Per-state screenshots PX02-<surface>-ON / -PAUSED are captured by both operators
+(see SCREENSHOT_INDEX.md).
+
+## PX1 assertions (added in PX1, +35 — unchanged and passing)
 
 KK-PX-R5-01 knowledge semantic consistency:
 

@@ -1,18 +1,12 @@
-# Self-contained deliverable — KnowME-Knowledge-01-Prototype.html
+# Deliverable — GOAL-KK-01 PX02 Disclosure Correction R1
 
-Built from engineering successor candidate
-`0e859d93960e630965a5b71a3ff4c07e631d8570` (PX Findings Correction R1,
-PR #12) — `npm run build`, then JS/CSS inlined into a single HTML; no
-external asset references (verified by build assertion and by the assertion
-suite).
+`KnowME-Knowledge-01-Prototype.html` — self-contained single-file build of
+candidate `f89fe6695ebdbfa69e6b569447247120fab0c360` (PX02 Disclosure
+Correction R1). Opens directly via `file://` with no server.
 
 ```text
-HTML_SHA256=9db96a26a6821c134d2ca543ebd5016f0654ac60bc6eb48976ceb4e3cd6a2a02
-SOURCE_CANDIDATE_SHA=0e859d93960e630965a5b71a3ff4c07e631d8570
-SOURCE_CANDIDATE_TREE=f93f4cfa9c539c22873e228df2738a21cb2bd1b9
+sha256=fff5fe152c204471263a97d9753a09317dea2d08e4aec585ab25dff5b5eaf539
+file-protocol-assertions.json: 125/125 via file:// URL (sha256 51d53d3ae414cfcdd8d9bb32bc5702e231957665347944608d10d80e8839b4f0)
 ```
 
-- Opens directly via `file://` (no dev server required).
-- `file-protocol-assertions.json`: full 115/115 Playwright assertion run
-  against the `file://` URL of this exact file (2026-09-16), including all
-  KK-PX-R5-01..04 acceptance checks; console/page errors empty.
+All content is deterministic prototype mock data (see ../MOCK_DATA_DISCLOSURE.md).

@@ -1,41 +1,49 @@
-# Local Execution Receipt — GOAL-KK-01 PX Findings Correction R1
+# Local Execution Receipt — GOAL-KK-01 PX02 Disclosure Correction R1
 
 ```text
 EVIDENCE_CHANNEL_ROLE=NON_CANDIDATE_EVIDENCE
 ROLE=LOCAL_EXECUTOR (independent observation only)
-CONTEXT_ID=LE-KK-GOAL01-PX1-0E859D9-FINAL-20260916-2230-B71C
+CONTEXT_ID=LE-KK-GOAL01-PX2-F89FE66-FINAL-20260917-0930-E4A1
 ```
 
 ## Materialization identity (verified before any run)
 
 ```text
-CLONE_DIR=/tmp/le-px1-materialization (fresh clone, --filter=blob:none due to flaky network)
-HEAD=0e859d93960e630965a5b71a3ff4c07e631d8570        == CANDIDATE_SHA ✓
-TREE=f93f4cfa9c539c22873e228df2738a21cb2bd1b9        == CANDIDATE_TREE ✓
-PARENT=40063afd16a36674e8660f6b4a05315d51f4e546      == exact preimage ✓
-POST_RUN_GIT_STATUS=CLEAN
+MATERIALIZATION=GITHUB_TARBALL_AT_EXACT_SHA
+  (git clone over https failed twice with "Empty reply from server" — flaky network;
+   fallback: gh api repos/<owner>/<repo>/tarball/f89fe6695ebdbfa69e6b569447247120fab0c360
+   extracted to /tmp/le-px2-materialization)
+EXACT_SHA_FETCHED=f89fe6695ebdbfa69e6b569447247120fab0c360   == CANDIDATE_SHA ✓ (identity guaranteed by exact-SHA tarball)
+GIT_METADATA=NONE (tarball extraction has no .git; HEAD/tree rev-parse and post-run git status NOT APPLICABLE)
 SOURCE_MUTATION=NONE  TEST_MUTATION=NONE  COMMIT/PUSH=NONE
 ```
 
 ## Execution
 
 ```text
-npm ci (62 packages) → npm run build (vite ✓ 600ms) → npm run dev -- --port 5174 --strictPort
+npm ci → npm run build (vite ✓) → npm run dev -- --port 5174 --strictPort
 python3.13 tests/browser_assertions.py --url http://127.0.0.1:5174 \
-  --out le-assertions.json --shots <dir> --prefix PX1-LE
-RESULT=115/115 assertions passed; console_errors=[]; page_errors=[]
+  --out le-assertions.json --shots <dir> --prefix PX2-LE
+RESULT=125/125 assertions passed; console_errors=[]; page_errors=[]
 ```
 
 ## Observation summary
 
-All four PX acceptance criteria observed on the final exact SHA:
+PX02 acceptance (the sole PX1 blocking residual) observed on the final exact SHA:
+
+- KK-PX-R5-02 residual FIXED: on all five sheet surfaces (Knowledge /
+  Knowledge Detail / Work Surface / Calendar / Todo) and in both sensing
+  states (ON 后台持续感知中 / PAUSED 感知已暂停), the dedicated disclosure chip
+  「模拟 · 无真实 ASR」 renders complete and untruncated at 360x780
+  (PX02_DISCLOSURE_FULL_* ×10 assertions, scrollWidth <= clientWidth+1);
+  暂停/恢复 reachable and synced with the global strip; no overlap, no
+  horizontal scroll.
+
+PX1 regression (unchanged, all passing):
 
 - KK-PX-R5-01: two distinct synthetic topics each bound to their own content
   across query/detail/work surface; honest no-conclusion note; no AOG/ABC
   cross-topic leakage; unknown topic → honest gap, zero unrelated refs.
-- KK-PX-R5-02: in-sheet sensing bar visible with 模拟·无真实 ASR disclosure
-  across Knowledge/Detail/WorkSurface/Calendar/Todo; 暂停/恢复 reachable and
-  synced with the global strip; no overlap, no horizontal scroll at 360x780.
 - KK-PX-R5-03: 保存修正 returns to candidate card without ingesting; explicit
   确认入库 ingests; confirmed item shows 已确认 only; reject does not grow
   knowledge count.
@@ -46,8 +54,9 @@ All four PX acceptance criteria observed on the final exact SHA:
 ## Evidence files (this directory)
 
 ```text
-le-assertions.json                       sha256 df5c4151fedfb1c898d00b4bbaf9130ff61ae2ebfea8eb8870a5932d81b384c5
-screenshots/local-executor/PX1-LE-P01..P12.png   (sha256 table in SCREENSHOT_INDEX.md)
+le-assertions.json                       sha256 933f02945d8e7e1f8a1c0e81cfc2b88f97ca0862200585bbe5e164f2c7fc9f9b
+screenshots/local-executor/PX2-LE-P01..P12.png + PX2-LE-PX02-<surface>-<ON|PAUSED>.png ×10
+                                         (22 total; sha256 table in SCREENSHOT_INDEX.md)
 ```
 
 ```text

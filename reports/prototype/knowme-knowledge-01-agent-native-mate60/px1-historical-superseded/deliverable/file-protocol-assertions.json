@@ -1,0 +1,592 @@
+{
+  "protocol_version": "DELIVERY-LIFECYCLE-1.0",
+  "artifact": "BROWSER_TECHNICAL_ASSERTIONS",
+  "url": "file:///Users/njx/Project/KnowME%20knowledge/KnowME%20knowledge/knowme-knowledge/KnowME-Knowledge-01-Prototype.html",
+  "viewport": {
+    "width": 360,
+    "height": 780,
+    "kind": "MATE60_CLASS_SIMULATION"
+  },
+  "assertions": [
+    {
+      "assertion": "FIRST_VIEW_AGENT_IDENTITY",
+      "pass": true,
+      "detail": "header shows personal knowledge Agent identity"
+    },
+    {
+      "assertion": "PROTOTYPE_STATE_DISCLOSED",
+      "pass": true,
+      "detail": "0.1 PROTOTYPE · 确定性 Mock · 非真实数据"
+    },
+    {
+      "assertion": "FIRST_VIEW_KNOWLEDGE_CONTEXT",
+      "pass": true,
+      "detail": "current knowledge context summary visible"
+    },
+    {
+      "assertion": "FIRST_VIEW_KNOWN_UNKNOWN",
+      "pass": true,
+      "detail": "known/unknown gaps visible"
+    },
+    {
+      "assertion": "FIRST_VIEW_CAPTURE_ENTRY",
+      "pass": true,
+      "detail": "capture entry"
+    },
+    {
+      "assertion": "FIRST_VIEW_ASK_ENTRY",
+      "pass": true,
+      "detail": "ask-Agent entry"
+    },
+    {
+      "assertion": "FIRST_VIEW_CAPABILITIES",
+      "pass": true,
+      "detail": "capability entries visible"
+    },
+    {
+      "assertion": "STATE_FIRST_VIEW",
+      "pass": true,
+      "detail": "FIRST_VIEW"
+    },
+    {
+      "assertion": "BRAND_RENAMED_LINGXI",
+      "pass": true,
+      "detail": "header + opening message use 灵犀; 懂我 fully retired"
+    },
+    {
+      "assertion": "SENSING_STRIP_VISIBLE",
+      "pass": true,
+      "detail": "persistent sensing strip mounted"
+    },
+    {
+      "assertion": "SENSING_CONTINUOUS_BY_DEFAULT",
+      "pass": true,
+      "detail": "后台持续感知中 09:12 模拟感知:环境安静,无语音片段 模拟感知 · 无真实 ASR"
+    },
+    {
+      "assertion": "SENSING_HONESTLY_MOCK",
+      "pass": true,
+      "detail": "simulated sensing never claims real ASR"
+    },
+    {
+      "assertion": "SENSING_STREAM_TICKS",
+      "pass": true,
+      "detail": "09:12 模拟感知:环境安静,无语音片段"
+    },
+    {
+      "assertion": "ASK_AGENT_WORKS",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 3 条知识\n\n基于当前知识上下文:「AOG 航材保障」:围绕响应时限、供"
+    },
+    {
+      "assertion": "AGENT_RESPONSE_REFERENCES_CONTEXT",
+      "pass": true,
+      "detail": "AOG 航材保障\n供应商与 SLA\n供应风险记录"
+    },
+    {
+      "assertion": "STATE_ASK_AGENT",
+      "pass": true,
+      "detail": "ASK_AGENT"
+    },
+    {
+      "assertion": "NEXT_ACTION_OPENS_CONTEXTUAL_WORK",
+      "pass": true,
+      "detail": "next action opened knowledge detail overlay"
+    },
+    {
+      "assertion": "CONVERSATION_PRESERVED_UNDER_OVERLAY",
+      "pass": true,
+      "detail": "conversation DOM still mounted under overlay"
+    },
+    {
+      "assertion": "TEXT_CAPTURE_WORKS",
+      "pass": true,
+      "detail": "capture sheet opens"
+    },
+    {
+      "assertion": "STATE_CAPTURE",
+      "pass": true,
+      "detail": "CAPTURE"
+    },
+    {
+      "assertion": "CAPTURE_CHANNELS_DISCLOSED",
+      "pass": true,
+      "detail": "语音 PROTOTYPE_ONLY 后台持续感知为模拟;无真实 ASR / 声纹"
+    },
+    {
+      "assertion": "CANDIDATE_KNOWLEDGE_CREATED",
+      "pass": true,
+      "detail": "备用供应商 XYZ 报价每台便宜 8…"
+    },
+    {
+      "assertion": "CORRECT_SAVE_HINT_VISIBLE",
+      "pass": true,
+      "detail": "user can predict before click: save does NOT ingest"
+    },
+    {
+      "assertion": "CORRECT_SAVE_RETURNS_TO_CANDIDATE",
+      "pass": true,
+      "detail": "save correction returns to candidate card, still awaiting explicit confirm"
+    },
+    {
+      "assertion": "CORRECT_SAVE_NO_DIRECT_INGEST",
+      "pass": true,
+      "detail": "knowledge count unchanged after 保存修正 (KK-PX-R5-03)"
+    },
+    {
+      "assertion": "CORRECT_WORKS",
+      "pass": true,
+      "detail": "corrected candidate confirmed into context"
+    },
+    {
+      "assertion": "CONFIRMED_KNOWLEDGE_CHANGES_CONTEXT",
+      "pass": true,
+      "detail": "7 条知识\n12 条连接 · 持续生长"
+    },
+    {
+      "assertion": "AGENT_EXPLAINS_CONTEXT_CHANGE",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n已确认入库:「备用供应商 XYZ 报价(已修正)」现在是知"
+    },
+    {
+      "assertion": "STATE_CONTEXT_UPDATED",
+      "pass": true,
+      "detail": "KNOWLEDGE_CONTEXT_UPDATED"
+    },
+    {
+      "assertion": "REJECT_WORKS",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答\n\n已拒绝候选知识「一条将被拒绝的测试信息。」,它没有进入知识上"
+    },
+    {
+      "assertion": "REJECT_DOES_NOT_GROW_CONTEXT",
+      "pass": true,
+      "detail": "count unchanged after reject"
+    },
+    {
+      "assertion": "CONFIRM_WORKS",
+      "pass": true,
+      "detail": "8 条知识\n13 条连接 · 持续生长"
+    },
+    {
+      "assertion": "KNOWLEDGE_NAVIGATION_VIEW",
+      "pass": true,
+      "detail": "navigation view renders the two Owner-defined maps"
+    },
+    {
+      "assertion": "KNOWLEDGE_NAV_NO_LEGACY_GROUPS",
+      "pass": true,
+      "detail": "R5: no extra MOC/WIKI/NOTE groups beyond 五维/九维 maps"
+    },
+    {
+      "assertion": "KNOWLEDGE_NAV_FIVE_DIM_MAP",
+      "pass": true,
+      "detail": "five-dimension knowledge map renders all five life dimensions"
+    },
+    {
+      "assertion": "KNOWLEDGE_NAV_NINE_DIM_COGNITIVE",
+      "pass": true,
+      "detail": "nine-dimension cognitive graph renders all nine dimensions"
+    },
+    {
+      "assertion": "CAPTURED_ITEM_IN_FIVE_DIM",
+      "pass": true,
+      "detail": "工作记录 count = 3 seeds + 2 confirmed captures = 5 (live count): ◆ 工作记录 我做了什么 5"
+    },
+    {
+      "assertion": "DIM_ROW_EXPAND_LISTS_REAL_ITEMS",
+      "pass": true,
+      "detail": "dimension expands to its real items incl. today's capture"
+    },
+    {
+      "assertion": "CAPTURED_ITEM_IN_NAV",
+      "pass": true,
+      "detail": "confirmed capture appears under 九维 09 动态与情景"
+    },
+    {
+      "assertion": "DIM_ITEM_OPENS_DETAIL",
+      "pass": true,
+      "detail": "dimension item opens knowledge detail"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_VIEW_SWITCHER",
+      "pass": true,
+      "detail": "knowledge calendar day / week / month view switcher rendered"
+    },
+    {
+      "assertion": "KNOWLEDGE_CALENDAR_VIEW",
+      "pass": true,
+      "detail": "knowledge day view defaults to 今天 (2026-09-16)"
+    },
+    {
+      "assertion": "VALUE_LOOP_CAPTURED_VISIBLE_BY_CALENDAR",
+      "pass": true,
+      "detail": "both confirmed captures land on today's calendar view"
+    },
+    {
+      "assertion": "KNOWLEDGE_CALENDAR_OTHER_DAYS",
+      "pass": true,
+      "detail": "昨天 day view holds its item"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_MONTH_VIEW",
+      "pass": true,
+      "detail": "September 2026 knowledge month grid, dot only where knowledge exists, today highlighted"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_MONTH_CELL_OPENS_DAY",
+      "pass": true,
+      "detail": "clicking 09-15 in knowledge month view opens its day view"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_OTHER_MONTH_DAY",
+      "pass": true,
+      "detail": "knowledge on 2026-07-18 reachable via 本月之外 list"
+    },
+    {
+      "assertion": "KNOWLEDGE_CAL_WEEK_VIEW",
+      "pass": true,
+      "detail": "full week rows 周一..周日 with real knowledge items and counts"
+    },
+    {
+      "assertion": "KNOWLEDGE_DETAIL_HAS_DAY",
+      "pass": true,
+      "detail": "昨天(2026-09-15)"
+    },
+    {
+      "assertion": "KNOWLEDGE_ITEM_OPENS",
+      "pass": true,
+      "detail": "knowledge detail opened"
+    },
+    {
+      "assertion": "SOURCE_STATE_VISIBLE",
+      "pass": true,
+      "detail": "来源与状态 来源 原型种子数据 · MOCK_SOURCE 状态 CONFIRMED 日期 今天(2026-09-16) 证据 4 条(Mock) 更新 刚刚"
+    },
+    {
+      "assertion": "WORK_SURFACE_OPENS",
+      "pass": true,
+      "detail": "contextual work surface"
+    },
+    {
+      "assertion": "WORK_BACK_LABEL_MATCHES_TARGET_NAV_PATH",
+      "pass": true,
+      "detail": "back from work surface lands DIRECTLY on Agent conversation"
+    },
+    {
+      "assertion": "RETURN_PRESERVES_CONTEXT",
+      "pass": true,
+      "detail": "conversation intact after knowledge -> work surface -> back to Agent"
+    },
+    {
+      "assertion": "CAPABILITY_OPENS_CONTEXTUAL_WORK",
+      "pass": true,
+      "detail": "calendar concrete work surface"
+    },
+    {
+      "assertion": "NOT_CONNECTED_NOT_CONNECTED",
+      "pass": true,
+      "detail": "calendar honestly NOT_CONNECTED"
+    },
+    {
+      "assertion": "CALENDAR_VIEW_SWITCHER",
+      "pass": true,
+      "detail": "day / week / month view switcher rendered"
+    },
+    {
+      "assertion": "CALENDAR_MONTH_VIEW",
+      "pass": true,
+      "detail": "September 2026 month grid (30 days), today 09-16 highlighted"
+    },
+    {
+      "assertion": "CALENDAR_MONTH_EVENT_DOTS",
+      "pass": true,
+      "detail": "days with schedule/todos carry dots; empty days do not"
+    },
+    {
+      "assertion": "CALENDAR_MONTH_DAY_OPENS_DAY_VIEW",
+      "pass": true,
+      "detail": "clicking 周四 09-17 in month view opens its day view"
+    },
+    {
+      "assertion": "CALENDAR_WEEK_VIEW",
+      "pass": true,
+      "detail": "full week rows 周一..周日 with real schedule and todo counts"
+    },
+    {
+      "assertion": "CALENDAR_VISUAL_WEEK_STRIP",
+      "pass": true,
+      "detail": "visual day strip rendered"
+    },
+    {
+      "assertion": "CALENDAR_TODO_LINKED_ON_DAY",
+      "pass": true,
+      "detail": "today's todos appear on the calendar day"
+    },
+    {
+      "assertion": "CALENDAR_DAY_SWITCH",
+      "pass": true,
+      "detail": "周四 shows its schedule + linked todo"
+    },
+    {
+      "assertion": "SENSING_RUNS_IN_BACKGROUND",
+      "pass": true,
+      "detail": "sensing strip still on while calendar sheet is open"
+    },
+    {
+      "assertion": "STATE_CAPABILITY_WORK",
+      "pass": true,
+      "detail": "CAPABILITY_WORK"
+    },
+    {
+      "assertion": "SCHEDULE_QUICK_ACTION_COMPLETE",
+      "pass": true,
+      "detail": "装机窗口复核 marked done via quick action"
+    },
+    {
+      "assertion": "SCHEDULE_QUICK_ACTION_POSTPONE",
+      "pass": true,
+      "detail": "postponed item leaves 周四 day view"
+    },
+    {
+      "assertion": "SCHEDULE_POSTPONED_VISIBLE_ON_NEXT_DAY",
+      "pass": true,
+      "detail": "postponed item appears on 周五 09-18"
+    },
+    {
+      "assertion": "SCHEDULE_REFERENCE_TO_CHAT",
+      "pass": true,
+      "detail": "schedule item quoted into conversation; 灵犀 answers with linked knowledge"
+    },
+    {
+      "assertion": "STATE_CONTEXT_RESTORED",
+      "pass": true,
+      "detail": "AGENT_CONTEXT_RESTORED"
+    },
+    {
+      "assertion": "TODO_STATE_CHANGES",
+      "pass": true,
+      "detail": "aria-pressed false -> true"
+    },
+    {
+      "assertion": "TODO_QUICK_ACTION_POSTPONE",
+      "pass": true,
+      "detail": "○ 评审前生成一页摘要 关联:AOG 航材保障 📅 2026-09-17 · 在可视化日历中查看 ⏭ 顺延一天 💬 引用"
+    },
+    {
+      "assertion": "TODO_DEEP_LINKS_TO_CALENDAR_DAY",
+      "pass": true,
+      "detail": "todo opened its own day on the visual calendar"
+    },
+    {
+      "assertion": "TODO_REFERENCE_TO_CHAT",
+      "pass": true,
+      "detail": "todo item quoted into conversation; 灵犀 answers with linked knowledge"
+    },
+    {
+      "assertion": "SKILLS_PLANNED_DISCLOSED",
+      "pass": true,
+      "detail": "skills honestly PLANNED, no fake work surface"
+    },
+    {
+      "assertion": "PX01_CAPTURE_CONFIRM_TOPIC_A",
+      "pass": true,
+      "detail": "topic A captured and confirmed"
+    },
+    {
+      "assertion": "PX01_CAPTURE_CONFIRM_TOPIC_B",
+      "pass": true,
+      "detail": "topic B captured and confirmed"
+    },
+    {
+      "assertion": "PX01_EXACT_TITLE_QUERY_BINDS_OWN_ITEM",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n基于当前知识上下文:「读书笔记复核:复利曲线在长期主义第三"
+    },
+    {
+      "assertion": "PX01_NO_CROSS_TOPIC_LEAKAGE",
+      "pass": true,
+      "detail": "no AOG/ABC template leakage into unrelated topic"
+    },
+    {
+      "assertion": "PX01_HONEST_NO_CONCLUSION",
+      "pass": true,
+      "detail": "honest note when the item has no deterministic conclusion"
+    },
+    {
+      "assertion": "PX01_NATURAL_QUERY_BINDS_OWN_ITEM",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答 · 引用 1 条知识\n\n基于当前知识上下文:「健身计划:每周三次力量训练,周日拉伸"
+    },
+    {
+      "assertion": "PX01_NATURAL_QUERY_NO_LEAKAGE",
+      "pass": true,
+      "detail": "topic B answer contains neither AOG nor topic A content"
+    },
+    {
+      "assertion": "PX01_UNKNOWN_NO_UNRELATED_REFS",
+      "pass": true,
+      "detail": "unknown topic yields honest gap with no unrelated refs"
+    },
+    {
+      "assertion": "PX01_DETAIL_OWN_CONTENT",
+      "pass": true,
+      "detail": "detail renders the item's own content only"
+    },
+    {
+      "assertion": "PX03_CONFIRMED_NO_PENDING_TAG",
+      "pass": true,
+      "detail": "confirmed item never shows 待确认 semantics (KK-PX-R5-03)"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_OWN_CONTENT",
+      "pass": true,
+      "detail": "work surface bound to the captured item's own content"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_HONEST_CONCLUSION",
+      "pass": true,
+      "detail": "no unrelated template conclusion for captured topic"
+    },
+    {
+      "assertion": "PX01_WORK_SURFACE_NO_FABRICATED_CONFLICT",
+      "pass": true,
+      "detail": "conflict count never fabricated"
+    },
+    {
+      "assertion": "PX01_SEED_WORK_SURFACE_OWN_CONCLUSION",
+      "pass": true,
+      "detail": "seed AOG item work surface shows its own conclusion"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside KNOWLEDGE"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "pause reachable inside KNOWLEDGE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE",
+      "pass": true,
+      "detail": "resume reachable inside KNOWLEDGE"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside KNOWLEDGE_DETAIL"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "pause reachable inside KNOWLEDGE_DETAIL; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_KNOWLEDGE_DETAIL",
+      "pass": true,
+      "detail": "resume reachable inside KNOWLEDGE_DETAIL"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside WORK_SURFACE"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "pause reachable inside WORK_SURFACE; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_WORK_SURFACE",
+      "pass": true,
+      "detail": "resume reachable inside WORK_SURFACE"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_CALENDAR",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside CALENDAR"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_CALENDAR",
+      "pass": true,
+      "detail": "pause reachable inside CALENDAR; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_CALENDAR",
+      "pass": true,
+      "detail": "resume reachable inside CALENDAR"
+    },
+    {
+      "assertion": "PX02_SENSING_VISIBLE_TODO",
+      "pass": true,
+      "detail": "sensing status + disclosure visible inside TODO"
+    },
+    {
+      "assertion": "PX02_PAUSE_REACHABLE_TODO",
+      "pass": true,
+      "detail": "pause reachable inside TODO; global strip in sync"
+    },
+    {
+      "assertion": "PX02_RESUME_REACHABLE_TODO",
+      "pass": true,
+      "detail": "resume reachable inside TODO"
+    },
+    {
+      "assertion": "PX04_AGENT_PATH_BACK_MATCHES_LABEL",
+      "pass": true,
+      "detail": "Agent-route work surface back lands on conversation; context preserved"
+    },
+    {
+      "assertion": "PX_P3_POSTPONED_SCHEDULE_TIME_ORDERED",
+      "pass": true,
+      "detail": "09-18 schedule times ordered: ['10:00', '14:00']"
+    },
+    {
+      "assertion": "UNKNOWN_TOPIC_ACKNOWLEDGES_GAP",
+      "pass": true,
+      "detail": "灵\n灵犀 · 确定性 Mock 回答\n\n当前知识上下文里没有覆盖「今晚吃什么?」的条目,这是一个诚实标注的已知空白。原型"
+    },
+    {
+      "assertion": "UNKNOWN_TOPIC_NEXT_ACTION_CAPTURE",
+      "pass": true,
+      "detail": "把这个问题捕获为候选知识 →"
+    },
+    {
+      "assertion": "VOICE_KEY_PAUSES_SENSING",
+      "pass": true,
+      "detail": "感知已暂停 点击麦克风恢复持续感知 模拟感知 · 无真实 ASR"
+    },
+    {
+      "assertion": "VOICE_KEY_RESUMES_SENSING",
+      "pass": true,
+      "detail": "continuous background sensing resumed"
+    },
+    {
+      "assertion": "NO_HORIZONTAL_BLOCKING_OVERFLOW",
+      "pass": true,
+      "detail": "scrollWidth=360, clientWidth=360"
+    },
+    {
+      "assertion": "NO_UNCAUGHT_PAGE_ERROR",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "assertion": "NO_BLOCKING_CONSOLE_ERROR",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "assertion": "NO_HOVER_ONLY_CRITICAL_ACTION",
+      "pass": true,
+      "detail": "{\"nav-capture\": \"BUTTON\", \"nav-knowledge\": \"BUTTON\", \"nav-calendar\": \"BUTTON\", \"nav-todo\": \"BUTTON\", \"nav-skills\": \"BUTTON\", \"composer-input\": \"INPUT\", \"composer-send\": \"BUTTON\", \"voice-key\": \"BUTTON\", \"context-summary-button\": \"BUTTON\"}"
+    }
+  ],
+  "console_errors": [],
+  "page_errors": [],
+  "passed": 115,
+  "failed": 0,
+  "issued_at": "2026-09-16T14:10:58.171638+00:00"
+}
