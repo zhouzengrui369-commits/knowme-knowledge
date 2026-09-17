@@ -7,5 +7,8 @@
   "license": "",
   "dependencies": {
     "sherpa_onnx": "1.12.1"
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.21"
   }
 }
