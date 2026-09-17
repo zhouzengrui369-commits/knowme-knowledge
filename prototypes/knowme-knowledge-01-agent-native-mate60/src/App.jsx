@@ -211,19 +211,23 @@ function Sheet({ title, testid, onClose, children, footer, sensing }) {
         </header>
         {sensing && (
           <div className="sheet-sensing" data-testid="sheet-sensing-strip" data-sensing={sensing.sensingOn ? "on" : "paused"}>
-            <i className={sensing.sensingOn ? "signal-live" : "signal-idle"} aria-hidden="true" />
-            <span className="sheet-sensing-text" data-testid="sheet-sensing-status">
-              {sensing.sensingOn ? `后台持续感知中 · ${sensing.line}` : "感知已暂停"}(模拟 · 无真实 ASR)
+            <div className="sheet-sensing-row">
+              <i className={sensing.sensingOn ? "signal-live" : "signal-idle"} aria-hidden="true" />
+              <span className="sheet-sensing-state">{sensing.sensingOn ? "后台持续感知中" : "感知已暂停"}</span>
+              <span className="state-chip state-prototype-only sheet-sensing-disclosure" data-testid="sheet-sensing-disclosure">模拟 · 无真实 ASR</span>
+              <button
+                type="button"
+                className="sheet-sensing-toggle"
+                data-testid="sheet-sensing-toggle"
+                aria-label={sensing.sensingOn ? "暂停后台语音感知" : "恢复后台语音感知"}
+                onClick={sensing.onToggle}
+              >
+                {sensing.sensingOn ? "暂停" : "恢复"}
+              </button>
+            </div>
+            <span className="sheet-sensing-line" data-testid="sheet-sensing-status">
+              {sensing.sensingOn ? sensing.line : "点击「恢复」继续后台持续感知(模拟)"}
             </span>
-            <button
-              type="button"
-              className="sheet-sensing-toggle"
-              data-testid="sheet-sensing-toggle"
-              aria-label={sensing.sensingOn ? "暂停后台语音感知" : "恢复后台语音感知"}
-              onClick={sensing.onToggle}
-            >
-              {sensing.sensingOn ? "暂停" : "恢复"}
-            </button>
           </div>
         )}
         <div className="sheet-body">{children}</div>

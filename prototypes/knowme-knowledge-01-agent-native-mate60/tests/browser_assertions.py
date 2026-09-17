@@ -602,22 +602,34 @@ def main():
         page.wait_for_timeout(300)
 
         # --- KK-PX-R5-02: sensing status visible + pause/resume reachable ---
+        # PX02 correction: the 模拟 · 无真实 ASR disclosure must be FULLY
+        # visually readable (no ellipsis) in both ON and PAUSED states.
+        def disclosure_fully_visible():
+            disc = page.get_by_test_id("sheet-sensing-disclosure")
+            return (disc.is_visible()
+                    and "模拟 · 无真实 ASR" in disc.inner_text()
+                    and disc.evaluate("el => el.scrollWidth <= el.clientWidth + 1"))
+
         def check_sheet_sensing(name):
             strip = page.get_by_test_id("sheet-sensing-strip")
             check(f"PX02_SENSING_VISIBLE_{name}",
                   strip.is_visible()
                   and strip.get_attribute("data-sensing") == "on"
-                  and "后台持续感知中" in strip.inner_text()
-                  and "无真实 ASR" in strip.inner_text(),
-                  f"sensing status + disclosure visible inside {name}")
+                  and "后台持续感知中" in strip.inner_text(),
+                  f"sensing status visible inside {name}")
+            check(f"PX02_DISCLOSURE_FULL_ON_{name}", disclosure_fully_visible(),
+                  f"ON-state disclosure fully readable inside {name} (no truncation)")
+            shot(f"PX02-{name}-ON")
             page.get_by_test_id("sheet-sensing-toggle").click()
             page.wait_for_timeout(200)
             check(f"PX02_PAUSE_REACHABLE_{name}",
                   strip.get_attribute("data-sensing") == "paused"
                   and "感知已暂停" in strip.inner_text()
-                  and "无真实 ASR" in strip.inner_text()
                   and page.get_by_test_id("sensing-strip").get_attribute("data-sensing") == "off",
                   f"pause reachable inside {name}; global strip in sync")
+            check(f"PX02_DISCLOSURE_FULL_PAUSED_{name}", disclosure_fully_visible(),
+                  f"PAUSED-state disclosure fully readable inside {name} (no truncation)")
+            shot(f"PX02-{name}-PAUSED")
             page.get_by_test_id("sheet-sensing-toggle").click()
             page.wait_for_timeout(200)
             check(f"PX02_RESUME_REACHABLE_{name}",
