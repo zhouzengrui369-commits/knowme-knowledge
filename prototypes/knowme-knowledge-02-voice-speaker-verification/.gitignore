@@ -19,3 +19,7 @@ local.properties
 *.p7b
 signing/
 secrets/
+
+# Runtime model assets — provisioned via scripts/provision-models.sh,
+# never committed (identity + sha256 recorded in receipts instead)
+entry/src/main/resources/rawfile/models/

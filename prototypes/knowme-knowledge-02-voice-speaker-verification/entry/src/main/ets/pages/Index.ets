@@ -2,6 +2,7 @@ import { common } from '@kit.AbilityKit';
 import { CandidateStatus, MicState, SpeakerState, TrustGateDecision } from '../core/VoiceCore';
 import { SessionPurpose, VoiceSessionController } from '../voice/VoiceSessionController';
 import { SpeakerVerificationController, UnprovisionedSpeakerEngine } from '../voice/SpeakerVerificationController';
+import { SherpaSpeakerEngine } from '../engine/SherpaSpeakerEngine';
 import { AgentContext, AgentMessage } from '../agent/AgentContext';
 
 @Entry
@@ -10,6 +11,8 @@ struct Index {
   @State agent: AgentContext = new AgentContext();
   @State session: VoiceSessionController =
     new VoiceSessionController(new SpeakerVerificationController(new UnprovisionedSpeakerEngine()));
+  private sherpaEngine: SherpaSpeakerEngine = new SherpaSpeakerEngine();
+  @State engineInitText: string = '声纹引擎初始化中…';
   @State micState: string = MicState.IDLE;
   @State speakerState: string = SpeakerState.NOT_ENROLLED;
   @State transcript: string = '';
@@ -80,6 +83,17 @@ struct Index {
     });
     this.session.refreshPermission();
     this.refresh();
+    // Async engine provisioning: honest NOT_AVAILABLE if it cannot init.
+    this.sherpaEngine.init(this.uiContext()).then((ok: boolean) => {
+      if (ok) {
+        this.session.speaker.setEngine(this.sherpaEngine);
+        this.engineInitText = '声纹引擎就绪(本地 sherpa-onnx)';
+      } else {
+        this.engineInitText = `声纹引擎不可用(NOT_AVAILABLE):${this.sherpaEngine.engineIdentity()}`;
+      }
+      this.session.refreshSpeakerState();
+      this.refresh();
+    });
   }
 
   private uiContext(): common.UIAbilityContext {
@@ -137,6 +151,9 @@ struct Index {
           Text(`声纹:${this.speakerNote}`)
             .fontSize(11)
             .fontColor('#777777')
+          Text(this.engineInitText)
+            .fontSize(11)
+            .fontColor(this.engineInitText.includes('不可用') ? '#C62828' : '#1B6E3C')
           Text('原型声纹验证 ≠ 生产身份认证 · 全程本地 · 无云端上传')
             .fontSize(11)
             .fontColor('#A05000')
