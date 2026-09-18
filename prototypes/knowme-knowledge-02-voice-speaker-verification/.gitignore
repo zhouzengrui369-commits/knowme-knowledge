@@ -26,3 +26,6 @@ entry/src/main/resources/rawfile/models/
 
 # hvigor on-device test intermediates
 **/.test/
+
+# local emulator/dev-loop artifacts (logs, dev screenshots)
+.local/
