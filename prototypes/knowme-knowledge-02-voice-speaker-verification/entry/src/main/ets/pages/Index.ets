@@ -27,6 +27,11 @@ struct Index {
   @State manualText: string = '';
   @State degradedCapture: boolean = false;
   @State tick: number = 0;
+  // D12 fix: agent.messages is a plain array on an unobserved class — push()
+  // is invisible to @State, so say() between two unchanged values stayed
+  // visually stale until an unrelated redraw (the D7 .id() trick did not
+  // actually force re-render). Mirror the tail into a real @State array.
+  @State visibleMessages: AgentMessage[] = [];
 
   private refresh(): void {
     this.micState = this.session.micState;
@@ -40,6 +45,7 @@ struct Index {
     this.speakerNote = this.session.speaker.engineIdentity();
     this.knowledgeCount = this.agent.knowledgeCount();
     this.gateText = this.gateLabel();
+    this.visibleMessages = this.agent.messages.slice(-4);
     this.tick += 1;
   }
 
@@ -173,17 +179,15 @@ struct Index {
 
         // ── Conversation (Agent context preserved) ──────────
         Column({ space: 8 }) {
-          ForEach(this.agent.messages.slice(-4), (msg: AgentMessage) => {
+          ForEach(this.visibleMessages, (msg: AgentMessage) => {
             Text(msg.text)
               .fontSize(13)
               .fontColor(msg.role === 'owner' ? '#1B4F8A' : '#333333')
               .width('100%')
           }, (msg: AgentMessage) => `${msg.at}-${msg.role}`)
         }
-        // D7 fix: read tick in build so every refresh() re-renders new
-        // messages; without an observed read here, say() between two
-        // unchanged @State values left the conversation visually stale.
-        .id(`conv-${this.tick}`)
+        // D12: visibleMessages is a real @State mirror (see refresh()); the
+        // old D7 .id() tick read alone did not re-render pushed messages.
         .width('100%')
         .alignItems(HorizontalAlign.Start)
         .padding(10)

@@ -93,7 +93,15 @@ export class VoiceSessionController {
   }
 
   refreshSpeakerState(): void {
-    this.speakerState = this.speaker.state();
+    // D13 fix: onPageShow → refreshPermission() used to clobber a live
+    // post-capture verdict (VERIFIED/UNCERTAIN) back to the enrollment state
+    // (ENROLLED) while the result card still showed the old similarity —
+    // the strip then contradicted itself. Only revert to enrollment state
+    // when no result is on screen.
+    if (this.gate === null && this.transcript.length === 0 &&
+      this.candidateStatus === CandidateStatus.NONE) {
+      this.speakerState = this.speaker.state();
+    }
   }
 
   /** Journey A: surface honest permission state before any capture. */
