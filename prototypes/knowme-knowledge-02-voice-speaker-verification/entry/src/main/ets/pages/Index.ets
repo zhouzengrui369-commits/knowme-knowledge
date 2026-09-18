@@ -25,6 +25,7 @@ struct Index {
   @State knowledgeCount: number = 0;
   @State correctedText: string = '';
   @State manualText: string = '';
+  @State degradedCapture: boolean = false;
   @State tick: number = 0;
 
   private refresh(): void {
@@ -310,7 +311,14 @@ struct Index {
                 }
               }
               this.session.backToIdle();
-              await this.session.startSession(SessionPurpose.CAPTURE);
+              const started = await this.session.startSession(SessionPurpose.CAPTURE);
+              // D10 fix: when STT is NOT_AVAILABLE the session refuses to
+              // record at all — without a degraded fallback the Owner has no
+              // way to capture anything (offline old-device scenario).
+              this.degradedCapture = !started && this.session.micState === MicState.UNAVAILABLE;
+              if (this.degradedCapture) {
+                this.agent.say('system', '本地语音识别不可用,录音通道已关闭;可以先用手动文本记录,不丢上下文。');
+              }
               this.refresh();
             })
         }
@@ -369,6 +377,7 @@ struct Index {
                   if (text.length > 0) {
                     this.agent.confirmVoiceCandidate(text, this.session.speakerState);
                   }
+                  this.session.dismissResult();
                   this.refresh();
                 })
               Button('丢弃')
@@ -377,6 +386,7 @@ struct Index {
                 .onClick(() => {
                   this.session.rejectCandidate();
                   this.agent.explainRejected();
+                  this.session.dismissResult();
                   this.refresh();
                 })
             }
@@ -409,7 +419,7 @@ struct Index {
                 .fontColor('#C62828')
                 .onClick(() => {
                   this.agent.explainBlocked(this.gateText);
-                  this.session.backToIdle();
+                  this.session.dismissResult();
                   this.refresh();
                 })
             }
@@ -425,9 +435,51 @@ struct Index {
                   if (this.manualText.trim().length > 0) {
                     this.agent.addTextNote(this.manualText.trim());
                     this.manualText = '';
-                    this.session.backToIdle();
+                    this.session.dismissResult();
                     this.refresh();
                   }
+                })
+            }
+          }
+          .width('100%')
+          .alignItems(HorizontalAlign.Start)
+        }
+
+        // ── Degraded path: STT NOT_AVAILABLE at capture start ──
+        // D10 fix: no recording possible, but knowledge capture must not
+        // dead-end — offer manual text entry with Agent context preserved.
+        if (this.degradedCapture && this.session.gate === null &&
+          this.candidateStatus === CandidateStatus.NONE) {
+          Column({ space: 8 }) {
+            Text('本地语音暂不可用(NOT_AVAILABLE,无云端回退)。可以先打字记录:')
+              .fontSize(12)
+              .fontColor('#555555')
+              .width('100%')
+            Row({ space: 6 }) {
+              TextInput({ text: this.manualText, placeholder: '手动输入这条知识' })
+                .layoutWeight(1)
+                .onChange((v: string) => {
+                  this.manualText = v;
+                })
+              Button('记录')
+                .fontSize(12)
+                .onClick(() => {
+                  if (this.manualText.trim().length > 0) {
+                    this.agent.addTextNote(this.manualText.trim());
+                    this.manualText = '';
+                    this.degradedCapture = false;
+                    this.session.dismissResult();
+                    this.refresh();
+                  }
+                })
+              Button('关闭')
+                .fontSize(12)
+                .fontColor('#555555')
+                .backgroundColor('#E0E0E0')
+                .onClick(() => {
+                  this.degradedCapture = false;
+                  this.session.dismissResult();
+                  this.refresh();
                 })
             }
           }

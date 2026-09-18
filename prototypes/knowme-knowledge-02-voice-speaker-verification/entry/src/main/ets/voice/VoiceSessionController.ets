@@ -256,4 +256,18 @@ export class VoiceSessionController {
       this.emit('STATE_CHANGED');
     }
   }
+
+  /**
+   * D11 fix: the Owner has disposed of the outcome (confirm / reject /
+   * discard / manual-text record) — clear gate + transcript + similarity so
+   * the result/blocked/candidate cards do not linger as stale UI.
+   */
+  dismissResult(): void {
+    this.micState = MicState.IDLE;
+    this.transcript = '';
+    this.similarity = Number.NaN;
+    this.gate = null;
+    this.candidateStatus = CandidateStatus.NONE;
+    this.emit('STATE_CHANGED');
+  }
 }
