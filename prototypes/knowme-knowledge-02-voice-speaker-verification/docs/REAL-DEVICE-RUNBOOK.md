@@ -1,6 +1,6 @@
 # GOAL-KK-02 真机取证 Runbook(Mate60)
 
-> Engineering Delivery 内部程序文档。模拟器开发轮已收尾(HEAD `ef5d668`),本清单用于 Mate60 真机到位后的取证执行。合同 §20:只有真机证据计入验收;模拟器证据永不作为验收证据。
+> Engineering Delivery 内部程序文档。模拟器缺陷循环进行中(HEAD `2a4364c`,D1–D13 已修并模拟器回归),本清单用于 Mate60 真机到位后的取证执行。合同 §20:只有真机证据计入验收;模拟器证据永不作为验收证据。
 
 ## 0. 前置条件(Owner 配合项)
 
@@ -52,6 +52,19 @@ $HDC install -r entry/build/default/outputs/default/entry-default-signed.hap
 $HDC shell "aa start -a EntryAbility -b com.knowme.knowledge.voiceprototype"
 ```
 
+安装失败排查:`Error: install sign info inconsistent` = 签名问题,回 §1;`install sdk version` 类报错 = minAPIVersion 不匹配(应为 40100011)。
+
+### 3.1 权限授予(真机步骤)
+
+1. 首启点「授权并按住说话」→ 系统弹窗「允许"灵犀语音原型"访问你的麦克风?」→ **允许**(弹窗内嵌用途说明:录制语音完成本地中文转写与机主声纹验证)
+2. 若误拒:应用会自动深链到系统应用信息页 → 麦克风开关打开 → 返回应用(返回后状态条应立即刷新为「权限已授予」,D8 回归点)
+3. 全程禁止静默录音:状态条必须如实显示 空闲/录音中/被拒绝(隐私合同:麦克风状态永不暗示)
+
+### 3.2 模型资产确认
+
+- 声纹模型(随 HAP 打包,不依赖系统):sherpa_onnx.har + `3dspeaker_speech_eres2net_base_200k_sv_zh-cn_16k-common.onnx`(rawfile,CPU,16kHz)。装机后首屏应显示「声纹引擎就绪(本地 sherpa-onnx)」;若显示 NOT_AVAILABLE,记录 `engineIdentity()` 文本进 TECHNICAL_RECEIPT
+- STT(系统侧 CoreSpeechKit):4.2 是否内置离线中文模型未知 —— 这是真机第一优先级实测项。NOT_AVAILABLE 为可接受诚实降级(触发 D10 降级卡:手动文本入口),伪造转写为违约
+
 冒烟检查:首屏三行状态(麦克风/STT/声纹)、引擎就绪行、无伪造文案。
 
 ## 4. 关键未知项实测(优先级排序)
@@ -63,21 +76,43 @@ $HDC shell "aa start -a EntryAbility -b com.knowme.knowledge.voiceprototype"
    - 安静/噪声 ≥5 次,记录 STT 行为
    - 依据分布重定标 VERIFIED / uncertain / REJECTED 三带数值,依据写入 TECHNICAL_RECEIPT
    - 参考:模拟器 TTS 重放同嗓 0.800 / 异嗓 0.786 无区分度(重放通道压缩所致,真机真人预计拉开)
-3. **真实离线 Journey E**:飞行模式 → 全链路应照常(声纹本地 sherpa-onnx)+ STT 离线应可用;任何网络调用即违约(CLOUD_AUDIO_UPLOAD=FORBIDDEN)
-4. **候选流**:STT 有非空转写后,修正 → 确认 → 入库 → 知识计数 +1 全链
+3. **真实离线 Journey E**(程序):
+   - 开飞行模式,`$HDC shell "param get persist.sys.airplane_mode"` 或状态栏截图确认
+   - 另起终端 `$HDC shell "hilog -r | grep -i -E 'http|socket|dns'"` 留观;或用 `netstat`/`cat /proc/net/tcp` 采样本进程无外联
+   - 应用内:注册采样→捕获→验证→入库全链路应照常(声纹本地 sherpa-onnx);STT 离线可用则转写,不可用则如实 NOT_AVAILABLE
+   - **任何网络调用即违约(CLOUD_AUDIO_UPLOAD=FORBIDDEN)**,一旦发现立即停止并如实记录
+   - 关飞行模式,OFFLINE_RECEIPT 记录:离线期间完成的功能清单、降级项、网络边界证据
+4. **候选流**:STT 有非空转写后,修正 → 确认 → 入库 → 知识计数 +1 全链;修正确认链路 agent 消息即时显示(D12 回归点);候选/拦截卡出口全部清场(D11 回归点)
 
 ## 5. 取证执行(冻结 SHA 后)
 
 1. 缺陷循环收敛 → 冻结 final SHA → 推 candidate 分支
 2. **Local Executor 子代理**:全新 context,按精确 SHA 物化工作区,真机五 Journey(A 权限 / B 注册验证 / C 捕获入库 / D 修正确认 / E 离线),P01–P20 截图,产出六份 receipt
-3. **ED 本人同 SHA 复跑**:ED-P01–P09 截图
+3. **ED 本人同 SHA 复跑**:ED-P01–P09 截图(不复用 Local Executor 的任何文件)
 4. **采样矩阵**:5 正 / 5 负 / 5 安静 STT,记录全部相似度与转写
-5. evidence 分支:20 份 receipt + 截图 + 采样矩阵原始数据
-6. Issue #13 terminal receipt → PR #18 body 重写(终态版)→ 对话末 PARENT_PM_HANDOVER_PROMPT(A–I 节)→ 停(不 merge,不 release)
+
+### 5.1 负样本政策(合同冻结项)
+
+- 来源二选一,Owner 未定前不执行负样本采集:
+  a) **同意的非机主真人朗读** —— 需口头/文字同意,记入 receipt(只记"同意已获",不记身份信息)
+  b) **披露的 replay 重放** —— 用另一台设备播放非机主录音,receipt 必须标注"重放样本,非真人在场"
+- 负样本期望:NOT_VERIFIED/UNCERTAIN 拦截,**误识(VERIFIED)必须 0/5**;任何误识 = 阻断缺陷,回缺陷循环
+- 负样本音频不出本机,不上传任何地方
+
+### 5.2 隐私净化(所有 receipt/截图适用)
+
+- 截图只含原型界面;若误入通知栏/其他应用内容,裁掉或重拍
+- receipt 不含:原始音频文件、机主声纹向量数值、完整转写隐私内容(转写示例限测试句式)
+- 相似度数值可记(标定依据需要);个人信息一律匿名化
+- evidence 分支推送前逐份核对本清单
+
+6. evidence 分支:20 份 receipt + 截图 + 采样矩阵原始数据
+7. Issue #13 terminal receipt → PR #18 body 重写(终态版)→ 对话末 PARENT_PM_HANDOVER_PROMPT(A–I 节)→ 停(不 merge,不 release)
 
 ## 6. 已知遗留(真机阶段处理)
 
 - 声纹阈值数值(0.62 当前值仅脚手架默认,必须真机真人重定标)
 - STT 真机可用性(模拟器:1002200010 / 1002200003 均如实上报)
-- 首屏顶部安全区空白(cosmetic,不阻塞)
+- D10 降级卡(STT init 失败→手动文本入口):代码与已验证拦截卡同构,但模拟器触发随机未获视觉证据,真机离线场景自然触发时补证
+- D12/D13 已在模拟器修复并回归(2a4364c),真机阶段随五 Journey 顺带复核:消息即时渲染、前后台切换判定保持
 - `signingConfigs` 材料不进 git
