@@ -174,6 +174,15 @@ export class SpeechToTextController {
   }
 
   destroy(): void {
+    // Release the native recognizer before dropping the handle; otherwise
+    // repeated destroy()+init() cycles leak engine resources (D1 companion).
+    if (this.engine) {
+      try {
+        this.engine.shutdown();
+      } catch (e) {
+        hilog.warn(DOMAIN, TAG, `shutdown warn: ${JSON.stringify(e)}`);
+      }
+    }
     this.engine = null;
     this.active = false;
   }

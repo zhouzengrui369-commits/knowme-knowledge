@@ -96,6 +96,16 @@ struct Index {
     });
   }
 
+  /**
+   * D8 fix: returning from a settings round-trip does not re-run
+   * aboutToAppear — without this the mic strip kept showing a stale
+   * PERMISSION_DENIED after the Owner granted mic in system settings.
+   */
+  onPageShow(): void {
+    this.session.refreshPermission();
+    this.refresh();
+  }
+
   private captureButtonLabel(): string {
     // D6 fix: a denied permission must say so on the action itself —
     // "开始说话" on a dead-end retry was dishonest affordance.
@@ -254,6 +264,9 @@ struct Index {
                   if (n >= 3) {
                     const done = this.session.speaker.completeEnrollment();
                     this.enrollmentText = done ? '注册完成(3/3)' : '注册失败,请重试';
+                    // D9 fix: refresh speaker state right after enrollment —
+                    // the strip kept saying NOT_ENROLLED next to 注册完成.
+                    this.session.refreshSpeakerState();
                   } else if (n > 0) {
                     this.enrollmentText = `采样 ${n}/3 · 再录 ${3 - n} 句`;
                   } else {
