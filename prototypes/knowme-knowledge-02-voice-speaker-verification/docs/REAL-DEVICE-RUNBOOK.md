@@ -11,14 +11,19 @@
 | 华为开发者账号登录 DevEco | ☑ | 2026-09-18 Owner 确认已登录 |
 | 负样本来源决定 | ☐ | 二选一:同意的非机主真人朗读 / 披露的 replay 重放(须写入 receipt) |
 
-## 0.1 ⚠️ 版本兼容决策点(必须先解决)
+## 0.1 版本兼容决策(2026-09-18 Owner 已定)
 
-原型当前 `compatibleSdkVersion 5.0.0(12)`(HarmonyOS NEXT 目标)。Mate60 现为 **HarmonyOS 4.2.0(API ≤ 11)**,无法直接安装 NEXT HAP。两条路:
+原型原 `compatibleSdkVersion 5.0.0(12)`(HarmonyOS NEXT 目标)。Mate60 现为 **HarmonyOS 4.2.0(API ≤ 11)**。
 
-- **路线 A(推荐)**:在手机上完成"升级尝鲜"已下载的新版本。若升级为 HarmonyOS NEXT 5.x,现有构建直接兼容(5.x ≥ 5.0.0(12)),CoreSpeechKit 离线语音按设计可用。模拟器为 6.1.1(24) Release,特性面接近。
-- **路线 B(回退目标)**:`compatibleSdkVersion` 降至 `4.1.0(11)` 适配现状系统。已核实 `@hms.ai.speechRecognizer` 声明 `@since 4.1.0(11)`,但 4.2 设备是否内置离线语音模型/服务未知;sherpa-onnx 原生库在 4.x 的可用性也需实测。此路线 STT 有降级为 NOT_AVAILABLE 的风险(诚实链可承载,但 Journey C/D 体验受损)。
+**Owner 决策:路线 B —— 安装包适配现有 4.2 系统,不升级手机。** 执行顺序(Owner 明确):模拟器开发测试 → 产品体验审核 → 最后才真机安装,不要着急装机。
 
-决定权在 Owner。升级前不要做路线 B 的改造。
+技术依据与风险:
+- `@hms.ai.speechRecognizer` 声明 `@since 4.1.0(11)`,编译面可行;但 4.2 设备是否内置离线语音模型/服务未知,STT 有降级为 NOT_AVAILABLE 的风险(诚实链承载,如实显示)
+- sherpa-onnx 原生库在 4.x 的可用性需真机实测
+- `compatibleSdkVersion` 降至 `4.1.0(11)` 后,构建期会静态拦截 API 12+ 调用,作为第一道防线
+- 模拟器(6.1.1(24))向后兼容,不受影响
+
+~~路线 A(升级尝鲜至 NEXT)已被 Owner 否决,不再考虑。~~
 
 ## 1. 签名(真机必须,模拟器免签名不代表真机)
 
