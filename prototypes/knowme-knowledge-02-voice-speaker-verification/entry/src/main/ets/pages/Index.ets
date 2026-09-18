@@ -442,6 +442,10 @@ struct Index {
       }
       .width('100%')
       .padding(16)
+      // Scroll centers short content vertically; pinning minHeight keeps the
+      // agent header at the top when the page is shorter than the viewport.
+      .constraintSize({ minHeight: '100%' })
+      .justifyContent(FlexAlign.Start)
     }
     .width('100%')
     .height('100%')
