@@ -7,9 +7,18 @@
 | 项 | 状态 | 说明 |
 | --- | --- | --- |
 | Mate60 数据线连接 + USB 调试(HDC) | ☐ | 开发者选项 → USB 调试;`hdc list targets` 出现非 `127.0.0.1:5555` 设备 |
-| HarmonyOS 版本号 | ☐ | 设置 → 关于本机,记录(如 5.x.x.x) |
+| HarmonyOS 版本号 | ☑ | **4.2.0.210**(2026-09-18 Owner 截图,工作区 `mate60-version.jpg`);截图同时显示"新版本已下载 · 升级尝鲜" |
 | 华为开发者账号登录 DevEco | ☑ | 2026-09-18 Owner 确认已登录 |
 | 负样本来源决定 | ☐ | 二选一:同意的非机主真人朗读 / 披露的 replay 重放(须写入 receipt) |
+
+## 0.1 ⚠️ 版本兼容决策点(必须先解决)
+
+原型当前 `compatibleSdkVersion 5.0.0(12)`(HarmonyOS NEXT 目标)。Mate60 现为 **HarmonyOS 4.2.0(API ≤ 11)**,无法直接安装 NEXT HAP。两条路:
+
+- **路线 A(推荐)**:在手机上完成"升级尝鲜"已下载的新版本。若升级为 HarmonyOS NEXT 5.x,现有构建直接兼容(5.x ≥ 5.0.0(12)),CoreSpeechKit 离线语音按设计可用。模拟器为 6.1.1(24) Release,特性面接近。
+- **路线 B(回退目标)**:`compatibleSdkVersion` 降至 `4.1.0(11)` 适配现状系统。已核实 `@hms.ai.speechRecognizer` 声明 `@since 4.1.0(11)`,但 4.2 设备是否内置离线语音模型/服务未知;sherpa-onnx 原生库在 4.x 的可用性也需实测。此路线 STT 有降级为 NOT_AVAILABLE 的风险(诚实链可承载,但 Journey C/D 体验受损)。
+
+决定权在 Owner。升级前不要做路线 B 的改造。
 
 ## 1. 签名(真机必须,模拟器免签名不代表真机)
 
