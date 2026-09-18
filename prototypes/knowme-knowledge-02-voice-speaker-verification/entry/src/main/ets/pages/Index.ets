@@ -96,6 +96,41 @@ struct Index {
     });
   }
 
+  private captureButtonLabel(): string {
+    // D6 fix: a denied permission must say so on the action itself —
+    // "开始说话" on a dead-end retry was dishonest affordance.
+    if (this.micState === MicState.PERMISSION_REQUIRED) {
+      return '授权并按住说话';
+    }
+    if (this.micState === MicState.PERMISSION_DENIED) {
+      return '重新授权麦克风';
+    }
+    return '🎙 开始说话';
+  }
+
+  /** Deep-link to system settings when the system no longer re-prompts. */
+  private async openMicSettings(): Promise<void> {
+    const ctx = this.uiContext();
+    const settingsBundles: string[] = ['com.huawei.hmos.settings', 'com.ohos.settings'];
+    for (const bundle of settingsBundles) {
+      try {
+        await ctx.startAbility({
+          bundleName: bundle,
+          abilityName: `${bundle}.MainAbility`,
+          uri: 'application_info_entry',
+          parameters: { pushParams: ctx.applicationInfo.name }
+        });
+        this.agent.say('system', '请在系统设置中允许麦克风权限,然后返回灵犀。');
+        this.refresh();
+        return;
+      } catch (e) {
+        // try next settings bundle name
+      }
+    }
+    this.agent.say('system', '无法自动跳转:请手动到 系统设置 → 应用 → 灵犀语音原型 → 权限 开启麦克风。');
+    this.refresh();
+  }
+
   private uiContext(): common.UIAbilityContext {
     return this.getUIContext().getHostContext() as common.UIAbilityContext;
   }
@@ -134,6 +169,10 @@ struct Index {
               .width('100%')
           }, (msg: AgentMessage) => `${msg.at}-${msg.role}`)
         }
+        // D7 fix: read tick in build so every refresh() re-renders new
+        // messages; without an observed read here, say() between two
+        // unchanged @State values left the conversation visually stale.
+        .id(`conv-${this.tick}`)
         .width('100%')
         .alignItems(HorizontalAlign.Start)
         .padding(10)
@@ -236,7 +275,7 @@ struct Index {
           .width('100%')
           .justifyContent(FlexAlign.Center)
         } else {
-          Button(this.micState === MicState.PERMISSION_REQUIRED ? '授权并按住说话' : '🎙 开始说话')
+          Button(this.captureButtonLabel())
             .fontSize(15)
             .width('100%')
             .height(48)
@@ -249,6 +288,11 @@ struct Index {
                 if (this.micState !== MicState.PERMISSION_GRANTED) {
                   this.agent.say('system', '麦克风权限未授予,无法录音。');
                   this.refresh();
+                  // D6 fix: system may stop re-prompting after denial —
+                  // give the Owner a real path forward instead of a dead button.
+                  if (this.micState === MicState.PERMISSION_DENIED) {
+                    await this.openMicSettings();
+                  }
                   return;
                 }
               }

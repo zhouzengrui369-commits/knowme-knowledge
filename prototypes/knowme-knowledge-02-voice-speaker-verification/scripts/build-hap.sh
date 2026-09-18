@@ -1,7 +1,7 @@
 #!/bin/bash
 # GOAL-KK-02 prototype — local build helper (DevEco CLI, no GUI required)
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 export DEVECO_SDK_HOME=/Applications/DevEco-Studio.app/Contents/sdk
 export NODE_HOME=/Applications/DevEco-Studio.app/Contents/tools/node
 export JAVA_HOME=/Applications/DevEco-Studio.app/Contents/jbr/Contents/Home
