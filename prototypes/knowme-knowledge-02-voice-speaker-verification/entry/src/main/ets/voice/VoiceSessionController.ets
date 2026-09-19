@@ -58,6 +58,8 @@ export class VoiceSessionController {
   micState: MicState = MicState.IDLE;
   speakerState: SpeakerState = SpeakerState.NOT_ENROLLED;
   transcript = '';
+  /** R2: true when transcript is a disclosed simulator TEST_FIXTURE, never real STT. */
+  fixtureTranscript = false;
   similarity: number = Number.NaN;
   sttEngineNote = '';
   speakerEngineNote = '';
@@ -102,6 +104,36 @@ export class VoiceSessionController {
       this.candidateStatus === CandidateStatus.NONE) {
       this.speakerState = this.speaker.state();
     }
+  }
+
+  /**
+   * R2-D14 fix: unconditional speaker-state refresh for enrollment-lifecycle
+   * transitions (completeEnrollment / resetEnrollment). The D13 guard above
+   * must NOT apply here: an enrollment session leaves a transcript on screen,
+   * which blocked the guard and left the strip saying NOT_ENROLLED next to
+   * 注册完成(3/3) — the strip contradicted itself again. There is no
+   * trust-gate verdict to protect in these contexts.
+   */
+  forceRefreshSpeakerState(): void {
+    this.speakerState = this.speaker.state();
+  }
+
+  /**
+   * R2-D17 (D-LE-02): voiceprint reset must also clear any on-screen capture
+   * result. After resetEnrollment the strip said NOT_ENROLLED while the old
+   * similarity (e.g. 0.762) was still displayed — a verdict that belongs to
+   * the deleted voiceprint, contradicting the strip on the same line.
+   * Enrollment-lifecycle transition: no trust-gate verdict needs protecting.
+   */
+  clearResultForReset(): void {
+    this.transcript = '';
+    this.fixtureTranscript = false;
+    this.similarity = Number.NaN;
+    this.lastStopToResultMs = -1;
+    this.gate = null;
+    this.candidateStatus = CandidateStatus.NONE;
+    this.speakerState = this.speaker.state();
+    this.emit('STATE_CHANGED');
   }
 
   /** Journey A: surface honest permission state before any capture. */
@@ -164,9 +196,38 @@ export class VoiceSessionController {
     this.micState = MicState.RECORDING;
     this.recordingStartedAt = Date.now();
     this.transcript = '';
+    this.fixtureTranscript = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
+    this.emit('STATE_CHANGED');
+    return true;
+  }
+
+  /**
+   * R2 contract: disclosed simulator TEST_FIXTURE transcript. Legal only when
+   * a real capture ran, the speaker verdict is VERIFIED, and STT produced
+   * nothing (BLOCKED_NOT_AVAILABLE — simulator lacks a usable offline model).
+   * Never presented as real recognition; the fixture flag follows the
+   * transcript through candidate → knowledge and every UI surface.
+   */
+  injectFixtureTranscript(text: string): boolean {
+    const trimmed = text.trim();
+    if (this.purpose !== SessionPurpose.CAPTURE ||
+      this.micState !== MicState.STOPPED ||
+      this.speakerState !== SpeakerState.VERIFIED ||
+      this.transcript.length > 0 || trimmed.length === 0 ||
+      this.gate !== TrustGateDecision.BLOCKED_NOT_AVAILABLE) {
+      return false;
+    }
+    this.transcript = trimmed;
+    this.fixtureTranscript = true;
+    // Route through the same VoiceCore rule — the speaker trust boundary is
+    // unchanged; only the transcript source is a disclosed fixture.
+    this.gate = trustGateDecision(this.speakerState, true);
+    this.candidateStatus = this.gate === TrustGateDecision.CANDIDATE_ALLOWED
+      ? CandidateStatus.DRAFT
+      : CandidateStatus.NONE;
     this.emit('STATE_CHANGED');
     return true;
   }
@@ -179,7 +240,17 @@ export class VoiceSessionController {
     const sttResult = await this.stt.finishSession();
     this.transcript = sttResult.transcript;
     if (sttResult.errorMessage.length > 0) {
-      this.sttEngineNote = sttResult.errorMessage;
+      // R2-D16 (D-LE-01): a partial STT failure must not overwrite the
+      // engine-disclosure copy when the transcript actually succeeded —
+      // otherwise the strip claims "STT 错误" while a real transcript is
+      // on screen, and the no-cloud disclosure disappears. Compose both
+      // facts honestly instead.
+      if (sttResult.transcript.length > 0) {
+        this.sttEngineNote = 'CoreSpeechKit 离线中文 (on-device,无云端) · 转写成功,' +
+          `但会话收尾报错已如实记录:${sttResult.errorMessage}`;
+      } else {
+        this.sttEngineNote = sttResult.errorMessage;
+      }
     }
 
     if (this.purpose === SessionPurpose.ENROLLMENT) {
@@ -273,6 +344,7 @@ export class VoiceSessionController {
   dismissResult(): void {
     this.micState = MicState.IDLE;
     this.transcript = '';
+    this.fixtureTranscript = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;

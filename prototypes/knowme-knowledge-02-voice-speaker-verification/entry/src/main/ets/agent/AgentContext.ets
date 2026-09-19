@@ -22,6 +22,8 @@ export interface KnowledgeItem {
   source: 'voice' | 'text';
   confirmedAt: number;
   speakerState: string;
+  /** R2: true = transcript was a disclosed simulator TEST_FIXTURE, not real STT. */
+  fixture?: boolean;
 }
 
 export class AgentContext {
@@ -42,7 +44,7 @@ export class AgentContext {
   }
 
   /** Explicit-confirm ingestion (VERIFIED voice candidate only). */
-  confirmVoiceCandidate(text: string, speakerState: string): KnowledgeItem | null {
+  confirmVoiceCandidate(text: string, speakerState: string, fixture: boolean = false): KnowledgeItem | null {
     const trimmed = text.trim();
     if (trimmed.length === 0) {
       return null;
@@ -54,10 +56,15 @@ export class AgentContext {
       title: title,
       source: 'voice',
       confirmedAt: Date.now(),
-      speakerState: speakerState
+      speakerState: speakerState,
+      fixture: fixture
     };
     this.knowledge.push(item);
-    this.say('agent', `已入库:「${item.title}」。这条来自你本人的语音(已验证),是你确认后才进入知识的。`);
+    if (fixture) {
+      this.say('agent', `已入库:「${item.title}」。⚠ 来源是模拟器测试转写(TEST_FIXTURE),不是真实语音识别;仅演示候选流程,真机未验证。`);
+    } else {
+      this.say('agent', `已入库:「${item.title}」。这条来自你本人的语音(已验证),是你确认后才进入知识的。`);
+    }
     return item;
   }
 
