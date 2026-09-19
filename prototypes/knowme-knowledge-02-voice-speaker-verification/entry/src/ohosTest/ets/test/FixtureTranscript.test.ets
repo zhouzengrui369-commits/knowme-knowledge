@@ -126,5 +126,22 @@ export default function fixtureTranscriptTest(): void {
       // UnprovisionedSpeakerEngine → NOT_AVAILABLE; key assertion: it changed.
       expect(s.speakerState).assertEqual(SpeakerState.NOT_AVAILABLE);
     });
+
+    it('R2D17_reset_clears_result_belonging_to_deleted_voiceprint', 0, () => {
+      // Reproduce R2-D17 (D-LE-02): after reset the strip said NOT_ENROLLED
+      // while the old 0.762 similarity was still displayed.
+      const s = newSession();
+      toFixtureEligible(s); // VERIFIED, gate, transcript-like state
+      s.injectFixtureTranscript('旧声纹的捕获结果');
+      expect(s.transcript.length > 0).assertTrue();
+      s.clearResultForReset();
+      expect(s.transcript).assertEqual('');
+      expect(s.fixtureTranscript).assertFalse();
+      expect(Number.isNaN(s.similarity)).assertTrue();
+      expect(s.lastStopToResultMs).assertEqual(-1);
+      expect(s.gate).assertEqual(null);
+      expect(s.candidateStatus).assertEqual(CandidateStatus.NONE);
+      expect(s.speakerState).assertEqual(SpeakerState.NOT_AVAILABLE);
+    });
   });
 }

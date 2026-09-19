@@ -118,6 +118,24 @@ export class VoiceSessionController {
     this.speakerState = this.speaker.state();
   }
 
+  /**
+   * R2-D17 (D-LE-02): voiceprint reset must also clear any on-screen capture
+   * result. After resetEnrollment the strip said NOT_ENROLLED while the old
+   * similarity (e.g. 0.762) was still displayed — a verdict that belongs to
+   * the deleted voiceprint, contradicting the strip on the same line.
+   * Enrollment-lifecycle transition: no trust-gate verdict needs protecting.
+   */
+  clearResultForReset(): void {
+    this.transcript = '';
+    this.fixtureTranscript = false;
+    this.similarity = Number.NaN;
+    this.lastStopToResultMs = -1;
+    this.gate = null;
+    this.candidateStatus = CandidateStatus.NONE;
+    this.speakerState = this.speaker.state();
+    this.emit('STATE_CHANGED');
+  }
+
   /** Journey A: surface honest permission state before any capture. */
   refreshPermission(): void {
     if (this.micState !== MicState.RECORDING) {
@@ -222,7 +240,17 @@ export class VoiceSessionController {
     const sttResult = await this.stt.finishSession();
     this.transcript = sttResult.transcript;
     if (sttResult.errorMessage.length > 0) {
-      this.sttEngineNote = sttResult.errorMessage;
+      // R2-D16 (D-LE-01): a partial STT failure must not overwrite the
+      // engine-disclosure copy when the transcript actually succeeded —
+      // otherwise the strip claims "STT 错误" while a real transcript is
+      // on screen, and the no-cloud disclosure disappears. Compose both
+      // facts honestly instead.
+      if (sttResult.transcript.length > 0) {
+        this.sttEngineNote = 'CoreSpeechKit 离线中文 (on-device,无云端) · 转写成功,' +
+          `但会话收尾报错已如实记录:${sttResult.errorMessage}`;
+      } else {
+        this.sttEngineNote = sttResult.errorMessage;
+      }
     }
 
     if (this.purpose === SessionPurpose.ENROLLMENT) {

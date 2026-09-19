@@ -270,7 +270,9 @@ struct Index {
                       this.session.speaker.resetEnrollment();
                       // R2-D14: reset must always update the strip, even while
                       // an old transcript/result is still on screen.
-                      this.session.forceRefreshSpeakerState();
+                      // R2-D17: and the old result (similarity/duration) belongs
+                      // to the deleted voiceprint — clear it with the reset.
+                      this.session.clearResultForReset();
                       this.enrollmentText = '已重置';
                       this.refresh();
                     }

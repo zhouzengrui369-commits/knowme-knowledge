@@ -30,12 +30,13 @@ git status                             # 必须 clean
 
 ```bash
 cd prototypes/knowme-knowledge-02-voice-speaker-verification
-./scripts/build-hap.sh                 # assembleHap,BUILD SUCCESSFUL
-./scripts/run-unit-tests.sh            # 顺带完成单元测试:须 23/23 PASS
+./scripts/provision-models.sh           # 必须:fresh materialization 无模型资产(不进 git),缺它注册会报「引擎未就绪」
+./scripts/build-hap.sh                  # assembleHap,BUILD SUCCESSFUL
+./scripts/run-unit-tests.sh             # 顺带完成单元测试:须 24/24 PASS(R2 新增 D17 回归用例)
 # 上面脚本会把 main+test 两个 hap 同命令装入模拟器
 ```
 
-模拟器:DevEco Emulator 实例 `kk02phone`(phone, API 11 / 4.1.0(11))。
+模拟器:DevEco Emulator 实例 `kk02phone`(phone;应用 compatibleSdkVersion=4.1.0(11),模拟器镜像实测 API 版本以 `hdc shell param get const.ohos.apiversion` 为准并**如实记录**,两者不一致属预期,不得改写为一致)。
 启动:`nohup /Users/njx/apps/deveco-tools/command-line-tools/bin/Emulator -start kk02phone >/tmp/emu.log 2>&1 &`
 就绪判定:`hdc shell param get bootevent.boot.completed` = true。
 **如实记录模拟器型号/镜像/API 版本进 receipt。**
