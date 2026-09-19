@@ -58,6 +58,8 @@ export class VoiceSessionController {
   micState: MicState = MicState.IDLE;
   speakerState: SpeakerState = SpeakerState.NOT_ENROLLED;
   transcript = '';
+  /** R2: true when transcript is a disclosed simulator TEST_FIXTURE, never real STT. */
+  fixtureTranscript = false;
   similarity: number = Number.NaN;
   sttEngineNote = '';
   speakerEngineNote = '';
@@ -164,9 +166,38 @@ export class VoiceSessionController {
     this.micState = MicState.RECORDING;
     this.recordingStartedAt = Date.now();
     this.transcript = '';
+    this.fixtureTranscript = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
+    this.emit('STATE_CHANGED');
+    return true;
+  }
+
+  /**
+   * R2 contract: disclosed simulator TEST_FIXTURE transcript. Legal only when
+   * a real capture ran, the speaker verdict is VERIFIED, and STT produced
+   * nothing (BLOCKED_NOT_AVAILABLE — simulator lacks a usable offline model).
+   * Never presented as real recognition; the fixture flag follows the
+   * transcript through candidate → knowledge and every UI surface.
+   */
+  injectFixtureTranscript(text: string): boolean {
+    const trimmed = text.trim();
+    if (this.purpose !== SessionPurpose.CAPTURE ||
+      this.micState !== MicState.STOPPED ||
+      this.speakerState !== SpeakerState.VERIFIED ||
+      this.transcript.length > 0 || trimmed.length === 0 ||
+      this.gate !== TrustGateDecision.BLOCKED_NOT_AVAILABLE) {
+      return false;
+    }
+    this.transcript = trimmed;
+    this.fixtureTranscript = true;
+    // Route through the same VoiceCore rule — the speaker trust boundary is
+    // unchanged; only the transcript source is a disclosed fixture.
+    this.gate = trustGateDecision(this.speakerState, true);
+    this.candidateStatus = this.gate === TrustGateDecision.CANDIDATE_ALLOWED
+      ? CandidateStatus.DRAFT
+      : CandidateStatus.NONE;
     this.emit('STATE_CHANGED');
     return true;
   }
@@ -273,6 +304,7 @@ export class VoiceSessionController {
   dismissResult(): void {
     this.micState = MicState.IDLE;
     this.transcript = '';
+    this.fixtureTranscript = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
