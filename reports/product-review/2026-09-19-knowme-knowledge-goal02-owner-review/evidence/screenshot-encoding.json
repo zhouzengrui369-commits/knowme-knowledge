@@ -1,0 +1,93 @@
+[
+  {
+    "file": "02-cold-home.png",
+    "source_format": "PNG",
+    "raw_sha256": "b2cf6e5ff1b0915e5350589620ed5524b4fa1213a79c220416b487486f58f7bc",
+    "published_sha256": "ac296e827613be14c48421495715203af6bdbbb8723a834d1e1d06ed3640e7fc",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "04-unenrolled-stop.png",
+    "source_format": "PNG",
+    "raw_sha256": "a2274f6ab9f43f0ce7d05c03fd11bc518356a72a679e81034dff6d4f7ccdd842",
+    "published_sha256": "15b6841a855e8859286590debe930cf332e59effc59f8b607b46226c8efb644a",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "15-voice-start.png",
+    "source_format": "PNG",
+    "raw_sha256": "097fae06ae6577186bd34d69c437628be7777fb3ad4cc998f6b9ad6c66485cea",
+    "published_sha256": "4e02e9dfe1b4a7ed29de39f480e03bdf7847bb60307e74ef168978ae9dbe8d3a",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "26-reset-dialog.png",
+    "source_format": "PNG",
+    "raw_sha256": "ffc4566f83b39952283c058f9cb59edd50a18777b03367f76c44741fd0ffc581",
+    "published_sha256": "bddae335f7bb09be12b13452f01dbee209514a387f4696b0eb30e3dcf7f72ea1",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "44-cold-recovery.png",
+    "source_format": "PNG",
+    "raw_sha256": "c2d708de1ad820a6447ce64ecf093bf260f9042ce81aadd405ea65831f64f66f",
+    "published_sha256": "c39c43a2a5a4a9da8f43e2c64217c561c5594cd9ed9e2e53580152c82615fa79",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "46-stable-uncertain.png",
+    "source_format": "PNG",
+    "raw_sha256": "3e7fd7fcd455182dee1b5940d2982cc40847515f54770799f030bebe4018e193",
+    "published_sha256": "df4095bd4198d1f7a85641505181aa55256dd9725dbfae3b4c461ecda3b9d418",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "49-proof-saved-stable.png",
+    "source_format": "PNG",
+    "raw_sha256": "208a0b7b1ee4d156613a100c7ea1a0ee7083bff20ca2bd5eb65beb0ce98360bf",
+    "published_sha256": "9f27fd9bbf18836043bc27a645e86cc9e853e84cbd07efcf2b6fa41e738dd527",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "52-wlan-off.png",
+    "source_format": "PNG",
+    "raw_sha256": "519efe39d16bb8f6e390d3d93a19574b0d10eead01bb90186ad1416f9463bf36",
+    "published_sha256": "9916e80ada35ff70ba908699f9665b6d1f162725695c1672a02d762be9550fed",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "55-offline-stop.png",
+    "source_format": "PNG",
+    "raw_sha256": "cf30b76050aa64f58556f157166febf0fe357af7b2077b69f7f89d9bff313b15",
+    "published_sha256": "31ac0fa199866fa1d1f75312f5baf46a2d7eb8adef9f4a70907ab83cdd98ca92",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "58-offline-saved.png",
+    "source_format": "PNG",
+    "raw_sha256": "0bc8c0b90316dd8244a7aa68d0276957a3f9a5dd4190bc69afbf8cba3db6bddd",
+    "published_sha256": "d50899e75c54e1c28c9d07d6bee6190de7840b1bb27dab5329b2907f5757b37e",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "60-wlan-restored.png",
+    "source_format": "PNG",
+    "raw_sha256": "cd2eb97fbc455f6d8758b8a329e52a7cd3fc591b9d066a9d7d4e9f75a5157830",
+    "published_sha256": "d7a3de4460f2116f34bb5a60edecd8dfdd4785f9615d6757d6ca74ac59393e55",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "66-denied-recovery-view.png",
+    "source_format": "PNG",
+    "raw_sha256": "9bf458e060906237c57d1b3cd221a9382fbb0358a5213975b6e56066f81eda9a",
+    "published_sha256": "9d618ea0150b6062b524b9d9fe906b2a221dcabe389273dc13503d4c33c49557",
+    "pixel_identity_verified": true
+  },
+  {
+    "file": "69-final-restored.png",
+    "source_format": "PNG",
+    "raw_sha256": "5ff0a43c40d9dd261c54a0328ad52d98b048203623290fbd66a43d1df281ddd5",
+    "published_sha256": "0e9e927bcc6e86dc4232d835c61e282a2c476a0764918caef15a211cb29b9658",
+    "pixel_identity_verified": true
+  }
+]
