@@ -26,6 +26,8 @@ struct Index {
   @State correctedText: string = '';
   @State manualText: string = '';
   @State degradedCapture: boolean = false;
+  @State fixtureActive: boolean = false;
+  @State fixtureText: string = '';
   @State tick: number = 0;
   // D12 fix: agent.messages is a plain array on an unobserved class — push()
   // is invisible to @State, so say() between two unchanged values stayed
@@ -45,6 +47,7 @@ struct Index {
     this.speakerNote = this.session.speaker.engineIdentity();
     this.knowledgeCount = this.agent.knowledgeCount();
     this.gateText = this.gateLabel();
+    this.fixtureActive = this.session.fixtureTranscript;
     this.visibleMessages = this.agent.messages.slice(-4);
     this.tick += 1;
   }
@@ -246,10 +249,35 @@ struct Index {
               .fontColor('#C62828')
               .enabled(this.micState !== MicState.RECORDING)
               .onClick(() => {
-                this.session.speaker.resetEnrollment();
-                this.session.refreshSpeakerState();
-                this.enrollmentText = '已重置';
-                this.refresh();
+                // R2-D15: destructive reset must be confirmed. A single
+                // accidental tap (e.g. stale-coordinate touch after the
+                // message list shifts the layout) used to wipe the on-device
+                // voiceprint profile irreversibly.
+                AlertDialog.show({
+                  title: '重置机主声纹?',
+                  message: '将删除本机声纹档案,不可恢复;已入库的知识条目不受影响。',
+                  autoCancel: true,
+                  alignment: DialogAlignment.Center,
+                  primaryButton: {
+                    value: '取消',
+                    fontColor: '#555555',
+                    action: () => {}
+                  },
+                  secondaryButton: {
+                    value: '确认重置',
+                    fontColor: '#C62828',
+                    action: () => {
+                      this.session.speaker.resetEnrollment();
+                      // R2-D14: reset must always update the strip, even while
+                      // an old transcript/result is still on screen.
+                      // R2-D17: and the old result (similarity/duration) belongs
+                      // to the deleted voiceprint — clear it with the reset.
+                      this.session.clearResultForReset();
+                      this.enrollmentText = '已重置';
+                      this.refresh();
+                    }
+                  }
+                });
               })
           }
         }
@@ -271,7 +299,10 @@ struct Index {
                     this.enrollmentText = done ? '注册完成(3/3)' : '注册失败,请重试';
                     // D9 fix: refresh speaker state right after enrollment —
                     // the strip kept saying NOT_ENROLLED next to 注册完成.
-                    this.session.refreshSpeakerState();
+                    // R2-D14: the D13-guarded refreshSpeakerState() is skipped
+                    // while the enrollment transcript is on screen, so use the
+                    // unconditional variant here.
+                    this.session.forceRefreshSpeakerState();
                   } else if (n > 0) {
                     this.enrollmentText = `采样 ${n}/3 · 再录 ${3 - n} 句`;
                   } else {
@@ -335,8 +366,14 @@ struct Index {
               .fontSize(12)
               .fontColor('#555555')
             if (this.transcript.length > 0) {
-              Text(`转写:「${this.transcript}」`)
+              Text(this.fixtureActive ? `转写(测试代理):「${this.transcript}」` : `转写:「${this.transcript}」`)
                 .fontSize(14)
+                .width('100%')
+            }
+            if (this.fixtureActive) {
+              Text('⚠ TEST_FIXTURE:这段"转写"是模拟器测试代理文本,不是真实语音识别;仅用于演示候选流程。真机未验证。')
+                .fontSize(11)
+                .fontColor('#B26A00')
                 .width('100%')
             }
             if (this.gateText.length > 0) {
@@ -356,7 +393,7 @@ struct Index {
         // ── Candidate card (correct / reject / explicit confirm) ──
         if (this.candidateStatus === CandidateStatus.DRAFT || this.candidateStatus === CandidateStatus.CORRECTED) {
           Column({ space: 8 }) {
-            Text('候选知识(未入库 · 待你确认)')
+            Text(this.fixtureActive ? '候选知识(TEST_FIXTURE 测试转写 · 未入库 · 待你确认)' : '候选知识(未入库 · 待你确认)')
               .fontSize(13)
               .fontWeight(FontWeight.Medium)
             TextInput({ text: this.transcript, placeholder: '可修正转写内容' })
@@ -379,7 +416,7 @@ struct Index {
                 .onClick(() => {
                   const text = this.session.confirmCandidate();
                   if (text.length > 0) {
-                    this.agent.confirmVoiceCandidate(text, this.session.speakerState);
+                    this.agent.confirmVoiceCandidate(text, this.session.speakerState, this.session.fixtureTranscript);
                   }
                   this.session.dismissResult();
                   this.refresh();
@@ -443,6 +480,38 @@ struct Index {
                     this.refresh();
                   }
                 })
+            }
+            // R2: disclosed simulator TEST_FIXTURE — only when the speaker is
+            // VERIFIED and the sole blocker is missing STT transcript. Lets
+            // the Owner exercise the full candidate flow in the simulator
+            // without ever presenting fixture text as real recognition.
+            if (this.session.gate === TrustGateDecision.BLOCKED_NOT_AVAILABLE &&
+              this.speakerState === SpeakerState.VERIFIED) {
+              Column({ space: 4 }) {
+                Text('模拟器无可用离线转写。可注入一段测试转写走完候选流程(全程标注 TEST_FIXTURE,不代表真实识别):')
+                  .fontSize(11)
+                  .fontColor('#B26A00')
+                  .width('100%')
+                Row({ space: 6 }) {
+                  TextInput({ text: this.fixtureText, placeholder: '输入测试转写(TEST_FIXTURE)' })
+                    .layoutWeight(1)
+                    .onChange((v: string) => {
+                      this.fixtureText = v;
+                    })
+                  Button('注入测试转写')
+                    .fontSize(12)
+                    .fontColor('#B26A00')
+                    .onClick(() => {
+                      if (this.session.injectFixtureTranscript(this.fixtureText)) {
+                        this.fixtureText = '';
+                        this.agent.say('system', '已注入模拟器测试转写(TEST_FIXTURE,非真实语音识别),候选流仅为流程演示。');
+                      }
+                      this.refresh();
+                    })
+                }
+              }
+              .width('100%')
+              .alignItems(HorizontalAlign.Start)
             }
           }
           .width('100%')
