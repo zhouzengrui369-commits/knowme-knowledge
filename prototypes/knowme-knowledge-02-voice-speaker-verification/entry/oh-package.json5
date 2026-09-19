@@ -1,0 +1,14 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "KnowME GOAL-KK-02 voice capture + speaker verification prototype entry",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "sherpa_onnx": "1.12.1"
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.21"
+  }
+}

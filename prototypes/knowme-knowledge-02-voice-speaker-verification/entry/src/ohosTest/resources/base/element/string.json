@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_test_desc",
+      "value": "KnowME voice prototype unit tests"
+    },
+    {
+      "name": "TestAbility_desc",
+      "value": "KnowME voice prototype test ability"
+    },
+    {
+      "name": "TestAbility_label",
+      "value": "灵犀语音测试"
+    }
+  ]
+}

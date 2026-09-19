@@ -1,0 +1,31 @@
+# DevEco / hvigor build artifacts
+oh_modules/
+.hvigor/
+.cxx/
+**/build/
+local.properties
+.idea/
+*.iml
+
+# Privacy boundary (GOAL-KK-02 contract): never commit raw Owner audio,
+# speaker embeddings/voiceprints, private transcripts, secrets or signing material
+*.wav
+*.pcm
+*.opus
+*.m4a
+*.p12
+*.csr
+*.cer
+*.p7b
+signing/
+secrets/
+
+# Runtime model assets — provisioned via scripts/provision-models.sh,
+# never committed (identity + sha256 recorded in receipts instead)
+entry/src/main/resources/rawfile/models/
+
+# hvigor on-device test intermediates
+**/.test/
+
+# local emulator/dev-loop artifacts (logs, dev screenshots)
+.local/
