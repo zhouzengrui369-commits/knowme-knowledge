@@ -250,7 +250,9 @@ struct Index {
               .enabled(this.micState !== MicState.RECORDING)
               .onClick(() => {
                 this.session.speaker.resetEnrollment();
-                this.session.refreshSpeakerState();
+                // R2-D14: reset must always update the strip, even while an
+                // old transcript/result is still on screen.
+                this.session.forceRefreshSpeakerState();
                 this.enrollmentText = '已重置';
                 this.refresh();
               })
@@ -274,7 +276,10 @@ struct Index {
                     this.enrollmentText = done ? '注册完成(3/3)' : '注册失败,请重试';
                     // D9 fix: refresh speaker state right after enrollment —
                     // the strip kept saying NOT_ENROLLED next to 注册完成.
-                    this.session.refreshSpeakerState();
+                    // R2-D14: the D13-guarded refreshSpeakerState() is skipped
+                    // while the enrollment transcript is on screen, so use the
+                    // unconditional variant here.
+                    this.session.forceRefreshSpeakerState();
                   } else if (n > 0) {
                     this.enrollmentText = `采样 ${n}/3 · 再录 ${3 - n} 句`;
                   } else {

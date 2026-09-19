@@ -106,6 +106,18 @@ export class VoiceSessionController {
     }
   }
 
+  /**
+   * R2-D14 fix: unconditional speaker-state refresh for enrollment-lifecycle
+   * transitions (completeEnrollment / resetEnrollment). The D13 guard above
+   * must NOT apply here: an enrollment session leaves a transcript on screen,
+   * which blocked the guard and left the strip saying NOT_ENROLLED next to
+   * 注册完成(3/3) — the strip contradicted itself again. There is no
+   * trust-gate verdict to protect in these contexts.
+   */
+  forceRefreshSpeakerState(): void {
+    this.speakerState = this.speaker.state();
+  }
+
   /** Journey A: surface honest permission state before any capture. */
   refreshPermission(): void {
     if (this.micState !== MicState.RECORDING) {

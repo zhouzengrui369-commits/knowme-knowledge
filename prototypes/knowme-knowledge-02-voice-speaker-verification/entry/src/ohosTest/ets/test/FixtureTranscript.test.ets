@@ -111,5 +111,20 @@ export default function fixtureTranscriptTest(): void {
       expect(s.gate).assertEqual(null);
       expect(s.candidateStatus).assertEqual(CandidateStatus.NONE);
     });
+
+    it('R2D14_force_refresh_bypasses_d13_guard_for_enrollment_lifecycle', 0, () => {
+      // Reproduce R2-D14: transcript on screen blocks refreshSpeakerState(),
+      // leaving a stale NOT_ENROLLED strip next to 注册完成(3/3).
+      const s = newSession();
+      s.speakerState = SpeakerState.ENROLLED; // stale value
+      s.transcript = '注册采样转写仍显示在屏幕上';
+      s.gate = null;
+      s.candidateStatus = CandidateStatus.NONE;
+      s.refreshSpeakerState();
+      expect(s.speakerState).assertEqual(SpeakerState.ENROLLED); // guarded: unchanged
+      s.forceRefreshSpeakerState();
+      // UnprovisionedSpeakerEngine → NOT_AVAILABLE; key assertion: it changed.
+      expect(s.speakerState).assertEqual(SpeakerState.NOT_AVAILABLE);
+    });
   });
 }
