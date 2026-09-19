@@ -23,9 +23,8 @@ echo "== build ohosTest hap (coverage step failure is expected/benign for unsign
 hvigorw --mode module -p module=entry@ohosTest -p product=default -p buildMode=debug onDeviceTest --no-daemon >/dev/null 2>&1 || true
 test -f entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap
 
-echo "== install on emulator =="
-hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap
-hdc install -r entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap
+echo "== install on emulator (both haps in ONE command — separate installs replace the bundle) =="
+hdc install -r entry/build/default/outputs/default/entry-default-unsigned.hap entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap
 
 echo "== run tests =="
 EXTRA=""
