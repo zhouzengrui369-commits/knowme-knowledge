@@ -249,12 +249,33 @@ struct Index {
               .fontColor('#C62828')
               .enabled(this.micState !== MicState.RECORDING)
               .onClick(() => {
-                this.session.speaker.resetEnrollment();
-                // R2-D14: reset must always update the strip, even while an
-                // old transcript/result is still on screen.
-                this.session.forceRefreshSpeakerState();
-                this.enrollmentText = '已重置';
-                this.refresh();
+                // R2-D15: destructive reset must be confirmed. A single
+                // accidental tap (e.g. stale-coordinate touch after the
+                // message list shifts the layout) used to wipe the on-device
+                // voiceprint profile irreversibly.
+                AlertDialog.show({
+                  title: '重置机主声纹?',
+                  message: '将删除本机声纹档案,不可恢复;已入库的知识条目不受影响。',
+                  autoCancel: true,
+                  alignment: DialogAlignment.Center,
+                  primaryButton: {
+                    value: '取消',
+                    fontColor: '#555555',
+                    action: () => {}
+                  },
+                  secondaryButton: {
+                    value: '确认重置',
+                    fontColor: '#C62828',
+                    action: () => {
+                      this.session.speaker.resetEnrollment();
+                      // R2-D14: reset must always update the strip, even while
+                      // an old transcript/result is still on screen.
+                      this.session.forceRefreshSpeakerState();
+                      this.enrollmentText = '已重置';
+                      this.refresh();
+                    }
+                  }
+                });
               })
           }
         }
