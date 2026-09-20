@@ -154,5 +154,26 @@ export default function fixtureDemoTest(): void {
       expect(s2.fixtureDemo).assertFalse();
       expect(s2.fixtureTranscript).assertFalse();
     });
+
+    it('FIXTURE_DEMO_D21_dismiss_preserves_honest_permission_state', 0, () => {
+      // R3-D21: manual-text record (or any outcome dispose) while the mic is
+      // PERMISSION_DENIED / PERMISSION_REQUIRED must NOT be clobbered to IDLE —
+      // that hid the denied banner + settings deep link until the next page
+      // show. Only a completed capture (STOPPED) returns to IDLE.
+      const denied = newSession();
+      denied.micState = MicState.PERMISSION_DENIED;
+      denied.dismissResult();
+      expect(denied.micState).assertEqual(MicState.PERMISSION_DENIED);
+
+      const required = newSession();
+      required.micState = MicState.PERMISSION_REQUIRED;
+      required.dismissResult();
+      expect(required.micState).assertEqual(MicState.PERMISSION_REQUIRED);
+
+      const stopped = newSession();
+      stopped.micState = MicState.STOPPED;
+      stopped.dismissResult();
+      expect(stopped.micState).assertEqual(MicState.IDLE);
+    });
   });
 }

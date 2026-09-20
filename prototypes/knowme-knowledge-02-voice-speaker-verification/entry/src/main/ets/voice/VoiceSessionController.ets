@@ -392,7 +392,14 @@ export class VoiceSessionController {
    * the result/blocked/candidate cards do not linger as stale UI.
    */
   dismissResult(): void {
-    this.micState = MicState.IDLE;
+    // R3-D21: disposing an outcome must not clobber an honest permission
+    // state. A manual-text record while PERMISSION_DENIED / PERMISSION_REQUIRED
+    // used to force IDLE, which hid the denied banner and the settings deep
+    // link until the next page show — the mic line read "空闲" while recording
+    // was still impossible. Only a completed capture (STOPPED) returns to IDLE.
+    if (this.micState === MicState.STOPPED) {
+      this.micState = MicState.IDLE;
+    }
     this.transcript = '';
     this.fixtureTranscript = false;
     this.fixtureDemo = false;
