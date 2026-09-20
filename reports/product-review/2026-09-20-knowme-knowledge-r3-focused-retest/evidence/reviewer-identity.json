@@ -1,0 +1,104 @@
+{
+  "captured_at": "2026-09-20T16:11:54.122316+08:00",
+  "purpose": "review candidate identity only; no product source inspection",
+  "runtime": [
+    {
+      "command": [
+        "/Users/njx/apps/deveco-tools/command-line-tools/sdk/default/openharmony/toolchains/hdc",
+        "shell",
+        "param",
+        "get",
+        "const.product.model"
+      ],
+      "exit_code": 0,
+      "stdout": "emulator",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/njx/apps/deveco-tools/command-line-tools/sdk/default/openharmony/toolchains/hdc",
+        "shell",
+        "param",
+        "get",
+        "const.ohos.apiversion"
+      ],
+      "exit_code": 0,
+      "stdout": "24",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/njx/apps/deveco-tools/command-line-tools/sdk/default/openharmony/toolchains/hdc",
+        "shell",
+        "param",
+        "get",
+        "const.product.software.version"
+      ],
+      "exit_code": 0,
+      "stdout": "emulator 6.1.0.126(SP1DEVC00E120R4P11)",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/njx/apps/deveco-tools/command-line-tools/sdk/default/openharmony/toolchains/hdc",
+        "shell",
+        "param",
+        "get",
+        "const.ohos.fullname"
+      ],
+      "exit_code": 0,
+      "stdout": "OpenHarmony-6.1.1.125",
+      "stderr": ""
+    }
+  ],
+  "candidate": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "KnowME knowledge/kk02-r3-le",
+        "rev-parse",
+        "HEAD",
+        "HEAD^{tree}"
+      ],
+      "exit_code": 0,
+      "stdout": "06b013cf776d308737cf6726afcff7ee4831f5f4\n7cb5983766875d982df4ff8795a1aa3a3bac96fc",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "KnowME knowledge/kk02-r3-le",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "KnowME knowledge/kk02-r3-le/prototypes/knowme-knowledge-02-voice-speaker-verification/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "sha256": "bc5f06a65ff9adce4073d84a79355817d11955abc5a897b351d4f0ee83ae0473",
+      "size": 79016293
+    },
+    {
+      "path": "KnowME knowledge/kk02-r3-le/prototypes/knowme-knowledge-02-voice-speaker-verification/entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap",
+      "sha256": "96ec99345aaa3be748665e8b1784d58c3d1048189653fb0bf9380df1f8d7b757",
+      "size": 79865138
+    }
+  ],
+  "github_pr": {
+    "number": 24,
+    "state": "open",
+    "draft": true,
+    "html_url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/pull/24",
+    "head": {
+      "sha": "06b013cf776d308737cf6726afcff7ee4831f5f4",
+      "ref": "engineering/goal-kk-02-px01-correction-r3"
+    }
+  },
+  "branch_head": "06b013cf776d308737cf6726afcff7ee4831f5f4"
+}
