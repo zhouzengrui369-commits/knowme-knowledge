@@ -2,6 +2,7 @@ import { common } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import {
   CandidateStatus,
+  CandidateTrustClass,
   MicState,
   SpeakerState,
   TrustGateDecision,
@@ -60,6 +61,14 @@ export class VoiceSessionController {
   transcript = '';
   /** R2: true when transcript is a disclosed simulator TEST_FIXTURE, never real STT. */
   fixtureTranscript = false;
+  /**
+   * R3 (PX-KK02-03): true when the current candidate came from the direct,
+   * always-reachable disclosed TEST_FIXTURE demo entry (no capture ran, no
+   * speaker verdict exists). Such candidates are trust-class FIXTURE: they
+   * claim no speaker identity and confirm exactly like manual text; the real
+   * VOICE trust gate is untouched.
+   */
+  fixtureDemo = false;
   similarity: number = Number.NaN;
   sttEngineNote = '';
   speakerEngineNote = '';
@@ -128,6 +137,7 @@ export class VoiceSessionController {
   clearResultForReset(): void {
     this.transcript = '';
     this.fixtureTranscript = false;
+    this.fixtureDemo = false;
     this.similarity = Number.NaN;
     this.lastStopToResultMs = -1;
     this.gate = null;
@@ -197,9 +207,46 @@ export class VoiceSessionController {
     this.recordingStartedAt = Date.now();
     this.transcript = '';
     this.fixtureTranscript = false;
+    this.fixtureDemo = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
+    this.emit('STATE_CHANGED');
+    return true;
+  }
+
+  /**
+   * R3 (PX-KK02-03): direct, always-reachable disclosed TEST_FIXTURE demo
+   * candidate. The simulator's acoustic path cannot repeatably produce a
+   * usable VERIFIED+transcript candidate, so the contract allows a clearly
+   * disclosed fixture route through visible UI — without touching thresholds
+   * or internal verification state.
+   *
+   * Hard rules:
+   *  - no capture/session may be live and no candidate may be on screen;
+   *  - no speaker verdict is created or implied (speakerState untouched,
+   *    gate stays null — there is NO trust-gate pass to show);
+   *  - the fixture flag follows the candidate through confirm → knowledge;
+   *  - correction, reject and explicit confirm stay separate operations;
+   *  - reject increments knowledge by 0, confirm by exactly +1 (via the
+   *    Agent layer with source=fixture, never "verified voice").
+   */
+  startFixtureCandidate(text: string): boolean {
+    const trimmed = text.trim();
+    if (this.micState === MicState.RECORDING ||
+      this.candidateStatus !== CandidateStatus.NONE ||
+      trimmed.length === 0) {
+      return false;
+    }
+    this.purpose = SessionPurpose.CAPTURE;
+    this.micState = MicState.IDLE;
+    this.transcript = trimmed;
+    this.fixtureTranscript = true;
+    this.fixtureDemo = true;
+    this.similarity = Number.NaN;
+    this.lastStopToResultMs = -1;
+    this.gate = null;
+    this.candidateStatus = CandidateStatus.DRAFT;
     this.emit('STATE_CHANGED');
     return true;
   }
@@ -281,6 +328,8 @@ export class VoiceSessionController {
     await this.stt.cancelSession();
     this.micState = MicState.IDLE;
     this.transcript = '';
+    this.fixtureTranscript = false;
+    this.fixtureDemo = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
@@ -320,7 +369,8 @@ export class VoiceSessionController {
 
   /** Returns the confirmed text when ingestion is allowed; empty string otherwise. */
   confirmCandidate(): string {
-    if (!canConfirmCandidate(this.candidateStatus, this.speakerState)) {
+    const trustClass = this.fixtureDemo ? CandidateTrustClass.FIXTURE : CandidateTrustClass.VOICE;
+    if (!canConfirmCandidate(this.candidateStatus, this.speakerState, trustClass)) {
       hilog.warn(DOMAIN, TAG, 'confirm blocked by trust gate');
       return '';
     }
@@ -342,9 +392,17 @@ export class VoiceSessionController {
    * the result/blocked/candidate cards do not linger as stale UI.
    */
   dismissResult(): void {
-    this.micState = MicState.IDLE;
+    // R3-D21: disposing an outcome must not clobber an honest permission
+    // state. A manual-text record while PERMISSION_DENIED / PERMISSION_REQUIRED
+    // used to force IDLE, which hid the denied banner and the settings deep
+    // link until the next page show — the mic line read "空闲" while recording
+    // was still impossible. Only a completed capture (STOPPED) returns to IDLE.
+    if (this.micState === MicState.STOPPED) {
+      this.micState = MicState.IDLE;
+    }
     this.transcript = '';
     this.fixtureTranscript = false;
+    this.fixtureDemo = false;
     this.similarity = Number.NaN;
     this.gate = null;
     this.candidateStatus = CandidateStatus.NONE;
