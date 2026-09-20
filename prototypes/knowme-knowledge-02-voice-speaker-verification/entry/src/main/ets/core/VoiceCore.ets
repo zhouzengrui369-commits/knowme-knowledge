@@ -49,6 +49,18 @@ export enum TrustGateDecision {
 }
 
 /**
+ * R3 (PX-KK02-03): candidate trust class. VOICE candidates come from real
+ * captured audio and keep the frozen trust gate (VERIFIED only). FIXTURE
+ * candidates are disclosed simulator TEST_FIXTURE demonstrations — they carry
+ * no speaker claim at all (same trust class as manual text, which has always
+ * been ingestible without verification), so they never weaken the voice gate.
+ */
+export enum CandidateTrustClass {
+  VOICE = 'VOICE',
+  FIXTURE = 'FIXTURE'
+}
+
+/**
  * Speaker-verification similarity thresholds (cosine on eres2net embeddings).
  * Values are Engineering-tuned on the real device benchmark; the mapping
  * rule itself is contract-frozen: an uncertain band must exist and must NOT
@@ -92,9 +104,18 @@ export function trustGateDecision(speaker: SpeakerState, hasTranscript: boolean)
 }
 
 /** Explicit-confirm rule: only a DRAFT/CORRECTED candidate from VERIFIED speech can ingest. */
-export function canConfirmCandidate(status: CandidateStatus, speaker: SpeakerState): boolean {
-  return speaker === SpeakerState.VERIFIED &&
-    (status === CandidateStatus.DRAFT || status === CandidateStatus.CORRECTED);
+export function canConfirmCandidate(status: CandidateStatus, speaker: SpeakerState,
+  trustClass: CandidateTrustClass = CandidateTrustClass.VOICE): boolean {
+  if (status !== CandidateStatus.DRAFT && status !== CandidateStatus.CORRECTED) {
+    return false;
+  }
+  // R3: a disclosed TEST_FIXTURE demo candidate claims no speaker identity —
+  // it is ingested exactly like manual text (explicit user confirm, honest
+  // source label). Real VOICE candidates still require VERIFIED speech.
+  if (trustClass === CandidateTrustClass.FIXTURE) {
+    return true;
+  }
+  return speaker === SpeakerState.VERIFIED;
 }
 
 /** Correction keeps the item a candidate; it never ingests by itself. */
