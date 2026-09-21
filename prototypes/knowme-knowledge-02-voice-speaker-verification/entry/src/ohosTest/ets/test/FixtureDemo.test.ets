@@ -175,5 +175,54 @@ export default function fixtureDemoTest(): void {
       stopped.dismissResult();
       expect(stopped.micState).assertEqual(MicState.IDLE);
     });
+
+    it('FIXTURE_DEMO_R3_06_generate_preserves_permission_fact', 0, () => {
+      // PX-KK02-R3-06: while system mic permission is denied/required/
+      // unavailable, creating a TEST_FIXTURE candidate must NOT clear the
+      // state to a fake "空闲·未录音" (IDLE). FIXTURE_STATE never overwrites
+      // MIC_PERMISSION_STATE.
+      const denied = newSession();
+      denied.micState = MicState.PERMISSION_DENIED;
+      expect(denied.startFixtureCandidate('拒绝态演示')).assertTrue();
+      expect(denied.micState).assertEqual(MicState.PERMISSION_DENIED);
+      expect(denied.candidateStatus).assertEqual(CandidateStatus.DRAFT);
+
+      const required = newSession();
+      required.micState = MicState.PERMISSION_REQUIRED;
+      expect(required.startFixtureCandidate('待授权演示')).assertTrue();
+      expect(required.micState).assertEqual(MicState.PERMISSION_REQUIRED);
+
+      const unavailable = newSession();
+      unavailable.micState = MicState.UNAVAILABLE;
+      expect(unavailable.startFixtureCandidate('不可用演示')).assertTrue();
+      expect(unavailable.micState).assertEqual(MicState.UNAVAILABLE);
+
+      const idle = newSession();
+      idle.micState = MicState.IDLE;
+      expect(idle.startFixtureCandidate('空闲演示')).assertTrue();
+      expect(idle.micState).assertEqual(MicState.IDLE);
+    });
+
+    it('FIXTURE_DEMO_R3_06_correct_reject_confirm_keep_denied_state', 0, () => {
+      // Full fixture lifecycle while denied: every entry/exit keeps the
+      // honest DENIED fact so the banner + truthful CTA never regress.
+      const s = newSession();
+      s.micState = MicState.PERMISSION_DENIED;
+      s.startFixtureCandidate('将被修正');
+      expect(s.correctCandidate('已修正内容')).assertTrue();
+      expect(s.micState).assertEqual(MicState.PERMISSION_DENIED);
+      s.rejectCandidate();
+      expect(s.micState).assertEqual(MicState.PERMISSION_DENIED);
+      s.dismissResult();
+      expect(s.micState).assertEqual(MicState.PERMISSION_DENIED);
+
+      const s2 = newSession();
+      s2.micState = MicState.PERMISSION_DENIED;
+      s2.startFixtureCandidate('将被确认');
+      expect(s2.confirmCandidate()).assertEqual('将被确认');
+      expect(s2.micState).assertEqual(MicState.PERMISSION_DENIED);
+      s2.dismissResult();
+      expect(s2.micState).assertEqual(MicState.PERMISSION_DENIED);
+    });
   });
 }

@@ -239,7 +239,9 @@ export class VoiceSessionController {
       return false;
     }
     this.purpose = SessionPurpose.CAPTURE;
-    this.micState = MicState.IDLE;
+    // R3-06 (PX-KK02-R3-06): creating a demo candidate must not erase the
+    // real microphone permission fact. FIXTURE_STATE != MIC_PERMISSION_STATE.
+    this.idleKeepingPermissionFact();
     this.transcript = trimmed;
     this.fixtureTranscript = true;
     this.fixtureDemo = true;
@@ -326,7 +328,9 @@ export class VoiceSessionController {
   async cancelSession(): Promise<void> {
     await this.capture.cancel();
     await this.stt.cancelSession();
-    this.micState = MicState.IDLE;
+    // R3-06: cancel must not fabricate record-readiness while the real
+    // permission is denied/required/unavailable.
+    this.idleKeepingPermissionFact();
     this.transcript = '';
     this.fixtureTranscript = false;
     this.fixtureDemo = false;
@@ -340,6 +344,22 @@ export class VoiceSessionController {
   backToIdle(): void {
     this.micState = MicState.IDLE;
     this.emit('STATE_CHANGED');
+  }
+
+  /**
+   * R3-06 (PX-KK02-R3-06): FIXTURE_STATE != MIC_PERMISSION_STATE. Fixture
+   * demo / candidate lifecycle transitions must never overwrite the real
+   * microphone permission fact — PERMISSION_DENIED / PERMISSION_REQUIRED /
+   * UNAVAILABLE are device-capability facts, "空闲·未录音" is only truthful
+   * when recording could actually start. Only states that genuinely mean
+   * "mic usable, nothing happening" may collapse to IDLE here.
+   */
+  private idleKeepingPermissionFact(): void {
+    if (this.micState !== MicState.PERMISSION_DENIED &&
+      this.micState !== MicState.PERMISSION_REQUIRED &&
+      this.micState !== MicState.UNAVAILABLE) {
+      this.micState = MicState.IDLE;
+    }
   }
 
   currentOutcome(): VoiceSessionOutcome {
