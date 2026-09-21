@@ -7,6 +7,7 @@ import {
   averageEmbedding,
   canConfirmCandidate,
   cosineSimilarity,
+  hasMeaningfulTranscript,
   speakerStateFromScore,
   statusAfterCorrection,
   trustGateDecision,
@@ -121,6 +122,25 @@ export default function voiceCoreTest(): void {
       c.push(new Uint8Array(500));
       expect(c.flush().length).assertEqual(500);
       expect(c.flush().length).assertEqual(0);
+    });
+
+    it('KK03_D01_punctuation_only_transcript_is_not_meaningful', 0, () => {
+      // D-KK03-01: simulator STT returned 「。」 and a content-free candidate
+      // entered the note flow. Punctuation/whitespace-only output must be
+      // treated as NO usable transcript (→ VERIFIED + BLOCKED_NOT_AVAILABLE).
+      expect(hasMeaningfulTranscript('。')).assertFalse();
+      expect(hasMeaningfulTranscript('。!?,;、 ')).assertFalse();
+      expect(hasMeaningfulTranscript('')).assertFalse();
+      expect(hasMeaningfulTranscript('   ')).assertFalse();
+      // Real content passes: CJK, Latin, digits — even mixed with punctuation.
+      expect(hasMeaningfulTranscript('今天的记录。')).assertTrue();
+      expect(hasMeaningfulTranscript('abc')).assertTrue();
+      expect(hasMeaningfulTranscript('第 3 句')).assertTrue();
+      // Gate consequence: punctuation-only behaves exactly like no transcript.
+      expect(trustGateDecision(SpeakerState.VERIFIED, hasMeaningfulTranscript('。')))
+        .assertEqual(TrustGateDecision.BLOCKED_NOT_AVAILABLE);
+      expect(trustGateDecision(SpeakerState.VERIFIED, hasMeaningfulTranscript('真实转写')))
+        .assertEqual(TrustGateDecision.CANDIDATE_ALLOWED);
     });
   });
 }

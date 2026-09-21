@@ -16,6 +16,8 @@
  * NO real LLM/Harness/RAG (out of scope by contract).
  */
 
+import { NoteDraft } from '../note/NoteFlow';
+
 export interface AgentMessage {
   role: 'agent' | 'owner' | 'system';
   text: string;
@@ -32,14 +34,24 @@ export interface AgentMessage {
 export interface KnowledgeItem {
   id: string;
   title: string;
-  /** R3: full content kept for later inspection (was truncated title only). */
+  /**
+   * Canonical note body (R3: full content kept for later inspection).
+   * For KK-03 note saves this is the ORGANIZED, user-edited body; it never
+   * replaces the original transcript, which is kept separately below.
+   */
   text: string;
   /**
-   * voice  = real captured speech, VERIFIED speaker, explicitly confirmed;
+   * voice  = real captured speech, VERIFIED speaker, explicitly saved;
    * text   = manual text entry (no voice claim);
    * fixture= disclosed simulator TEST_FIXTURE demo (no real ASR / no speaker claim).
    */
   source: 'voice' | 'text' | 'fixture';
+  /**
+   * KK-03 provenance: the original transcript exactly as captured/corrected
+   * before organization. '' for manual text and for legacy (pre-KK-03) items.
+   * ORIGINAL_SOURCE_PRESERVED: organized note bodies never overwrite this.
+   */
+  originalTranscript: string;
   confirmedAt: number;
   speakerState: string;
 }
@@ -52,7 +64,7 @@ export interface AgentSnapshot {
   messages: AgentMessage[];
 }
 
-export const AGENT_SNAPSHOT_VERSION: number = 3;
+export const AGENT_SNAPSHOT_VERSION: number = 4;
 /** Bounded prototype persistence: conversation tail + confirmed items caps. */
 export const AGENT_MESSAGE_CAP: number = 30;
 export const AGENT_KNOWLEDGE_CAP: number = 100;
@@ -67,7 +79,9 @@ export class AgentContext {
   /** First-run intro — only when nothing was restored. */
   ensureIntro(): void {
     if (this.messages.length === 0 && this.knowledge.length === 0) {
-      this.say('agent', '我是灵犀。语音是你的新捕获通道:先说,我看清是谁说的、说了什么,再由你决定要不要入库。');
+      this.say('agent',
+        '我是灵犀,你的个人知识 Agent。点下方「开始录音」说一段话,我会给你诚实的转写候选;' +
+        '你确认后点「整理成笔记」,编辑、保存,这条知识才真正入库。未经你确认的转写永远不会变成知识。');
     }
   }
 
@@ -113,6 +127,7 @@ export class AgentContext {
             title: raw.title,
             text: raw.text,
             source: raw.source,
+            originalTranscript: typeof raw.originalTranscript === 'string' ? raw.originalTranscript : '',
             confirmedAt: raw.confirmedAt,
             speakerState: typeof raw.speakerState === 'string' ? raw.speakerState : 'N/A'
           });
@@ -162,6 +177,7 @@ export class AgentContext {
       title: trimmed.length > 24 ? `${trimmed.slice(0, 24)}…` : trimmed,
       text: trimmed,
       source: fixture ? 'fixture' : 'voice',
+      originalTranscript: trimmed,
       confirmedAt: Date.now(),
       speakerState: speakerState
     };
@@ -172,6 +188,47 @@ export class AgentContext {
       this.say('agent', `已入库:「${item.title}」。这条来自你本人的语音(已验证),是你确认后才进入知识的。`);
     }
     return item;
+  }
+
+  /**
+   * KK-03: explicit note-draft save — exactly +1 knowledge item with full
+   * provenance (source class + original transcript). The organized/edited
+   * body becomes the canonical note text; the original transcript rides
+   * alongside and is never overwritten. Caller guarantees exactly-once
+   * (NoteFlowController.save is terminal).
+   */
+  saveNoteDraft(draft: NoteDraft): KnowledgeItem | null {
+    const title = draft.title.trim();
+    const body = draft.body.trim();
+    if (title.length === 0 || body.length === 0) {
+      return null;
+    }
+    this.counter += 1;
+    const item: KnowledgeItem = {
+      id: `kn-${this.counter}`,
+      title: title,
+      text: body,
+      source: draft.source,
+      originalTranscript: draft.originalTranscript,
+      confirmedAt: Date.now(),
+      speakerState: draft.speakerState
+    };
+    this.knowledge.push(item);
+    if (draft.source === 'fixture') {
+      this.say('agent',
+        `已保存笔记「${item.title}」,知识 +1(现在共 ${this.knowledgeCount()} 条)。⚠ 来源是模拟器测试转写(TEST_FIXTURE),不是真实语音识别;原始测试转写已保留,可随时点开笔记查看。`);
+    } else if (draft.source === 'voice') {
+      this.say('agent',
+        `已保存笔记「${item.title}」,知识 +1(现在共 ${this.knowledgeCount()} 条)。这条来自你本人已验证的语音;原始转写已保留,点开笔记即可对照查看。`);
+    } else {
+      this.say('agent', `已保存笔记「${item.title}」,知识 +1(现在共 ${this.knowledgeCount()} 条,手动文本来源)。`);
+    }
+    return item;
+  }
+
+  /** KK-03: explicit note-draft cancel — +0 knowledge, honestly explained. */
+  explainNoteCancelled(): void {
+    this.say('agent', '已取消,这条笔记没有保存。知识没有变化(+0);原始转写候选也已丢弃。');
   }
 
   explainBlocked(reason: string): void {
@@ -194,6 +251,7 @@ export class AgentContext {
       title: trimmed.length > 24 ? `${trimmed.slice(0, 24)}…` : trimmed,
       text: trimmed,
       source: 'text',
+      originalTranscript: '',
       confirmedAt: Date.now(),
       speakerState: 'N/A'
     };

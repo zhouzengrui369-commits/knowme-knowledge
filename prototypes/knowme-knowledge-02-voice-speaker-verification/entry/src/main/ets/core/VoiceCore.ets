@@ -126,6 +126,19 @@ export function statusAfterCorrection(status: CandidateStatus): CandidateStatus 
   return status;
 }
 
+/**
+ * KK-03 (D-KK03-01): a transcript is only meaningful when it carries actual
+ * content — at least one CJK ideograph, Latin letter or digit. Simulator STT
+ * can return punctuation-only results (e.g. 「。」); treating that as a real
+ * transcript would let an effectively empty candidate into the note flow.
+ * Punctuation-only output is honestly handled as NO usable transcript
+ * (VERIFIED + BLOCKED_NOT_AVAILABLE), where the disclosed secondary
+ * test-transcript route already exists by design.
+ */
+export function hasMeaningfulTranscript(text: string): boolean {
+  return /[一-鿿A-Za-z0-9]/.test(text);
+}
+
 /** Cosine similarity between two equal-length embedding vectors. */
 export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length === 0 || a.length !== b.length) {
