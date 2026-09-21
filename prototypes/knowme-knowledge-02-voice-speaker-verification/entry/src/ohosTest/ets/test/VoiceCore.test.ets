@@ -5,12 +5,14 @@ import {
   SpeakerState,
   TrustGateDecision,
   averageEmbedding,
+  boundedAnalysisPcm,
   canConfirmCandidate,
   cosineSimilarity,
   hasMeaningfulTranscript,
   speakerStateFromScore,
   statusAfterCorrection,
   trustGateDecision,
+  SPEAKER_ANALYSIS_MAX_BYTES,
   SPEAKER_THRESHOLD_UNCERTAIN_FLOOR,
   SPEAKER_THRESHOLD_VERIFIED
 } from '../../../main/ets/core/VoiceCore';
@@ -141,6 +143,28 @@ export default function voiceCoreTest(): void {
         .assertEqual(TrustGateDecision.BLOCKED_NOT_AVAILABLE);
       expect(trustGateDecision(SpeakerState.VERIFIED, hasMeaningfulTranscript('真实转写')))
         .assertEqual(TrustGateDecision.CANDIDATE_ALLOWED);
+    });
+
+    it('KK03_D02_analysis_window_bounded_no_main_thread_freeze', 0, () => {
+      // D-KK03-02 (D-LE-01): a ~67 s enrollment sample made eres2net compute
+      // block the main thread past the 6 s watchdog (APP_FREEZE, process
+      // killed). The embedding analysis window must be bounded; short PCM
+      // passes through untouched.
+      const short = new Uint8Array(16000 * 2 * 3); // 3 s
+      expect(boundedAnalysisPcm(short)).assertEqual(short);
+      expect(boundedAnalysisPcm(short).length).assertEqual(16000 * 2 * 3);
+      const long = new Uint8Array(16000 * 2 * 67); // 67 s — the freezing case
+      const bounded = boundedAnalysisPcm(long);
+      expect(bounded.length).assertEqual(SPEAKER_ANALYSIS_MAX_BYTES);
+      expect(bounded.length <= 16000 * 2 * 10).assertTrue();
+      // Content preserved from the start of the utterance (same window for
+      // enrollment and verification keeps scores comparable).
+      const marked = new Uint8Array(16000 * 2 * 30);
+      marked[0] = 7;
+      marked[1] = 9;
+      const mb = boundedAnalysisPcm(marked);
+      expect(mb[0]).assertEqual(7);
+      expect(mb[1]).assertEqual(9);
     });
   });
 }

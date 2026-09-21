@@ -139,6 +139,26 @@ export function hasMeaningfulTranscript(text: string): boolean {
   return /[一-鿿A-Za-z0-9]/.test(text);
 }
 
+/**
+ * KK-03 (D-KK03-02 / D-LE-01): bound the PCM window fed to the speaker
+ * embedding engine. A ~67 s enrollment sample made eres2net compute block the
+ * main thread past the 6 s watchdog (APP_FREEZE THREAD_BLOCK_6S, process
+ * killed). Speaker embeddings are designed for utterances of a few seconds —
+ * the analysis window is honestly bounded (first SPEAKER_ANALYSIS_MAX_SECONDS
+ * of speech, same window for enrollment and verification so they stay
+ * comparable); the full recording is never silently dropped from the
+ * transcript/STT path, only from embedding analysis.
+ */
+export const SPEAKER_ANALYSIS_MAX_SECONDS: number = 10;
+export const SPEAKER_ANALYSIS_MAX_BYTES: number = 16000 * 2 * SPEAKER_ANALYSIS_MAX_SECONDS;
+
+export function boundedAnalysisPcm(pcm: Uint8Array): Uint8Array {
+  if (pcm.length <= SPEAKER_ANALYSIS_MAX_BYTES) {
+    return pcm;
+  }
+  return pcm.slice(0, SPEAKER_ANALYSIS_MAX_BYTES);
+}
+
 /** Cosine similarity between two equal-length embedding vectors. */
 export function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length === 0 || a.length !== b.length) {
