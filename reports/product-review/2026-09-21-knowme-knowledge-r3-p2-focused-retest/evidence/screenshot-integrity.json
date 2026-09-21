@@ -1,0 +1,189 @@
+[
+  {
+    "file": "evidence/published/02-initial-stable.png",
+    "raw_file": "02-initial-stable.png",
+    "raw_sha256": "bb5b553244a8bc90873c0fd803836590c28d44af628c5c521aa2afad0dc94497",
+    "published_sha256": "8826e2dee0151b75033469a734df4e0d3e82c076c6aa51e3355060d9dfe332f2",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/06-mic-off.png",
+    "raw_file": "06-mic-off.png",
+    "raw_sha256": "6748bded932851f41e1cf42c59a997fce57ffb78e1ce152b97c4794f564a7752",
+    "published_sha256": "1d2c7a2e58b4da52b34be9cdefa7812f2835822b3b08d4dbcd965b2b1f9de260",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/10-reject-generated.png",
+    "raw_file": "10-reject-generated.png",
+    "raw_sha256": "679a8078c8480c3f4ec2c8e975392a044741919bd342d4b1c340ac2671164d76",
+    "published_sha256": "c01c16d437cc3301b28b444eca1adabdcd0093a1470f210d5a49c95515e54af6",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/15-reject-correction-saved.png",
+    "raw_file": "15-reject-correction-saved.png",
+    "raw_sha256": "974edd002eb547c2bcbcb7e142b8203603d3e3b3cb2cb09ebfc1f8e0ddbf0b15",
+    "published_sha256": "c6b331963bf8dab27af6320a2172604dd68bea25980f854fdf56a2f1d9199675",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/16-rejected-plus-zero.png",
+    "raw_file": "16-rejected-plus-zero.png",
+    "raw_sha256": "bd488d34e89c97510b63b2fa42dc8955db7ddfad7d1cb4a16ec47bb6cfa2439d",
+    "published_sha256": "1f0fe32650a995cef14d4fbd58dd7c21c6386934f5a8368c022cd5363b6552ba",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/17-permission-action-after-reject.png",
+    "raw_file": "17-permission-action-after-reject.png",
+    "raw_sha256": "e330f62edb41a6283e6e138bac2906f7dec458e1baab5d9c588206b2c002fe9f",
+    "published_sha256": "d0d94ca931972c66e7b907f6632a968fb77c893cb31731a595c5fd4dcb4f4c72",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/29-confirm-plus-one-denied.png",
+    "raw_file": "29-confirm-plus-one-denied.png",
+    "raw_sha256": "6dcd880a6f1a85115eb46de0894084d0e0a053cd1eea059f58183eb04cbfe1ba",
+    "published_sha256": "1e92ee07eba891b286378d6878ee70c5ddd44978db56fb1237d2a11102837d31",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/32-manual-keyboard-hide.png",
+    "raw_file": "32-manual-keyboard-hide.png",
+    "raw_sha256": "25d59402eadb1550f5c65930bab11e9cb2671f584c47bfc72ec8304430a6f55c",
+    "published_sha256": "9b0bb5e33f28c50aba05101b375fce2c1f6030060b47758727b24e214fc7038e",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/36-return-pending.png",
+    "raw_file": "36-return-pending.png",
+    "raw_sha256": "389a6ad20da3d9364d730c3a0887994587df752900ffac63b64b3997e40ea77e",
+    "published_sha256": "c248f1c9d2ccda94ca92164a4f13b52e5937b51e4e0462207ffc50ec33bc637b",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/39-cold-list-pending-absent.png",
+    "raw_file": "39-cold-list-pending-absent.png",
+    "raw_sha256": "74d52ce50013e502069fff3bbf75a9b08f02a7c31ef5b2a25a184a410e6de11d",
+    "published_sha256": "3a090b26b275daaa4386691ab55403cd4fd6115be6c70b3b72e782f4def9e213",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/41-mic-granted-system.png",
+    "raw_file": "41-mic-granted-system.png",
+    "raw_sha256": "ba9d06073bc8c4ae84dd51d0ee313a6c3e49c164d508a84eed732bdd3f2eb9e0",
+    "published_sha256": "6c61aa83d874451b68fe276b865e25caf5b975b8e36e43d0d28e3ed1a4efd3b6",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/42-return-granted.png",
+    "raw_file": "42-return-granted.png",
+    "raw_sha256": "77c9e9cb950f098a8d804561d71ef6fd785b7de8d9d9fbf6d056aa598a960bdb",
+    "published_sha256": "81551f4f52f009d7b7a787b23b008b66d921b65c705894eeeb7f74653ea28493",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/43-granted-start.png",
+    "raw_file": "43-granted-start.png",
+    "raw_sha256": "34ec2d5fa2a52cd17f20bde73307123ebc6cfbfd3c2eecf53509aea2b4111691",
+    "published_sha256": "83b5c339ead875f28e753396b380be51e36c098d59f3bec556185bb6802390c1",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/44-granted-cancel.png",
+    "raw_file": "44-granted-cancel.png",
+    "raw_sha256": "f6ab428ed3ac8f227320d5c2d1dd421bc3ce9a3e49c7d49e30f900978e41b562",
+    "published_sha256": "2c7482f1c15165e1cb8248973e23a9328c1bbcdf06ce4405651d042779988cb1",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/48-manual-detail-scroll.png",
+    "raw_file": "48-manual-detail-scroll.png",
+    "raw_sha256": "01dc34d477c7c55f521fc76ecca0f0899f9d5fda253828d813c1cd7f4d1f2442",
+    "published_sha256": "f43f85c7e3c26052b57d7aa0ef2a33f6d6a1fb7608407ebbb30f1cf19887a3cb",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/49-fixture-detail.png",
+    "raw_file": "49-fixture-detail.png",
+    "raw_sha256": "11540a09a520833369ffed8d4c8e3fa976836b41114a229ff02f287da9cf0a1c",
+    "published_sha256": "50b2a882e900cde334155deae123f87f5fe1f28d50d8aa777c17b02cb15edcd7",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/50-final-context.png",
+    "raw_file": "50-final-context.png",
+    "raw_sha256": "a4c0047341af65b37e9e7613b924324a3a141f004bdbe314714a8a0c54e82006",
+    "published_sha256": "c0e7f1524291332478aa3841bb075bb8f9d1814cda9b241a06a544f831e6639f",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  }
+]
