@@ -858,6 +858,11 @@ struct Index {
                       if (this.session.injectFixtureTranscript(this.fixtureText)) {
                         this.fixtureText = '';
                         this.agent.say('system', '已注入模拟器测试转写(TEST_FIXTURE,非真实语音识别),候选流仅为流程演示。');
+                      } else {
+                        // D-KK03-03: never a silent no-op — a refused injection
+                        // must say so and why (only blank input or a real
+                        // transcript already on screen can refuse here).
+                        this.agent.say('system', '注入被拒绝:请输入测试转写文本;若已有真实转写,请先丢弃再试。', false);
                       }
                       this.refresh();
                     })

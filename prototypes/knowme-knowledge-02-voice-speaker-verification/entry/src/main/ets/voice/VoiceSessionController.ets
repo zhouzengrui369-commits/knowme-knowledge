@@ -275,10 +275,15 @@ export class VoiceSessionController {
    */
   injectFixtureTranscript(text: string): boolean {
     const trimmed = text.trim();
+    // D-KK03-03 (ED personal finding): with the D-KK03-01 punctuation gate the
+    // on-screen transcript can be non-meaningful noise (e.g. 「。」) instead of
+    // empty — the old length>0 refusal then made this disclosed secondary path
+    // silently unreachable exactly when it is offered. Refuse only when a
+    // MEANINGFUL transcript already exists; punctuation noise is replaced.
     if (this.purpose !== SessionPurpose.CAPTURE ||
       this.micState !== MicState.STOPPED ||
       this.speakerState !== SpeakerState.VERIFIED ||
-      this.transcript.length > 0 || trimmed.length === 0 ||
+      hasMeaningfulTranscript(this.transcript) || trimmed.length === 0 ||
       this.gate !== TrustGateDecision.BLOCKED_NOT_AVAILABLE) {
       return false;
     }
