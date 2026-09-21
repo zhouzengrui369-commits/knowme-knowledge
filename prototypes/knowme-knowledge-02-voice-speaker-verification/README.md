@@ -1,10 +1,45 @@
-# GOAL-KK-02 — Voice Capture + Enrolled-Speaker Verification Prototype
+# GOAL-KK-03 — Voice-to-Note First-Use Prototype
+
+> 本目录同时保留 GOAL-KK-02(已关闭,candidate `33174690`)的语音捕获/声纹
+> 验证能力说明(见下文「GOAL-KK-02 能力基线」)。GOAL-KK-03 在同一原型上
+> 叠加首用「语音→笔记」产品闭环。
+
+Frozen contract:
+`governance/milestones/GOAL-KK-03-VOICE-TO-NOTE-FIRST-USE-PROTOTYPE/CONTRACT.md`
+@ `f38e48956dfcd8820cc090f04026839132508ece` (FROZEN). Activation: Issue #30
+comment `5759411988`. Engineering context:
+`ED-KK-GOAL03-VOICE-TO-NOTE-FIRST-USE-20260921-1935-D8F4`.
+
+## GOAL-KK-03 value loop (contract-frozen)
+
+clean first view (purpose + recording entry + voice-identity entry, no scroll)
+→ start recording → unmistakable RECORDING feedback (red state + ticking
+clock) → stop / cancel → honest transcript candidate (never silently saved)
+→ correct / reject / explicit 整理成笔记 → editable note draft (title +
+editable body; deterministic organizer, no LLM claim) → original transcript
++ source provenance inspectable → explicit save (exactly +1, double-tap
+safe) / cancel (+0) → saved note reopenable with title/body/source/original
+transcript → survives force-stop / cold reopen (bounded prototype
+persistence) → Agent explains what changed, context preserved.
+
+First-use hard rule: TEST_FIXTURE tooling and technical diagnostics are
+SECONDARY and collapsed by default; the primary path never requires
+engineering knowledge.
+
+Voice identity: 声纹档案(长期状态,未录入/已录入)与本次验证(单次结果)分离
+展示;录入/重录/查看入口在首屏可发现。
+
+Defect loop record: D-KK03-01 — simulator STT punctuation-only output(如
+「。」)曾被当成有效转写放行候选;修复为 `hasMeaningfulTranscript` 门控
+(按无可用转写处理,VERIFIED + BLOCKED_NOT_AVAILABLE,披露式测试转写路径
+保持可用),附回归测试。
+
+## GOAL-KK-02 能力基线(保留)
 
 Frozen contract:
 `governance/milestones/GOAL-KK-02-VOICE-CAPTURE-SPEAKER-VERIFICATION-PROTOTYPE/CONTRACT.md`
-@ `73701b2f3069a0384568977909b601504c9fc591` (FROZEN). Activation: Issue #13
-comment `5715249689`. Engineering context:
-`ED-KK-GOAL02-VOICE-SPEAKER-PROTOTYPE-R1-20260917-A7C4`.
+@ `73701b2f3069a0384568977909b601504c9fc591` (FROZEN, GOAL_MILESTONE_CLOSED).
+Activation: Issue #13 comment `5715249689`.
 
 ## Value loop (contract-frozen)
 

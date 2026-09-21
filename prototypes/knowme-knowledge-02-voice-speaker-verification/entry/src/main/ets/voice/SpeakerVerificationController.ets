@@ -4,6 +4,7 @@ import { fileIo } from '@kit.CoreFileKit';
 import { util } from '@kit.ArkTS';
 import {
   averageEmbedding,
+  boundedAnalysisPcm,
   cosineSimilarity,
   SpeakerState,
   speakerStateFromScore
@@ -116,7 +117,9 @@ export class SpeakerVerificationController {
     if (!this.engine.isReady() || pcm.length < SpeakerVerificationController.MIN_PCM_BYTES) {
       return this.enrollmentSamples.length;
     }
-    const emb = this.engine.extract(pcm);
+    // D-KK03-02 (D-LE-01): bounded analysis window — an over-long sample must
+    // never block the main thread past the app-freeze watchdog.
+    const emb = this.engine.extract(boundedAnalysisPcm(pcm));
     if (emb.length > 0) {
       this.enrollmentSamples.push(emb);
     }
@@ -177,7 +180,9 @@ export class SpeakerVerificationController {
     if (pcm.length < SpeakerVerificationController.MIN_PCM_BYTES) {
       return new VerifyVerdict(SpeakerState.UNCERTAIN, Number.NaN);
     }
-    const emb = this.engine.extract(pcm);
+    // D-KK03-02 (D-LE-01): same bounded window as enrollment — verdicts stay
+    // comparable and over-long captures cannot freeze the main thread.
+    const emb = this.engine.extract(boundedAnalysisPcm(pcm));
     if (emb.length === 0) {
       return new VerifyVerdict(SpeakerState.UNCERTAIN, Number.NaN);
     }

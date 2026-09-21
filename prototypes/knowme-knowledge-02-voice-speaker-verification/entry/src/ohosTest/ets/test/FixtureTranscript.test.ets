@@ -64,6 +64,27 @@ export default function fixtureTranscriptTest(): void {
       expect(s.fixtureTranscript).assertFalse();
     });
 
+    it('KK03_D03_fixture_allowed_over_punctuation_noise', 0, () => {
+      // D-KK03-03 (ED personal finding): with the D-KK03-01 punctuation gate,
+      // a VERIFIED capture whose STT returned 「。」 is blocked NOT_AVAILABLE —
+      // but the old length>0 refusal then made the disclosed injection path
+      // silently unreachable exactly when the UI offers it. Punctuation noise
+      // must NOT block injection; a MEANINGFUL transcript still must.
+      const s = newSession();
+      toFixtureEligible(s);
+      s.transcript = '。';
+      expect(s.injectFixtureTranscript('注入的测试转写')).assertTrue();
+      expect(s.transcript).assertEqual('注入的测试转写');
+      expect(s.fixtureTranscript).assertTrue();
+      expect(s.candidateStatus).assertEqual(CandidateStatus.DRAFT);
+      // Meaningful transcript still refuses (regression of the case above).
+      const s2 = newSession();
+      toFixtureEligible(s2);
+      s2.transcript = '真实的转写内容';
+      expect(s2.injectFixtureTranscript('y')).assertFalse();
+      expect(s2.transcript).assertEqual('真实的转写内容');
+    });
+
     it('FIXTURE_refused_when_gate_not_blocked_not_available', 0, () => {
       const s = newSession();
       toFixtureEligible(s);

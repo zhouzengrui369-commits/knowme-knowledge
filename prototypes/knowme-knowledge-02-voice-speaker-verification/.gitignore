@@ -29,3 +29,7 @@ entry/src/main/resources/rawfile/models/
 
 # local emulator/dev-loop artifacts (logs, dev screenshots)
 .local/
+
+# python helper cache
+__pycache__/
+*.pyc

@@ -7,6 +7,7 @@ import {
   SpeakerState,
   TrustGateDecision,
   canConfirmCandidate,
+  hasMeaningfulTranscript,
   statusAfterCorrection,
   trustGateDecision
 } from '../core/VoiceCore';
@@ -37,6 +38,18 @@ export type SessionEvent =
   | 'SESSION_DONE';
 
 export type SessionListener = (event: SessionEvent) => void;
+
+/**
+ * KK-03: payload handed from a transcript candidate to the note-draft flow
+ * via the explicit "整理成笔记" action. The original transcript is captured
+ * verbatim (provenance) before the session outcome is cleared.
+ */
+export interface CandidatePayload {
+  transcript: string;
+  source: 'voice' | 'fixture';
+  speakerState: string;
+  trustClass: CandidateTrustClass;
+}
 
 export enum SessionPurpose {
   CAPTURE = 'CAPTURE',
@@ -262,10 +275,15 @@ export class VoiceSessionController {
    */
   injectFixtureTranscript(text: string): boolean {
     const trimmed = text.trim();
+    // D-KK03-03 (ED personal finding): with the D-KK03-01 punctuation gate the
+    // on-screen transcript can be non-meaningful noise (e.g. 「。」) instead of
+    // empty — the old length>0 refusal then made this disclosed secondary path
+    // silently unreachable exactly when it is offered. Refuse only when a
+    // MEANINGFUL transcript already exists; punctuation noise is replaced.
     if (this.purpose !== SessionPurpose.CAPTURE ||
       this.micState !== MicState.STOPPED ||
       this.speakerState !== SpeakerState.VERIFIED ||
-      this.transcript.length > 0 || trimmed.length === 0 ||
+      hasMeaningfulTranscript(this.transcript) || trimmed.length === 0 ||
       this.gate !== TrustGateDecision.BLOCKED_NOT_AVAILABLE) {
       return false;
     }
@@ -312,7 +330,11 @@ export class VoiceSessionController {
       const verdict = this.speaker.verify(pcm);
       this.speakerState = verdict.state;
       this.similarity = verdict.similarity;
-      this.gate = trustGateDecision(verdict.state, this.transcript.length > 0);
+      // KK-03 (D-KK03-01): punctuation-only STT output (e.g. 「。」) is NOT a
+      // usable transcript — gate it as NOT_AVAILABLE so an effectively empty
+      // candidate can never enter the note flow; the disclosed secondary
+      // test-transcript route stays available exactly as designed.
+      this.gate = trustGateDecision(verdict.state, hasMeaningfulTranscript(this.transcript));
       this.candidateStatus = this.gate === TrustGateDecision.CANDIDATE_ALLOWED
         ? CandidateStatus.DRAFT
         : CandidateStatus.NONE;
@@ -404,6 +426,46 @@ export class VoiceSessionController {
       this.candidateStatus = CandidateStatus.REJECTED;
       this.emit('STATE_CHANGED');
     }
+  }
+
+  /**
+   * KK-03: explicit "整理成笔记" transition. Legal only from an on-screen
+   * DRAFT/CORRECTED candidate. Captures the transcript verbatim as draft
+   * provenance, then clears the session outcome (same disposal semantics as
+   * dismissResult) so the note-draft editor becomes the single focus. The
+   * trust class and speaker verdict travel with the payload — a VOICE-sourced
+   * draft still may only be saved when the capture was VERIFIED.
+   */
+  continueToNote(): CandidatePayload | null {
+    if (this.candidateStatus !== CandidateStatus.DRAFT &&
+      this.candidateStatus !== CandidateStatus.CORRECTED) {
+      return null;
+    }
+    const payload: CandidatePayload = {
+      transcript: this.transcript,
+      source: this.fixtureTranscript ? 'fixture' : 'voice',
+      speakerState: this.fixtureDemo ? 'N/A' : this.speakerState,
+      trustClass: this.fixtureDemo ? CandidateTrustClass.FIXTURE : CandidateTrustClass.VOICE
+    };
+    if (this.micState === MicState.STOPPED) {
+      this.micState = MicState.IDLE;
+    }
+    this.transcript = '';
+    this.fixtureTranscript = false;
+    this.fixtureDemo = false;
+    this.similarity = Number.NaN;
+    this.gate = null;
+    this.candidateStatus = CandidateStatus.NONE;
+    this.emit('STATE_CHANGED');
+    return payload;
+  }
+
+  /** KK-03: live recording elapsed time for the in-progress indicator. */
+  recordingElapsedMs(): number {
+    if (this.micState !== MicState.RECORDING || this.recordingStartedAt <= 0) {
+      return -1;
+    }
+    return Date.now() - this.recordingStartedAt;
   }
 
   /**
