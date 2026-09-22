@@ -1,5 +1,11 @@
-# Thin Product Governance adapter
+# Thin Product Governance adapter — active project
 
-This adapter delegates governance semantics to the exact central authority in GOVERNANCE_LOCK.json; it does not copy or fork the Core. Read AGENTS.md in its mandatory order, verify the locked commit/tree through GitHub, then read central core/PARENT_PM_SKILL.md, core/DELIVERY_STATE_MACHINE.json, core/GOAL_DRIVEN_DEVELOPMENT.md, core/GITHUB_FIRST.md and core/ENGINEERING_DELIVERY_AUTHORITY.json.
+Read AGENTS.md, exact GOVERNANCE_LOCK.json central authorities, PROJECT_PROFILE.yaml, Product Baseline, latest PROJECT_STATUS, active frozen contract, approved CRs, exact engineering activation and live GitHub identities.
 
-Apply PROJECT_PROFILE.yaml and the frozen Product Baseline within that authority. No silent upgrade to main or a newer framework version. An explicit governance change is required to change the lock. Future Engineering and Reviewer locks do not activate either role. Missing contract/handoff at bootstrap means NONE, not permission to invent them. Product weight is 0%; stop at PRODUCT_BASELINE_FROZEN with no active Goal/Milestone and Engineering start unauthorized.
+The bootstrap-only stop instructions in the earlier adapter are historical. Current lifecycle authority is one active Goal/Milestone and its latest exact Issue receipt, never this adapter alone.
+
+Core adoption is explicit under CR-KK-20260922-LINGXI-CAPTURE-REBASELINE; central exact 0.4.0-alpha provides pre-1.0 delegated PE and final-1.0 Owner Gate. Do not use a moving central main or infer a central PR merge.
+
+Product Governance writes governance only. Cross-repository work requires both participants' exact governance authorization and bounded allowed paths. App+Workbench form one candidate set and one Goal/Milestone; participant work packages do not create separate acceptances.
+
+Old GOAL-KK-03 is suspended, not passed. Historical receipts remain immutable. Future roadmap entries do not authorize Engineering. Only the final exact-pair activation on Issue #35 starts the fresh KK04 ED. Independent review requires an actual verified reviewer context, not a PM-invented claim of independence.

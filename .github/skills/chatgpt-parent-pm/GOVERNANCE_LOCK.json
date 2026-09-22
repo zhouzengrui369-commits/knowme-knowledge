@@ -1,26 +1,28 @@
 {
   "framework": "chatgpt-parent-pm",
-  "version": "0.3.0-alpha",
+  "version": "0.4.0-alpha",
   "protocol_version": "DELIVERY-LIFECYCLE-1.0",
   "role_model": "PRODUCT_GOVERNANCE_SEPARATED_ENGINEERING_DELIVERY",
   "core_repository": "zhouzengrui369-commits/chatgpt-parent-pm",
-  "core_commit": "118594ff0b853732a2da22270d9499573ff2201e",
-  "core_tree": "84b57f804076fa34bf83218496575d07cfc457df",
+  "core_commit": "fc4872d9ba33325cf43a0778bb3ea01aea050c0f",
+  "core_tree": "3acdba332db5cb58236a8abe87065846cf3ab8a0",
   "core_path": "core/PARENT_PM_SKILL.md",
   "state_machine_path": "core/DELIVERY_STATE_MACHINE.json",
+  "owner_gate_policy_path": "core/HUMAN_OWNER_GATE_POLICY.md",
+  "adoption_authority": "CR-KK-20260922-LINGXI-CAPTURE-REBASELINE",
+  "adoption_scope": "PROJECT_ONLY_NO_CENTRAL_MERGE_CLAIM",
   "engineering_delivery": {
     "repository": "zhouzengrui369-commits/chatgpt-engineering-delivery",
     "commit": "8bcf9da58d6147fcd2345a4b465f17f7a27850fd",
     "tree": "593bacfee4910a55b9b6c7bd2f2ca56b8761d134",
     "path": "core/ENGINEERING_DELIVERY_SKILL.md",
-    "version": "0.2.0-alpha",
-    "activation": "FUTURE_AUTHORITY_ONLY"
+    "activation": "EXACT_GOAL_ISSUE_RECEIPT_REQUIRED"
   },
   "product_experience_reviewer": {
     "repository": "zhouzengrui369-commits/product-experience-reviewer-skill",
     "commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
     "tree": "eaa62967737b17cc8ad07e46e297e0a52b2c3092",
-    "activation": "FUTURE_AUTHORITY_ONLY"
+    "activation": "ACTUAL_INDEPENDENCE_VERIFICATION_AND_EXACT_REFERRAL_REQUIRED"
   },
   "one_goal_equals_one_milestone": true,
   "direct_main_write": false,
@@ -28,5 +30,6 @@
   "automatic_release": false,
   "candidate_identity_change_invalidates_downstream": true,
   "contract_change_invalidates_engineering_handoff": true,
-  "local_executor_observation_only": true
+  "local_executor_observation_only": true,
+  "multi_repository_candidate": "ONE_MANIFEST_EXACT_APP_AND_WORKBENCH_PAIR"
 }
