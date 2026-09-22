@@ -58,6 +58,9 @@ BINDS_CONTRACT=knowme-knowledge@be400447c1d68062d22ae5e9ea0d169d929514df:governa
   不产生第二次正式效果）。
 - 相同 `capture_id` 但 `content_hash` 不同且 revision 未升 = `409 CONTENT_CONFLICT`，不覆盖。
 - 不同 `capture_id` 即使同名同分钟 = 两个独立采集，互不覆盖。
+- `processing_policy.auto_organize=false`（显式 false）= 只可靠接收不自动整理：
+  采集落盘 RECEIVED，任务停 `NEEDS_INPUT`，由 `POST /tasks/{task_id}/retry` 显式触发整理。
+  缺省或 true = 接收后自动进入整理流水线。
 
 ## 3. 端点
 
@@ -117,8 +120,13 @@ hash/尺寸不符 = `422 HASH_MISMATCH`，手机保留原件重传。
 `GET /tasks/{task_id}`（需 token）→ 任务状态（PENDING/PROCESSING/NEEDS_INPUT/COMPLETED/FAILED）
 + `error`+`recovery_action`。工作台/插件重启后任务从持久存储恢复查询，不依赖内存。
 
+`POST /tasks/{task_id}/retry`（需 token，D-KK04-05）→ 显式重试/触发整理：
+仅 `FAILED`（整理失败，如工作台超时）或 `NEEDS_INPUT`（auto_organize=false 待触发）可调用；
+重置为 PENDING 并立即重新调度，幂等由 `(capture_id, payload_revision)` 产物核对保证，
+不产生重复正式效果。其他状态 = `409 BAD_STATE`；跨设备 = `404`。
+
 `GET /events?cursor=N&limit=`（需 token）→ 追加式事件流：
-`{"events":[{"seq":N,"type":"CAPTURE_RECEIVED|PROCESSING_STARTED|ORGANIZE_COMPLETED|ORGANIZE_FAILED|RESULT_UPDATED","capture_id":"…","task_id":"…","at":"…","refs":{…}}],"next_cursor":M}`
+`{"events":[{"seq":N,"type":"CAPTURE_RECEIVED|PROCESSING_STARTED|ORGANIZE_COMPLETED|ORGANIZE_FAILED|ORGANIZE_DEFERRED|RETRY_REQUESTED|RESULT_UPDATED","capture_id":"…","task_id":"…","at":"…","refs":{…}}],"next_cursor":M}`
 断线后按 cursor 补拉；事件**不是**唯一完成记录（状态以 `/captures/{id}` 持久视图为准）。
 
 ### 3.4 结果与修正（J08）

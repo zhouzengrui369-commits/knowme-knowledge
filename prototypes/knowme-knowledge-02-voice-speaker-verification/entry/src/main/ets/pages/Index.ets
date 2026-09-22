@@ -98,6 +98,7 @@ struct Index {
     if (sess !== null && sess.token.length > 0) {
       this.connectUrl = sess.baseUrl;
       this.bridge.configure(sess.baseUrl, sess.deviceId, sess.token);
+      this.bridgeConfigured = true;
       this.deviceIdText = sess.deviceId;
       this.connectState = '已连接（本地会话恢复）';
       this.showConnect = false;
@@ -183,6 +184,7 @@ struct Index {
       const token = String(body['device_token'] ?? '');
       const deviceId = String(body['device_id'] ?? '');
       this.bridge.configure(url, deviceId, token);
+      this.bridgeConfigured = true;
       this.captureStore.saveSession(url, deviceId, token);
       this.deviceIdText = deviceId;
       this.connectState = '已连接';
@@ -223,6 +225,7 @@ struct Index {
     }
     this.captureStore.clearSession();
     this.bridge.configure('', '', '');
+    this.bridgeConfigured = false;
     this.connectState = '已撤销（未连接）';
     this.deviceIdText = '';
     this.capsText = '';
@@ -336,6 +339,9 @@ struct Index {
    * 迟到场景（用户显式声明捕获时间，不修改系统时间）。
    */
   @State importingAudio: boolean = false;
+  /** D-KK04-04：bridge.configured 是普通属性不参与状态驱动，撤销/重连后按钮态不刷新；
+   *  用显式 @State 镜像，所有 configure 调用点同步维护。 */
+  @State bridgeConfigured: boolean = false;
 
   private async importDemoAudio(markYesterday: boolean, demoName: string = 'kk04_reading_30s'): Promise<void> {
     if (this.importingAudio) {
@@ -560,7 +566,7 @@ struct Index {
                 .fontSize(13)
                 .fontColor('#C62828')
                 .backgroundColor('#F6E3E3')
-                .enabled(this.bridge.configured)
+                .enabled(this.bridgeConfigured)
                 .onClick(async () => {
                   await this.revokeNow();
                 })
@@ -656,7 +662,7 @@ struct Index {
                 .layoutWeight(1)
                 .fontColor('#1B4F8A')
                 .backgroundColor('#E3ECF7')
-                .enabled(this.bridge.configured && !this.importingAudio)
+                .enabled(this.bridgeConfigured && !this.importingAudio)
                 .onClick(async () => {
                   await this.importDemoAudio(false);
                 })
@@ -665,7 +671,7 @@ struct Index {
                 .layoutWeight(1)
                 .fontColor('#1B4F8A')
                 .backgroundColor('#E3ECF7')
-                .enabled(this.bridge.configured && !this.importingAudio)
+                .enabled(this.bridgeConfigured && !this.importingAudio)
                 .onClick(async () => {
                   await this.importDemoAudio(true);
                 })
@@ -674,7 +680,7 @@ struct Index {
                 .layoutWeight(1)
                 .fontColor('#1B4F8A')
                 .backgroundColor('#E3ECF7')
-                .enabled(this.bridge.configured && !this.importingAudio)
+                .enabled(this.bridgeConfigured && !this.importingAudio)
                 .onClick(async () => {
                   await this.importDemoAudio(false, 'kk04_reading_5min');
                 })
@@ -734,6 +740,21 @@ struct Index {
                     .backgroundColor('#5656D6')
                     .onClick(async () => {
                       await this.handToLingxi(item);
+                    })
+                }
+                if (item.processing === ProcessingStatus.FAILED && item.taskId.length > 0) {
+                  // D-KK04-05：整理失败（如工作台超时）提供显式重试入口，服务端幂等
+                  Button('重试整理')
+                    .fontSize(11)
+                    .backgroundColor('#B26A00')
+                    .onClick(async () => {
+                      const r = await this.bridge.retryTask(item.taskId);
+                      if (r.ok) {
+                        this.say('已请求重新整理，状态会自动更新。');
+                        this.syncCtl.kick();
+                      } else {
+                        this.say(`重试整理失败：${r.error.length > 0 ? r.error : `HTTP ${r.status}`}`);
+                      }
                     })
                 }
                 if (item.processing === ProcessingStatus.COMPLETED) {

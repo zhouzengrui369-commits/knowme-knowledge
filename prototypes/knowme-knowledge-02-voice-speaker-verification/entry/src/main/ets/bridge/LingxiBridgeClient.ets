@@ -146,6 +146,12 @@ export class LingxiBridgeClient {
     return this.request(http.RequestMethod.POST, '/api/mobile-capture/v1/devices/revoke', '{}');
   }
 
+  /** D-KK04-05：整理失败任务显式重试（服务端幂等，不产生重复效果）。 */
+  async retryTask(taskId: string): Promise<BridgeResult> {
+    return this.request(http.RequestMethod.POST,
+      `/api/mobile-capture/v1/tasks/${taskId}/retry`, '{}');
+  }
+
   /** 提交采集元数据（文本含正文）。 */
   async submitCapture(item: CaptureItem): Promise<BridgeResult> {
     const policy: ProcessingPolicyJson = {
