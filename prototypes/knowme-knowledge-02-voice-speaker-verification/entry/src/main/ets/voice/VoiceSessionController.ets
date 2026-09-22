@@ -91,6 +91,8 @@ export class VoiceSessionController {
   enrollmentCount = 0;
   lastStopToResultMs = -1;
   lastDurationMs = -1;
+  /** KK-04: 最近一次录音的原始 PCM（16k/mono/s16le），供采集箱 WAV 封装上传。 */
+  lastPcm: Uint8Array = new Uint8Array(0);
 
   private recordingStartedAt = 0;
   private listener: SessionListener = () => {};
@@ -304,6 +306,8 @@ export class VoiceSessionController {
     const stoppedAt = Date.now();
     this.lastDurationMs = stoppedAt - this.recordingStartedAt;
     const pcm = await this.capture.stop();
+    // KK-04: 保留原始 PCM 供采集箱封装 WAV 上传工作台（原始资产不丢）。
+    this.lastPcm = pcm;
     const sttResult = await this.stt.finishSession();
     this.transcript = sttResult.transcript;
     if (sttResult.errorMessage.length > 0) {

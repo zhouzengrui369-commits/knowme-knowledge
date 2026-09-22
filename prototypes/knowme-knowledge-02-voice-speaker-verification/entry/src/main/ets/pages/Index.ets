@@ -1,449 +1,504 @@
 import { common } from '@kit.AbilityKit';
-import { CandidateStatus, MicState, SpeakerState, TrustGateDecision } from '../core/VoiceCore';
+import { fileIo as fs } from '@kit.CoreFileKit';
+import { MicState, SpeakerState } from '../core/VoiceCore';
 import { SessionPurpose, VoiceSessionController } from '../voice/VoiceSessionController';
 import { SpeakerVerificationController, UnprovisionedSpeakerEngine } from '../voice/SpeakerVerificationController';
 import { SherpaSpeakerEngine } from '../engine/SherpaSpeakerEngine';
-import { AgentContext, AgentMessage, KnowledgeItem } from '../agent/AgentContext';
+import { AudioCaptureController } from '../voice/AudioCaptureController';
+import { AgentContext, AgentMessage } from '../agent/AgentContext';
 import { AgentContextStore } from '../agent/AgentContextStore';
-import { NoteDraft, NoteDraftStatus, NoteFlowController } from '../note/NoteFlow';
+import {
+  CaptureItem, CaptureKind, TransferStatus, ProcessingStatus,
+  newCaptureId, localIsoWithOffset, deviceTimezone,
+  authorizeDraft, enqueue, makeCorrection, statusLabel
+} from '../capture/CaptureCore';
+import { CaptureStore } from '../capture/CaptureStore';
+import { WavWriter } from '../capture/WavWriter';
+import { LingxiBridgeClient } from '../bridge/LingxiBridgeClient';
+import { SyncController } from '../bridge/SyncController';
 
 /**
- * GOAL-KK-03 first-use voice-to-note product surface.
+ * GOAL-KK-04 灵犀移动采集设备产品面。
  *
- * Layout contract (frozen): the FIRST screen must read as a product —
- * purpose + primary recording action + voice-identity entry visible without
- * scrolling; simulator/test tooling and diagnostics stay secondary/collapsed.
- *
- * Product loop: start recording → clear RECORDING feedback → stop/cancel →
- * honest transcript candidate → correct / reject / 整理成笔记 → editable
- * note draft (title + body, original transcript preserved) → explicit
- * save (+1) / cancel (+0) → saved note reopenable with provenance →
- * Agent explains what changed, context preserved.
+ * 产品定位（baseline v3，冻结）：手机是灵犀工作台的智能采集设备。
+ * 首屏三区：①采集（文本/录音，先本地可靠保存）②采集箱（未同步与未整理
+ * 状态分明，显式「交给灵犀」）③灵犀结果（工作台真实整理产物，同一
+ * note_id，原始来源两次导航内可达）。声纹保留为可选来源识别（折叠），
+ * 不作为采集/上传前置门槛；诊断与 TEST_FIXTURE 工具折叠次要。
  */
 @Entry
 @Component
 struct Index {
-  @State agent: AgentContext = new AgentContext();
+  // ── 既有能力：权限/声纹（折叠区） ──
   @State session: VoiceSessionController =
     new VoiceSessionController(new SpeakerVerificationController(new UnprovisionedSpeakerEngine()));
   private sherpaEngine: SherpaSpeakerEngine = new SherpaSpeakerEngine();
-  private store: AgentContextStore = new AgentContextStore();
-  private noteFlow: NoteFlowController = new NoteFlowController();
-  @State engineInitText: string = '声纹引擎初始化中…';
   @State micState: string = MicState.IDLE;
   @State speakerState: string = SpeakerState.NOT_ENROLLED;
-  @State transcript: string = '';
-  @State similarityText: string = '';
-  @State gateText: string = '';
-  @State candidateStatus: string = CandidateStatus.NONE;
+  @State engineInitText: string = '声纹引擎初始化中…';
   @State enrollmentText: string = '';
-  @State enrollmentArchiveText: string = '';
-  @State verdictText: string = '—(尚未捕获)';
-  @State sttNote: string = '';
-  @State speakerNote: string = '';
-  @State knowledgeCount: number = 0;
-  @State correctedText: string = '';
-  @State manualText: string = '';
-  @State degradedCapture: boolean = false;
-  @State fixtureActive: boolean = false;
-  @State fixtureDemo: boolean = false;
-  @State fixtureText: string = '';
-  @State showDiagnostics: boolean = false;
-  @State showSimTools: boolean = false;
   @State showVoiceIdentity: boolean = false;
-  @State expandedKnowledgeId: string = '';
-  @State tick: number = 0;
-  // KK-03: live recording feedback (mm:ss ticking while RECORDING).
-  @State recordElapsedSec: number = 0;
-  private recordTimer: number = -1;
-  // KK-03: note-draft editor mirror (NoteFlowController is unobserved).
-  @State noteStatus: string = NoteDraftStatus.NONE;
-  @State noteTitle: string = '';
-  @State noteBody: string = '';
-  @State noteOriginal: string = '';
-  @State noteSource: string = 'text';
-  @State noteSpeaker: string = 'N/A';
-  @State noteShowOriginal: boolean = false;
-  @State noteSaving: boolean = false;
-  // D12 fix: agent.messages is a plain array on an unobserved class — push()
-  // is invisible to @State. Mirror the tail into a real @State array.
+  @State showDiagnostics: boolean = false;
+
+  // ── Agent 消息（操作反馈与历史分开呈现） ──
+  @State agent: AgentContext = new AgentContext();
+  private agentStore: AgentContextStore = new AgentContextStore();
   @State visibleMessages: AgentMessage[] = [];
-  // R3 (PX-KK02-01/04): restored + live knowledge must be inspectable — mirror
-  // the full confirmed list into a real @State array (latest first).
-  @State visibleKnowledge: KnowledgeItem[] = [];
 
-  private refresh(): void {
-    this.micState = this.session.micState;
-    this.speakerState = this.session.speakerState;
-    this.transcript = this.session.transcript;
-    this.similarityText = Number.isNaN(this.session.similarity)
-      ? '—'
-      : this.session.similarity.toFixed(3);
-    this.candidateStatus = this.session.candidateStatus;
-    this.sttNote = this.session.sttEngineNote;
-    this.speakerNote = this.session.speaker.engineIdentity();
-    this.knowledgeCount = this.agent.knowledgeCount();
-    this.gateText = this.gateLabel();
-    this.fixtureActive = this.session.fixtureTranscript;
-    this.fixtureDemo = this.session.fixtureDemo;
-    this.visibleMessages = this.agent.messages.slice(-6);
-    this.visibleKnowledge = this.agent.knowledge.slice().reverse();
-    this.enrollmentArchiveText = this.enrollmentArchiveLabel();
-    this.verdictText = this.currentVerdictLabel();
-    this.tick += 1;
-  }
+  // ── KK-04 采集箱 ──
+  private captureStore: CaptureStore = new CaptureStore();
+  private bridge: LingxiBridgeClient = new LingxiBridgeClient();
+  private syncCtl: SyncController = new SyncController(this.captureStore, this.bridge);
+  private boxRecorder: AudioCaptureController = new AudioCaptureController();
+  @State captureList: CaptureItem[] = [];
+  @State textDraft: string = '';
+  @State correctionOfId: string = '';
+  @State recordingBox: boolean = false;
+  @State boxElapsedSec: number = 0;
+  private boxTimer: number = -1;
+  private boxStartedAt: number = 0;
+  private syncTimer: number = -1;
 
-  /** Mirror the note-draft controller into observable state. */
-  private syncNoteState(): void {
-    this.noteStatus = this.noteFlow.status;
-    const d = this.noteFlow.draft;
-    if (d !== null && this.noteStatus === NoteDraftStatus.EDITING) {
-      this.noteTitle = d.title;
-      this.noteBody = d.body;
-      this.noteOriginal = d.originalTranscript;
-      this.noteSource = d.source;
-      this.noteSpeaker = d.speakerState;
-    }
-    if (this.noteStatus === NoteDraftStatus.NONE) {
-      this.noteTitle = '';
-      this.noteBody = '';
-      this.noteOriginal = '';
-      this.noteSource = 'text';
-      this.noteSpeaker = 'N/A';
-      this.noteShowOriginal = false;
-      this.noteSaving = false;
-    }
-  }
+  // ── 连接工作台 ──
+  @State connectUrl: string = '';
+  @State connectState: string = '未连接';
+  @State capsText: string = '';
+  @State showConnect: boolean = true;
+  @State deviceIdText: string = '';
 
-  private gateLabel(): string {
-    const gate = this.session.gate;
-    if (gate === null) {
-      return '';
-    }
-    switch (gate) {
-      case TrustGateDecision.CANDIDATE_ALLOWED:
-        return '信任门通过:可进入候选(仍需你明确确认)';
-      case TrustGateDecision.BLOCKED_NOT_VERIFIED:
-        return '信任门拦截:非机主语音(NOT_VERIFIED),不入库';
-      case TrustGateDecision.BLOCKED_UNCERTAIN:
-        return '信任门拦截:无法确定是谁(UNCERTAIN),不入库';
-      case TrustGateDecision.BLOCKED_NOT_AVAILABLE:
-        return '信任门拦截:本地能力不可用(NOT_AVAILABLE),无云端回退';
-      case TrustGateDecision.BLOCKED_NOT_ENROLLED:
-        return '信任门拦截:尚未注册机主声纹';
-      default:
-        return '';
-    }
-  }
-
-  private micLabel(): string {
-    switch (this.micState) {
-      case MicState.IDLE: return '空闲 · 未录音';
-      case MicState.PERMISSION_REQUIRED: return '需要麦克风权限';
-      case MicState.PERMISSION_GRANTED: return '权限已授予 · 待开始';
-      case MicState.PERMISSION_DENIED: return '权限被拒绝 · 无法录音';
-      case MicState.RECORDING: return '● 录音中';
-      case MicState.STOPPED: return '已停止';
-      case MicState.UNAVAILABLE: return '本地语音能力不可用';
-      default: return this.micState;
-    }
-  }
-
-  /**
-   * R3 (PX-KK02-05): enrollment archive state is a persistent profile fact,
-   * shown separately from each capture verdict — they must never share one line.
-   */
-  private enrollmentArchiveLabel(): string {
-    const s = this.session.speaker.state();
-    switch (s) {
-      case SpeakerState.ENROLLED: return '已录入(本地声纹档案)';
-      case SpeakerState.NOT_ENROLLED: return '未录入';
-      case SpeakerState.NOT_AVAILABLE: return '引擎不可用(NOT_AVAILABLE)';
-      default: return s;
-    }
-  }
-
-  /** R3 (PX-KK02-05): per-capture verdict — only meaningful while a result is on screen. */
-  private currentVerdictLabel(): string {
-    if (this.session.fixtureDemo) {
-      return '不适用(演示候选,未采集语音)';
-    }
-    // R3-D19: an enrollment stop leaves its STT echo on screen — that is a
-    // sampling echo, NOT a capture verdict.
-    if (this.session.purpose === SessionPurpose.ENROLLMENT &&
-      (this.session.gate !== null || this.session.transcript.length > 0 ||
-        this.session.candidateStatus !== CandidateStatus.NONE)) {
-      return '—(注册采样回声,非本次验证)';
-    }
-    if (this.session.gate !== null || this.session.transcript.length > 0 ||
-      this.session.candidateStatus !== CandidateStatus.NONE) {
-      return `${this.session.speakerState} · 相似度 ${this.similarityText}`;
-    }
-    return '—(尚未捕获)';
-  }
+  // ── 结果查看 ──
+  @State resultFor: string = '';
+  @State resultTitle: string = '';
+  @State resultBody: string = '';
+  @State provenanceFor: string = '';
+  @State provenanceText: string = '';
 
   aboutToAppear(): void {
-    // R3 (PX-KK02-01): restore bounded confirmed knowledge + conversation
-    // context from the app-private sandbox BEFORE first render. Only
-    // explicitly saved items were ever persisted; rejected, discarded and
-    // unconfirmed candidates/drafts are absent by construction.
-    this.store.init(this.uiContext());
-    const snap = this.store.load();
+    this.agentStore.init(this.uiContext());
+    const snap = this.agentStore.load();
     if (snap !== null && (snap.knowledge.length > 0 || snap.messages.length > 0)) {
       this.agent.restore(snap);
-      this.agent.say('system',
-        `已从本地恢复 ${this.agent.knowledgeCount()} 条已保存知识与对话上下文(0.1 原型有界本地存储,非生产备份)。`, false);
     } else {
       this.agent.ensureIntro();
     }
     this.agent.onChanged = () => {
-      this.store.save(this.agent);
+      this.agentStore.save(this.agent);
     };
+
+    this.captureStore.init(this.uiContext());
+    this.syncCtl.setListener({ onChange: () => this.mirrorCaptures() });
+    this.syncCtl.watchNetwork();
     this.session.speaker.initStorage(this.uiContext());
     this.session.onEvent(() => {
-      this.refresh();
+      this.refreshVoice();
     });
     this.session.refreshPermission();
-    this.refresh();
-    // Async engine provisioning: honest NOT_AVAILABLE if it cannot init.
+
+    const sess = this.captureStore.loadSession();
+    if (sess !== null && sess.token.length > 0) {
+      this.connectUrl = sess.baseUrl;
+      this.bridge.configure(sess.baseUrl, sess.deviceId, sess.token);
+      this.deviceIdText = sess.deviceId;
+      this.connectState = '已连接（本地会话恢复）';
+      this.showConnect = false;
+      this.refreshCapabilities();
+    }
+
+    this.mirrorCaptures();
+    this.refreshVoice();
+    this.syncTimer = setInterval(() => {
+      this.syncCtl.tick();
+    }, 5000);
+
     this.sherpaEngine.init(this.uiContext()).then((ok: boolean) => {
       if (ok) {
         this.session.speaker.setEngine(this.sherpaEngine);
-        this.engineInitText = '声纹引擎就绪(本地 sherpa-onnx)';
+        this.engineInitText = '声纹引擎就绪（本地 sherpa-onnx，可选能力）';
       } else {
-        this.engineInitText = `声纹引擎不可用(NOT_AVAILABLE):${this.sherpaEngine.engineIdentity()}`;
+        this.engineInitText = `声纹引擎不可用（可选能力，不影响采集）：${this.sherpaEngine.engineIdentity()}`;
       }
-      this.session.refreshSpeakerState();
-      this.refresh();
+      this.refreshVoice();
     });
   }
 
   aboutToDisappear(): void {
-    this.stopRecordTimer();
+    this.stopBoxTimer();
+    if (this.syncTimer >= 0) {
+      clearInterval(this.syncTimer);
+      this.syncTimer = -1;
+    }
   }
 
-  /**
-   * D8 fix: returning from a settings round-trip does not re-run
-   * aboutToAppear — refresh the mic strip so a granted permission shows up.
-   */
   onPageShow(): void {
     this.session.refreshPermission();
-    this.refresh();
-  }
-
-  private captureButtonLabel(): string {
-    if (this.micState === MicState.PERMISSION_REQUIRED) {
-      return '🎙 授权麦克风并开始录音';
-    }
-    if (this.micState === MicState.PERMISSION_DENIED) {
-      return '麦克风已拒绝 · 点这里去设置开启';
-    }
-    return '🎙 开始录音';
-  }
-
-  /** Deep-link to system settings when the system no longer re-prompts. */
-  private async openMicSettings(): Promise<void> {
-    const ctx = this.uiContext();
-    const settingsBundles: string[] = ['com.huawei.hmos.settings', 'com.ohos.settings'];
-    for (const bundle of settingsBundles) {
-      try {
-        await ctx.startAbility({
-          bundleName: bundle,
-          abilityName: `${bundle}.MainAbility`,
-          uri: 'application_info_entry',
-          parameters: { pushParams: ctx.applicationInfo.name }
-        });
-        this.agent.say('system', '请在系统设置中允许麦克风权限,然后返回灵犀。');
-        this.refresh();
-        return;
-      } catch (e) {
-        // try next settings bundle name
-      }
-    }
-    this.agent.say('system', '无法自动跳转:请手动到 系统设置 → 应用 → 灵犀语音原型 → 权限 开启麦克风。');
-    this.refresh();
-  }
-
-  /** KK-03: ticking elapsed-time feedback while RECORDING. */
-  private startRecordTimer(): void {
-    this.stopRecordTimer();
-    this.recordElapsedSec = 0;
-    this.recordTimer = setInterval(() => {
-      const ms = this.session.recordingElapsedMs();
-      if (ms >= 0) {
-        this.recordElapsedSec = Math.floor(ms / 1000);
-      }
-    }, 500);
-  }
-
-  private stopRecordTimer(): void {
-    if (this.recordTimer >= 0) {
-      clearInterval(this.recordTimer);
-      this.recordTimer = -1;
-    }
-  }
-
-  private recordClock(): string {
-    const mm = Math.floor(this.recordElapsedSec / 60).toString().padStart(2, '0');
-    const ss = (this.recordElapsedSec % 60).toString().padStart(2, '0');
-    return `${mm}:${ss}`;
-  }
-
-  private async startCapture(): Promise<void> {
-    if (!this.session.permission.isGranted()) {
-      await this.session.requestPermission(this.uiContext());
-      this.refresh();
-      if (this.micState !== MicState.PERMISSION_GRANTED) {
-        this.agent.say('system', '麦克风权限未授予,无法录音;可以改用下方手动文本记录,不丢上下文。');
-        this.refresh();
-        if (this.micState === MicState.PERMISSION_DENIED) {
-          await this.openMicSettings();
-        }
-        return;
-      }
-    }
-    this.session.backToIdle();
-    const started = await this.session.startSession(SessionPurpose.CAPTURE);
-    // D10 fix: when STT is NOT_AVAILABLE the session refuses to record at
-    // all — surface the degraded fallback honestly.
-    this.degradedCapture = !started && this.session.micState === MicState.UNAVAILABLE;
-    if (this.degradedCapture) {
-      this.agent.say('system', '本地语音识别不可用,录音通道已关闭;可以先用手动文本记录,不丢上下文。');
-    }
-    if (started) {
-      this.startRecordTimer();
-    }
-    this.refresh();
-  }
-
-  private async stopCapture(): Promise<void> {
-    this.stopRecordTimer();
-    await this.session.stopSession();
-    if (this.session.purpose === SessionPurpose.ENROLLMENT) {
-      const n = this.session.enrollmentCount;
-      if (n >= 3) {
-        const done = this.session.speaker.completeEnrollment();
-        this.enrollmentText = done ? '录入完成(3/3)' : '录入失败,请重试';
-        // R2-D14: unconditional refresh — the guarded variant is skipped
-        // while the enrollment transcript is on screen.
-        this.session.forceRefreshSpeakerState();
-      } else if (n > 0) {
-        this.enrollmentText = `采样 ${n}/3 · 再录 ${3 - n} 句`;
-      } else {
-        this.enrollmentText = '采样无效(太短或引擎未就绪),请重试';
-      }
-    }
-    this.refresh();
-  }
-
-  private async cancelCapture(): Promise<void> {
-    this.stopRecordTimer();
-    await this.session.cancelSession();
-    this.enrollmentText = '';
-    this.refresh();
-  }
-
-  /** R3 (PX-KK02-02): manual text save — always available, source-labeled. */
-  private saveManualText(): void {
-    if (this.manualText.trim().length > 0) {
-      this.agent.addTextNote(this.manualText.trim());
-      this.manualText = '';
-      this.degradedCapture = false;
-      this.session.dismissResult();
-      this.refresh();
-    }
-  }
-
-  /** KK-03: fixture demo generation lives in the collapsed simulator tools. */
-  private startFixtureDemo(): void {
-    const text = this.fixtureText.trim().length > 0
-      ? this.fixtureText.trim()
-      : '今天把语音转笔记的流程完整跑通了一遍。整理、保存、溯源都验证过了。';
-    if (this.session.startFixtureCandidate(text)) {
-      this.fixtureText = '';
-      this.agent.say('system', '已生成演示候选(TEST_FIXTURE):这是明确标注的测试转写,不是真实语音识别,也不代表机主身份;仅用于演示修正/丢弃/整理成笔记流程,真机未验证。');
-    }
-    this.refresh();
-  }
-
-  /** KK-03: explicit "整理成笔记" — candidate → one editable note draft. */
-  private organizeIntoNote(): void {
-    const payload = this.session.continueToNote();
-    if (payload !== null) {
-      const created = this.noteFlow.createFromCandidate(
-        payload.transcript, payload.source, payload.speakerState, payload.trustClass);
-      if (created) {
-        this.agent.say('agent',
-          '已整理成笔记草稿:标题和正文都可以直接改,原始转写已保留可对照。点「保存笔记」才真正入库(+1);点「取消」则什么都不保存(+0)。');
-      }
-    }
-    this.syncNoteState();
-    this.refresh();
-  }
-
-  /** KK-03: explicit note save — exactly +1, exactly-once (double-tap safe). */
-  private saveNote(): void {
-    if (this.noteSaving) {
-      return;
-    }
-    this.noteSaving = true;
-    const draft: NoteDraft | null = this.noteFlow.save();
-    if (draft !== null) {
-      this.agent.saveNoteDraft(draft);
-      this.noteFlow.clear();
-    } else {
-      this.agent.say('system', '这条草稿当前不能保存(标题/正文为空,或信任条件不满足)。', false);
-    }
-    this.noteSaving = false;
-    this.syncNoteState();
-    this.refresh();
-  }
-
-  /** KK-03: explicit note cancel — +0 knowledge. */
-  private cancelNote(): void {
-    if (this.noteFlow.cancel()) {
-      this.agent.explainNoteCancelled();
-      this.noteFlow.clear();
-    }
-    this.syncNoteState();
-    this.refresh();
-  }
-
-  private knowledgeSourceLabel(item: KnowledgeItem): string {
-    if (item.source === 'voice') {
-      return '本人语音 · 已验证';
-    }
-    if (item.source === 'fixture') {
-      return 'TEST_FIXTURE 演示';
-    }
-    return '手动文本';
-  }
-
-  private knowledgeSourceColor(item: KnowledgeItem): string {
-    if (item.source === 'voice') {
-      return '#1B6E3C';
-    }
-    if (item.source === 'fixture') {
-      return '#B26A00';
-    }
-    return '#1B4F8A';
-  }
-
-  private formatTime(at: number): string {
-    const d = new Date(at);
-    const hh = d.getHours().toString().padStart(2, '0');
-    const mm = d.getMinutes().toString().padStart(2, '0');
-    return `${hh}:${mm}`;
+    this.refreshVoice();
   }
 
   private uiContext(): common.UIAbilityContext {
     return this.getUIContext().getHostContext() as common.UIAbilityContext;
   }
 
+  private refreshVoice(): void {
+    this.micState = this.session.micState;
+    this.speakerState = this.session.speakerState;
+  }
+
+  private mirrorCaptures(): void {
+    this.captureList = this.captureStore.listLatest();
+    this.visibleMessages = this.agent.messages.slice(-5);
+  }
+
+  /** J09 保护：每条反馈带时间；非本次启动产生的消息显式标「历史」，不被误读为当前指令。 */
+  private launchAt: number = Date.now();
+
+  private formatMsg(msg: AgentMessage, idx: number): string {
+    const d = new Date(msg.at);
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    const tag = msg.at < this.launchAt ? '历史' : (idx === this.visibleMessages.length - 1 ? '当前' : '早前');
+    return `[${hh}:${mm}·${tag}] ${msg.text}`;
+  }
+
+  private say(text: string): void {
+    this.agent.say('system', text, false);
+    this.mirrorCaptures();
+  }
+
+  // ── 连接（J01） ──────────────────────────────────────────────────────
+  private async connectNow(): Promise<void> {
+    const url = this.connectUrl.trim();
+    if (url.length === 0) {
+      this.connectState = '请先填写工作台地址';
+      return;
+    }
+    this.connectState = '连接中…';
+    const instanceId = `sim-${this.uiContext().applicationInfo.name}`;
+    const r = await this.bridge.register(url, 'Mate60-模拟器', instanceId, '0.4.0-kk04');
+    if (!r.ok) {
+      this.connectState = `连接失败：${r.error || `HTTP ${r.status}`}`;
+      return;
+    }
+    try {
+      const body = JSON.parse(r.body) as Record<string, Object>;
+      const token = String(body['device_token'] ?? '');
+      const deviceId = String(body['device_id'] ?? '');
+      this.bridge.configure(url, deviceId, token);
+      this.captureStore.saveSession(url, deviceId, token);
+      this.deviceIdText = deviceId;
+      this.connectState = '已连接';
+      this.say('已连接灵犀工作台（隔离实例），可以开始采集并「交给灵犀」。');
+      await this.refreshCapabilities();
+      this.showConnect = false;
+      this.syncCtl.kick();
+    } catch (e) {
+      this.connectState = `连接响应异常：${JSON.stringify(e)}`;
+    }
+  }
+
+  private async refreshCapabilities(): Promise<void> {
+    const r = await this.bridge.capabilities();
+    if (r.ok) {
+      try {
+        const c = JSON.parse(r.body) as Record<string, Object>;
+        const asr = c['asr'] as Record<string, Object>;
+        const org = c['organizer'] as Record<string, Object>;
+        const plg = c['plugin'] as Record<string, Object>;
+        this.capsText = `插件 ${plg['version']}（${plg['status']}）· ASR ${asr['engine']}` +
+          ` · 整理 ${org['skill']} · 外发 ${String(c['processing_policy'])}`;
+        this.capsText = `插件 ${plg['version']}（${plg['status']}）· ASR ${asr['engine']}/${asr['model']}` +
+          ` · 整理 ${org['skill']} · 隔离环境不外发`;
+      } catch (e) {
+        this.capsText = '能力查询成功（解析从略）';
+      }
+    } else if (r.status === 401) {
+      this.connectState = '凭证失效，请重新连接';
+      this.showConnect = true;
+    }
+  }
+
+  private async revokeNow(): Promise<void> {
+    const r = await this.bridge.revoke();
+    if (r.ok) {
+      this.say('设备凭证已撤销：此后不能再上传或读取，重新连接才会签发新凭证。');
+    }
+    this.captureStore.clearSession();
+    this.bridge.configure('', '', '');
+    this.connectState = '已撤销（未连接）';
+    this.deviceIdText = '';
+    this.capsText = '';
+  }
+
+  // ── 采集（J02/J03/J04） ──────────────────────────────────────────────
+  private saveTextDraft(): void {
+    const text = this.textDraft.trim();
+    if (text.length === 0) {
+      return;
+    }
+    const now = new Date();
+    let item: CaptureItem;
+    if (this.correctionOfId.length > 0) {
+      const src = this.captureStore.get(this.correctionOfId);
+      if (src !== null) {
+        item = makeCorrection(src, text, now);
+        item.contentHash = `sha256:${WavWriter.sha256Text(text)}`;
+        this.say(`已生成「${src.titleHint || src.captureId}」的修正版（revision ${item.payloadRevision}），原文保持不变。`);
+      } else {
+        return;
+      }
+    } else {
+      item = {
+        captureId: newCaptureId(), payloadRevision: 1, kind: CaptureKind.TEXT,
+        capturedAt: localIsoWithOffset(now), capturedTimezone: deviceTimezone(),
+        titleHint: '', text: text,
+        assetFile: '', assetSha256: '', assetSize: 0, assetDurationMs: 0,
+        contentHash: `sha256:${WavWriter.sha256Text(text)}`,
+        transfer: TransferStatus.DRAFT, processing: ProcessingStatus.NONE,
+        taskId: '', noteId: '', noteRevision: 0,
+        intent: 'note', correctionOf: '', contextRef: '',
+        error: '', recoveryAction: '', attempts: 0, updatedAt: now.getTime()
+      };
+      this.say('已保存到采集箱（草稿，未提交）。点「交给灵犀」才会上传整理。');
+    }
+    this.captureStore.save(item);
+    this.textDraft = '';
+    this.correctionOfId = '';
+    this.mirrorCaptures();
+  }
+
+  private async startBoxRecording(): Promise<void> {
+    if (!this.session.permission.isGranted()) {
+      await this.session.requestPermission(this.uiContext());
+      this.refreshVoice();
+      if (!this.session.permission.isGranted()) {
+        this.say('麦克风权限未授予，无法录音；可以先用文字采集，不丢内容。');
+        return;
+      }
+    }
+    const ok = await this.boxRecorder.start();
+    if (ok) {
+      this.recordingBox = true;
+      this.boxStartedAt = Date.now();
+      this.boxElapsedSec = 0;
+      this.boxTimer = setInterval(() => {
+        this.boxElapsedSec = Math.floor((Date.now() - this.boxStartedAt) / 1000);
+      }, 500);
+    }
+  }
+
+  private async stopBoxRecording(): Promise<void> {
+    this.stopBoxTimer();
+    const pcm = await this.boxRecorder.stop();
+    this.recordingBox = false;
+    if (pcm.length === 0) {
+      this.say('没有录到声音，未保存。');
+      return;
+    }
+    const now = new Date();
+    const cid = newCaptureId();
+    const wav = WavWriter.wrap(pcm, 16000);
+    const sha = WavWriter.sha256Hex(wav);
+    const filename = `${cid}.wav`;
+    const abs = `${this.captureStore.assetDirFor(cid, 1)}/${filename}`;
+    try {
+      WavWriter.writeFile(abs, wav);
+    } catch (e) {
+      this.say(`录音保存失败：${JSON.stringify(e)}`);
+      return;
+    }
+    const item: CaptureItem = {
+      captureId: cid, payloadRevision: 1, kind: CaptureKind.AUDIO,
+      capturedAt: localIsoWithOffset(now), capturedTimezone: deviceTimezone(),
+      titleHint: '', text: '',
+      assetFile: filename, assetSha256: sha, assetSize: wav.length,
+      assetDurationMs: Math.round(pcm.length / 32),
+      contentHash: `sha256:${sha}`,
+      transfer: TransferStatus.DRAFT, processing: ProcessingStatus.NONE,
+      taskId: '', noteId: '', noteRevision: 0,
+      intent: 'note', correctionOf: '', contextRef: '',
+      error: '', recoveryAction: '', attempts: 0, updatedAt: now.getTime()
+    };
+    this.captureStore.save(item);
+    this.say(`录音已保存到采集箱（${Math.round(pcm.length / 32000)} 秒，草稿未提交）。点「交给灵犀」上传工作台做真实转写与整理。`);
+    this.mirrorCaptures();
+  }
+
+  private async cancelBoxRecording(): Promise<void> {
+    this.stopBoxTimer();
+    await this.boxRecorder.cancel();
+    this.recordingBox = false;
+    this.say('已取消录音，内容已丢弃。');
+  }
+
+  /**
+   * J03/J07 受控替代：模拟器无真实麦克风（实测峰值为噪底）。
+   * 从已连接的隔离工作台下载合成朗读 wav 入采集箱；内容与来源诚实标注，
+   * ASR 与整理仍为真实链路。markYesterday=true 模拟「昨日采集今日上传」
+   * 迟到场景（用户显式声明捕获时间，不修改系统时间）。
+   */
+  @State importingAudio: boolean = false;
+
+  private async importDemoAudio(markYesterday: boolean, demoName: string = 'kk04_reading_30s'): Promise<void> {
+    if (this.importingAudio) {
+      return;
+    }
+    this.importingAudio = true;
+    try {
+      const cid = newCaptureId();
+      const filename = `${cid}.wav`;
+      const dir = this.captureStore.assetDirFor(cid, 1);
+      fs.mkdirSync(dir, true);
+      const abs = `${dir}/${filename}`;
+      const dl = await this.bridge.downloadDemoAudio(demoName, abs);
+      if (!dl.ok) {
+        this.say(`演示音频下载失败：${dl.error}`);
+        return;
+      }
+      const fd = fs.openSync(abs, fs.OpenMode.READ_ONLY);
+      const buf = new ArrayBuffer(dl.size);
+      fs.readSync(fd.fd, buf);
+      fs.closeSync(fd);
+      const bytes = new Uint8Array(buf);
+      const sha = WavWriter.sha256Hex(bytes);
+      const durationMs = Math.round((dl.size - 44) / 32); // 16kHz/16bit/mono
+      const captured = new Date();
+      if (markYesterday) {
+        captured.setDate(captured.getDate() - 1);
+        captured.setHours(21, 0, 0, 0);
+      }
+      const now = new Date();
+      const item: CaptureItem = {
+        captureId: cid, payloadRevision: 1, kind: CaptureKind.AUDIO,
+        capturedAt: localIsoWithOffset(captured), capturedTimezone: deviceTimezone(),
+        titleHint: `导入演示音频(合成朗读${demoName.includes('5min') ? '·5分钟' : ''}${markYesterday ? '·昨日捕获' : ''})`, text: '',
+        assetFile: filename, assetSha256: sha, assetSize: dl.size,
+        assetDurationMs: durationMs,
+        contentHash: `sha256:${sha}`,
+        transfer: TransferStatus.DRAFT, processing: ProcessingStatus.NONE,
+        taskId: '', noteId: '', noteRevision: 0,
+        intent: 'note', correctionOf: '', contextRef: '',
+        error: '', recoveryAction: '', attempts: 0, updatedAt: now.getTime()
+      };
+      this.captureStore.save(item);
+      this.say(`演示音频已入采集箱（${Math.round(durationMs / 1000)} 秒，合成朗读，草稿未提交）` +
+        `${markYesterday ? '，捕获时间显式标记为昨日 21:00（迟到采集场景）' : ''}。点「交给灵犀」走真实 ASR 与整理。`);
+      this.mirrorCaptures();
+    } finally {
+      this.importingAudio = false;
+    }
+  }
+
+  private stopBoxTimer(): void {
+    if (this.boxTimer >= 0) {
+      clearInterval(this.boxTimer);
+      this.boxTimer = -1;
+    }
+  }
+
+  private boxClock(): string {
+    const mm = Math.floor(this.boxElapsedSec / 60).toString().padStart(2, '0');
+    const ss = (this.boxElapsedSec % 60).toString().padStart(2, '0');
+    return `${mm}:${ss}`;
+  }
+
+  // ── 采集箱动作 ────────────────────────────────────────────────────────
+  private async handToLingxi(item: CaptureItem): Promise<void> {
+    if (!this.bridge.configured) {
+      this.say('尚未连接灵犀工作台：请先在顶部「连接」区配置地址并连接。');
+      this.showConnect = true;
+      return;
+    }
+    if (authorizeDraft(item) || item.transfer === TransferStatus.FAILED) {
+      enqueue(item);
+      this.captureStore.save(item);
+      this.mirrorCaptures();
+      this.say(`已交给灵犀：${item.kind === 'audio' ? '录音' : '文本'}进入同步队列，网络可用时自动上传。`);
+      await this.syncCtl.kick();
+    }
+  }
+
+  private startCorrection(item: CaptureItem): void {
+    this.correctionOfId = item.captureId;
+    this.say(`正在修正「${item.titleHint || item.capturedAt.slice(11, 16)} 的采集」：在上方文本框输入修正内容后保存，将作为新版本提交（原文不覆盖）。`);
+  }
+
+  private async viewResult(item: CaptureItem): Promise<void> {
+    if (!item.noteId) {
+      return;
+    }
+    const r = await this.bridge.result(item.noteId);
+    if (r.ok) {
+      try {
+        const body = JSON.parse(r.body) as Record<string, Object>;
+        this.resultFor = item.captureId;
+        this.resultTitle = String(body['note_id'] ?? item.noteId);
+        this.resultBody = String(body['body_md'] ?? '');
+      } catch (e) {
+        this.say('结果解析失败。');
+      }
+    } else {
+      this.say(`结果获取失败：HTTP ${r.status} ${r.error}`);
+    }
+  }
+
+  private async viewProvenance(item: CaptureItem): Promise<void> {
+    const lines: string[] = [
+      `capture_id：${item.captureId}（revision ${item.payloadRevision}）`,
+      `捕获时间：${item.capturedAt}（${item.capturedTimezone}）`,
+      `内容哈希：${item.contentHash}`
+    ];
+    if (item.kind === CaptureKind.AUDIO) {
+      lines.push(`原始录音：${item.assetFile} · ${item.assetSize}B · sha256 ${item.assetSha256.slice(0, 16)}…`);
+      lines.push('原件保存在手机采集箱，工作台可靠接收后双端各保留一份。');
+    } else {
+      lines.push(`原始文本：「${item.text.slice(0, 120)}」`);
+    }
+    if (item.taskId) {
+      const r = await this.bridge.getCapture(item.captureId);
+      if (r.ok) {
+        try {
+          const v = JSON.parse(r.body) as Record<string, Object>;
+          const prov = (v['provenance'] ?? {}) as Record<string, Object>;
+          const transcript = String(prov['initial_transcript'] ?? '');
+          if (transcript.length > 0) {
+            lines.push(`工作台最初转写：「${transcript.slice(0, 200)}」`);
+          }
+          lines.push(`接收时间：${String(v['received_at'] ?? '—')} · 整理时间：${String(v['organized_at'] ?? '—')}`);
+        } catch (e) {
+          // 忽略解析失败，本地信息已足够
+        }
+      }
+    }
+    this.provenanceFor = item.captureId;
+    this.provenanceText = lines.join('\n');
+  }
+
+  private itemTitle(item: CaptureItem): string {
+    if (item.titleHint) {
+      return item.titleHint;
+    }
+    if (item.kind === CaptureKind.TEXT) {
+      return item.text.length > 24 ? `${item.text.slice(0, 24)}…` : item.text;
+    }
+    return `录音 ${Math.round(item.assetDurationMs / 1000)} 秒`;
+  }
+
+  private statusColor(item: CaptureItem): string {
+    if (item.transfer !== TransferStatus.RECEIVED) {
+      return item.transfer === TransferStatus.DRAFT ? '#888888' : '#B26A00';
+    }
+    if (item.processing === ProcessingStatus.COMPLETED) {
+      return '#1B6E3C';
+    }
+    if (item.processing === ProcessingStatus.FAILED || item.processing === ProcessingStatus.NEEDS_INPUT) {
+      return '#C62828';
+    }
+    return '#1B4F8A';
+  }
+
   build() {
     Scroll() {
       Column({ space: 12 }) {
-        // ── Agent-first header: purpose understandable at first glance ──
+        // ── 头部：产品定位一眼可读 ──
         Row({ space: 8 }) {
           Text('灵')
             .fontSize(20)
@@ -454,10 +509,10 @@ struct Index {
             .borderRadius(18)
             .backgroundColor('#5656D6')
           Column({ space: 2 }) {
-            Text('灵犀 · 把语音变成笔记')
+            Text('灵犀 · 移动采集')
               .fontSize(18)
               .fontWeight(FontWeight.Medium)
-            Text(`个人知识 Agent · 知识 ${this.knowledgeCount} 条 · 说话→转写→整理成笔记`)
+            Text(`手机采集 · 离线不丢 · 联网交给灵犀整理 · ${this.connectState}`)
               .fontSize(11)
               .fontColor('#777777')
           }
@@ -465,8 +520,7 @@ struct Index {
         }
         .width('100%')
 
-        // ── Compact boundary disclosure (single line, never a wall) ──
-        Text('0.1 原型 · OpenHarmony 模拟器演示(非 Mate60 真机)· 全程本地 · 无云端上传')
+        Text('KK-04 原型 · OpenHarmony 模拟器 · 只连你自己配置的隔离灵犀工作台 · 无任何对外发送')
           .fontSize(10)
           .fontColor('#A05000')
           .width('100%')
@@ -474,76 +528,51 @@ struct Index {
           .borderRadius(6)
           .backgroundColor('#FFF3E0')
 
-        // ── PRIMARY CARD: recording action + voice identity entry ──
-        // First-screen rule: start-recording and voice-identity entries are
-        // discoverable without scrolling.
-        Column({ space: 8 }) {
-          if (this.micState === MicState.RECORDING) {
-            // KK-03: unmistakable in-progress feedback — red state, ticking
-            // clock, and the two verbs that match the next tap.
-            Text(`● 正在录音 ${this.recordClock()}`)
-              .fontSize(16)
-              .fontWeight(FontWeight.Medium)
-              .fontColor('#C62828')
-              .width('100%')
-            Text(this.session.purpose === SessionPurpose.ENROLLMENT
-              ? '声纹录入采样中:说完一句点「停止」,共 3 句;点「取消」丢弃本次采样'
-              : '说完点「停止录音」得到转写候选;点「取消录音」丢弃这段语音')
-              .fontSize(11)
-              .fontColor('#888888')
-              .width('100%')
-            Row({ space: 10 }) {
-              Button(this.session.purpose === SessionPurpose.ENROLLMENT ? '停止' : '停止录音')
-                .fontSize(14)
-                .layoutWeight(1)
-                .backgroundColor('#C62828')
-                .onClick(async () => {
-                  await this.stopCapture();
-                })
-              Button(this.session.purpose === SessionPurpose.ENROLLMENT ? '取消' : '取消录音')
-                .fontSize(14)
-                .layoutWeight(1)
-                .fontColor('#555555')
-                .backgroundColor('#E0E0E0')
-                .onClick(async () => {
-                  await this.cancelCapture();
-                })
-            }
-            .width('100%')
-          } else {
-            Button(this.captureButtonLabel())
-              .fontSize(16)
-              .width('100%')
-              .height(50)
-              .enabled((this.candidateStatus === CandidateStatus.NONE ||
-                this.candidateStatus === CandidateStatus.CONFIRMED ||
-                this.candidateStatus === CandidateStatus.REJECTED) &&
-                this.noteStatus !== NoteDraftStatus.EDITING)
-              .onClick(async () => {
-                await this.startCapture();
-              })
-            Text(`麦克风:${this.micLabel()}`)
-              .fontSize(11)
-              .fontColor('#777777')
-              .width('100%')
-          }
-
-          // Voice identity entry — archive state visible, entry discoverable.
+        // ── 连接区（连接后可折叠） ──
+        Column({ space: 6 }) {
           Row({ space: 8 }) {
-            Text(`声纹档案:${this.enrollmentArchiveText}`)
+            Text(`连接：${this.connectState}`)
               .fontSize(12)
-              .fontColor(this.session.speaker.state() === SpeakerState.ENROLLED ? '#1B6E3C' : '#7A4A00')
+              .fontColor(this.connectState.includes('已连接') ? '#1B6E3C' : '#7A4A00')
               .layoutWeight(1)
-            Button(this.showVoiceIdentity ? '收起声纹管理' : (this.session.speaker.state() === SpeakerState.ENROLLED ? '查看/重录声纹' : '录入我的声纹'))
-              .fontSize(12)
-              .fontColor('#1B4F8A')
-              .backgroundColor('#E3ECF7')
-              .enabled(this.micState !== MicState.RECORDING)
+            Button(this.showConnect ? '收起' : '设置')
+              .fontSize(11)
+              .fontColor('#555555')
+              .backgroundColor('#EFEFEF')
               .onClick(() => {
-                this.showVoiceIdentity = !this.showVoiceIdentity;
+                this.showConnect = !this.showConnect;
               })
           }
           .width('100%')
+          if (this.showConnect) {
+            TextInput({ text: this.connectUrl, placeholder: '工作台地址，如 http://192.168.x.x:18231' })
+              .onChange((v: string) => {
+                this.connectUrl = v;
+              })
+            Row({ space: 8 }) {
+              Button('连接灵犀工作台')
+                .fontSize(13)
+                .layoutWeight(1)
+                .onClick(async () => {
+                  await this.connectNow();
+                })
+              Button('撤销设备')
+                .fontSize(13)
+                .fontColor('#C62828')
+                .backgroundColor('#F6E3E3')
+                .enabled(this.bridge.configured)
+                .onClick(async () => {
+                  await this.revokeNow();
+                })
+            }
+            .width('100%')
+            if (this.capsText.length > 0) {
+              Text(this.capsText)
+                .fontSize(10)
+                .fontColor('#555555')
+                .width('100%')
+            }
+          }
         }
         .width('100%')
         .alignItems(HorizontalAlign.Start)
@@ -552,363 +581,247 @@ struct Index {
         .backgroundColor('#FFFFFF')
         .border({ width: 1, color: '#E4E4EE' })
 
-        // ── Voice identity panel (expanded via the entry above) ──
-        if (this.showVoiceIdentity) {
-          Column({ space: 6 }) {
-            Text('机主声纹(原型验证,非生产身份认证)')
-              .fontSize(13)
-              .fontWeight(FontWeight.Medium)
-              .width('100%')
-            Text('声纹档案是你的长期身份状态;「本次验证」只是某一次录音的结果,两者互不代表。')
-              .fontSize(11)
-              .fontColor('#888888')
-              .width('100%')
-            Text(`录入状态:${this.enrollmentArchiveText}` +
-              (this.enrollmentText.length > 0 ? ` · ${this.enrollmentText}` : ''))
-              .fontSize(12)
-              .width('100%')
-            Text(`本次验证:${this.verdictText}`)
-              .fontSize(12)
-              .fontColor('#555555')
-              .width('100%')
-            Row({ space: 8 }) {
-              Button(this.session.speaker.state() === SpeakerState.ENROLLED ? '重新录入(3 句采样)' : '开始录入采样')
-                .fontSize(12)
-                .enabled(this.micState !== MicState.RECORDING)
-                .onClick(async () => {
-                  if (!this.session.permission.isGranted()) {
-                    await this.session.requestPermission(this.uiContext());
-                    this.refresh();
-                    if (this.micState !== MicState.PERMISSION_GRANTED) {
-                      return;
-                    }
-                  }
-                  const ok = await this.session.startSession(SessionPurpose.ENROLLMENT);
-                  if (ok) {
-                    this.startRecordTimer();
-                    this.enrollmentText = `采样 ${this.session.enrollmentCount}/3 · 请朗读一句中文,说完点停止`;
-                  }
-                  this.refresh();
-                })
-              Button('重置声纹')
-                .fontSize(12)
-                .fontColor('#C62828')
-                .enabled(this.micState !== MicState.RECORDING)
-                .onClick(() => {
-                  // R2-D15: destructive reset must be confirmed.
-                  AlertDialog.show({
-                    title: '重置机主声纹?',
-                    message: '将删除本机声纹档案,不可恢复;已保存的笔记与知识不受影响。',
-                    autoCancel: true,
-                    alignment: DialogAlignment.Center,
-                    primaryButton: {
-                      value: '取消',
-                      fontColor: '#555555',
-                      action: () => {}
-                    },
-                    secondaryButton: {
-                      value: '确认重置',
-                      fontColor: '#C62828',
-                      action: () => {
-                        this.session.speaker.resetEnrollment();
-                        // R2-D17: the old result belongs to the deleted
-                        // voiceprint — clear it with the reset.
-                        this.session.clearResultForReset();
-                        this.enrollmentText = '已重置';
-                        this.refresh();
-                      }
-                    }
-                  });
-                })
-            }
-          }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(12)
-          .borderRadius(12)
-          .backgroundColor('#F7F7FB')
-        }
-
-        // ── Transcript candidate (never silently saved) ──
-        if (this.candidateStatus === CandidateStatus.DRAFT || this.candidateStatus === CandidateStatus.CORRECTED) {
-          Column({ space: 8 }) {
-            Text(this.fixtureActive
-              ? '转写候选(TEST_FIXTURE 测试转写 · 未入库 · 不会自动保存)'
-              : '转写候选(未入库 · 不会自动保存)')
-              .fontSize(13)
-              .fontWeight(FontWeight.Medium)
-              .fontColor(this.fixtureActive ? '#B26A00' : '#333333')
-              .width('100%')
-            if (this.fixtureDemo) {
-              Text('演示候选:与声纹验证无关,不创建任何机主身份结论;整理成笔记并保存后按 TEST_FIXTURE 来源入库(+1),丢弃则不变(+0)。')
-                .fontSize(11)
-                .fontColor('#B26A00')
-                .width('100%')
-            }
-            if (!this.fixtureDemo && !this.fixtureActive) {
-              Text(`本次验证:${this.speakerState} · 相似度 ${this.similarityText}`)
-                .fontSize(11)
-                .fontColor('#555555')
-                .width('100%')
-            }
-            Text(this.fixtureActive ? `转写(测试代理):「${this.transcript}」` : `转写:「${this.transcript}」`)
-              .fontSize(14)
-              .width('100%')
-            TextInput({ text: this.transcript, placeholder: '可修正转写内容' })
-              .onChange((v: string) => {
-                this.correctedText = v;
-              })
-            Row({ space: 8 }) {
-              Button('保存修正')
-                .fontSize(12)
-                .onClick(() => {
-                  if (this.correctedText.trim().length > 0) {
-                    this.session.correctCandidate(this.correctedText.trim());
-                    this.correctedText = '';
-                    this.refresh();
-                  }
-                })
-              Button('丢弃')
-                .fontSize(12)
-                .fontColor('#C62828')
-                .onClick(() => {
-                  this.session.rejectCandidate();
-                  this.agent.explainRejected();
-                  this.session.dismissResult();
-                  this.refresh();
-                })
-            }
+        // ── ① 采集（主入口，首屏可达，1 秒内明确反馈） ──
+        Column({ space: 8 }) {
+          Text(this.correctionOfId.length > 0 ? '① 采集（正在写修正版）' : '① 采集')
+            .fontSize(14)
+            .fontWeight(FontWeight.Medium)
             .width('100%')
-            Button('整理成笔记')
-              .fontSize(15)
-              .width('100%')
-              .height(44)
-              .backgroundColor('#1B6E3C')
+          TextArea({ text: this.textDraft, placeholder: '输入文字，先保存在本机采集箱；不会自动上传' })
+            .height(80)
+            .onChange((v: string) => {
+              this.textDraft = v;
+            })
+          Row({ space: 8 }) {
+            Button('保存到采集箱')
+              .fontSize(13)
+              .layoutWeight(1)
+              .enabled(this.textDraft.trim().length > 0)
               .onClick(() => {
-                this.organizeIntoNote();
+                this.saveTextDraft();
               })
+            if (this.correctionOfId.length > 0) {
+              Button('放弃修正')
+                .fontSize(13)
+                .fontColor('#555555')
+                .backgroundColor('#E0E0E0')
+                .onClick(() => {
+                  this.correctionOfId = '';
+                })
+            }
           }
           .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(12)
-          .borderRadius(12)
-          .backgroundColor('#FFFFFF')
-          .border({ width: 1, color: '#DDDDDD' })
-        }
 
-        // ── Note draft editor (explicit save / cancel) ──
-        if (this.noteStatus === NoteDraftStatus.EDITING) {
-          Column({ space: 8 }) {
-            Text('笔记草稿(未保存 · 保存 +1 / 取消 +0)')
-              .fontSize(13)
+          if (this.recordingBox) {
+            Text(`● 正在录音 ${this.boxClock()}`)
+              .fontSize(16)
               .fontWeight(FontWeight.Medium)
+              .fontColor('#C62828')
               .width('100%')
-            Text('确定性整理(非真实 LLM):只重排你说过的话,不新增内容;标题与正文都可编辑。')
-              .fontSize(11)
-              .fontColor('#888888')
-              .width('100%')
-            TextInput({ text: this.noteTitle, placeholder: '笔记标题' })
-              .onChange((v: string) => {
-                this.noteTitle = v;
-                this.noteFlow.editTitle(v);
-              })
-            TextArea({ text: this.noteBody, placeholder: '笔记正文' })
-              .height(120)
-              .onChange((v: string) => {
-                this.noteBody = v;
-                this.noteFlow.editBody(v);
-              })
-            Button(this.noteShowOriginal ? '收起原始转写与来源 ▴' : '查看原始转写与来源 ▾')
-              .fontSize(11)
-              .fontColor('#555555')
-              .backgroundColor('#EFEFEF')
-              .onClick(() => {
-                this.noteShowOriginal = !this.noteShowOriginal;
-              })
-            if (this.noteShowOriginal) {
-              Text(this.noteSource === 'voice'
-                ? `来源:机主本人语音(验证状态 ${this.noteSpeaker})`
-                : this.noteSource === 'fixture'
-                  ? '来源:模拟器 TEST_FIXTURE 演示转写 — 非真实语音识别,非机主身份,真机未验证。'
-                  : '来源:手动文本输入(非语音,未做声纹验证)。')
-                .fontSize(11)
-                .fontColor(this.noteSource === 'fixture' ? '#B26A00' : '#555555')
-                .width('100%')
-              Text(`原始转写(整理不会覆盖它):「${this.noteOriginal}」`)
-                .fontSize(12)
-                .fontColor('#555555')
-                .width('100%')
-                .padding(8)
-                .borderRadius(8)
-                .backgroundColor('#F0F0F5')
-            }
             Row({ space: 10 }) {
-              Button('保存笔记')
+              Button('停止并保存')
                 .fontSize(14)
                 .layoutWeight(1)
-                .backgroundColor('#1B6E3C')
-                .enabled(!this.noteSaving)
-                .onClick(() => {
-                  this.saveNote();
+                .backgroundColor('#C62828')
+                .onClick(async () => {
+                  await this.stopBoxRecording();
                 })
-              Button('取消')
+              Button('取消录音')
                 .fontSize(14)
                 .layoutWeight(1)
                 .fontColor('#555555')
                 .backgroundColor('#E0E0E0')
-                .onClick(() => {
-                  this.cancelNote();
+                .onClick(async () => {
+                  await this.cancelBoxRecording();
                 })
             }
             .width('100%')
+          } else {
+            Button('🎙 录音采集（保存到本机采集箱）')
+              .fontSize(15)
+              .width('100%')
+              .height(46)
+              .onClick(async () => {
+                await this.startBoxRecording();
+              })
           }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(12)
-          .borderRadius(12)
-          .backgroundColor('#FFFFFF')
-          .border({ width: 1, color: '#CBDDCE' })
-        }
-
-        // ── Result + trust gate (capture outcome outside candidate/draft) ──
-        if ((this.transcript.length > 0 || this.gateText.length > 0) &&
-          this.candidateStatus !== CandidateStatus.DRAFT &&
-          this.candidateStatus !== CandidateStatus.CORRECTED &&
-          this.noteStatus !== NoteDraftStatus.EDITING) {
-          Column({ space: 6 }) {
-            if (!this.fixtureDemo) {
-              Text(this.session.purpose === SessionPurpose.ENROLLMENT
-                ? '注册采样回声(非本次验证)'
-                : `本次验证:${this.speakerState} · 相似度 ${this.similarityText}` +
-                  (this.session.lastStopToResultMs >= 0 ? ` · 停止→结果 ${this.session.lastStopToResultMs}ms` : ''))
-                .fontSize(12)
-                .fontColor('#555555')
-            }
-            if (this.transcript.length > 0) {
-              Text(this.fixtureActive ? `转写(测试代理):「${this.transcript}」` : `转写:「${this.transcript}」`)
-                .fontSize(14)
-                .width('100%')
-            }
-            if (this.fixtureActive) {
-              Text('⚠ TEST_FIXTURE:这段"转写"是模拟器测试代理文本,不是真实语音识别;仅用于演示流程。真机未验证。')
-                .fontSize(11)
-                .fontColor('#B26A00')
-                .width('100%')
-            }
-            if (this.gateText.length > 0) {
-              Text(this.gateText)
-                .fontSize(12)
-                .fontColor(this.session.gate === TrustGateDecision.CANDIDATE_ALLOWED ? '#1B6E3C' : '#C62828')
-                .width('100%')
-            }
-          }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(10)
-          .borderRadius(10)
-          .backgroundColor('#F0F6FF')
-        }
-
-        // ── Blocked path: retry / discard (+ disclosed fixture injection) ──
-        if (this.session.gate !== null && this.session.gate !== TrustGateDecision.CANDIDATE_ALLOWED &&
-          this.candidateStatus === CandidateStatus.NONE) {
-          Column({ space: 8 }) {
-            Text('这段语音不会进入知识。你可以重说、丢弃,或直接用下方文本框手动记录:')
-              .fontSize(12)
-              .fontColor('#555555')
+          Text(`麦克风：${this.micState === MicState.PERMISSION_DENIED ? '权限被拒绝（可用文字采集）' : '就绪/按需授权'} · 录音原件保存在本机，上传前不删除`)
+            .fontSize(10)
+            .fontColor('#999999')
+            .width('100%')
+          if (!this.recordingBox) {
             Row({ space: 8 }) {
-              Button('重说一次')
+              Button('导入演示音频')
                 .fontSize(12)
+                .layoutWeight(1)
+                .fontColor('#1B4F8A')
+                .backgroundColor('#E3ECF7')
+                .enabled(this.bridge.configured && !this.importingAudio)
                 .onClick(async () => {
-                  this.session.backToIdle();
-                  const ok = await this.session.startSession(SessionPurpose.CAPTURE);
-                  if (ok) {
-                    this.startRecordTimer();
-                  }
-                  this.refresh();
+                  await this.importDemoAudio(false);
                 })
-              Button('丢弃')
+              Button('导入·昨日捕获')
                 .fontSize(12)
-                .fontColor('#C62828')
-                .onClick(() => {
-                  this.agent.explainBlocked(this.gateText);
-                  this.session.dismissResult();
-                  this.refresh();
+                .layoutWeight(1)
+                .fontColor('#1B4F8A')
+                .backgroundColor('#E3ECF7')
+                .enabled(this.bridge.configured && !this.importingAudio)
+                .onClick(async () => {
+                  await this.importDemoAudio(true);
+                })
+              Button('导入·5分钟')
+                .fontSize(12)
+                .layoutWeight(1)
+                .fontColor('#1B4F8A')
+                .backgroundColor('#E3ECF7')
+                .enabled(this.bridge.configured && !this.importingAudio)
+                .onClick(async () => {
+                  await this.importDemoAudio(false, 'kk04_reading_5min');
                 })
             }
-            // R2: disclosed simulator TEST_FIXTURE — only when the speaker is
-            // VERIFIED and the sole blocker is missing STT transcript.
-            if (this.session.gate === TrustGateDecision.BLOCKED_NOT_AVAILABLE &&
-              this.speakerState === SpeakerState.VERIFIED) {
-              Column({ space: 4 }) {
-                Text('模拟器无可用离线转写。可注入一段测试转写走完候选流程(全程标注 TEST_FIXTURE,不代表真实识别):')
-                  .fontSize(11)
-                  .fontColor('#B26A00')
-                  .width('100%')
-                Row({ space: 6 }) {
-                  TextInput({ text: this.fixtureText, placeholder: '输入测试转写(TEST_FIXTURE)' })
-                    .layoutWeight(1)
-                    .onChange((v: string) => {
-                      this.fixtureText = v;
+            .width('100%')
+            Text('模拟器无真实麦克风：从已连接工作台拉取合成朗读音频入箱（内容合成，ASR/整理为真实链路）')
+              .fontSize(10)
+              .fontColor('#999999')
+              .width('100%')
+          }
+        }
+        .width('100%')
+        .alignItems(HorizontalAlign.Start)
+        .padding(12)
+        .borderRadius(12)
+        .backgroundColor('#FFFFFF')
+        .border({ width: 1, color: '#DDE4DD' })
+
+        // ── ② 采集箱（未同步 / 未整理 状态分明） ──
+        Column({ space: 8 }) {
+          Text(`② 采集箱（${this.captureList.length} 条 · 草稿不入库）`)
+            .fontSize(14)
+            .fontWeight(FontWeight.Medium)
+            .width('100%')
+          if (this.captureList.length === 0) {
+            Text('还没有采集。上面输入文字或录音后点「保存到采集箱」，再显式「交给灵犀」。')
+              .fontSize(11)
+              .fontColor('#999999')
+              .width('100%')
+          }
+          ForEach(this.captureList, (item: CaptureItem) => {
+            Column({ space: 4 }) {
+              Row({ space: 6 }) {
+                Text(item.kind === CaptureKind.AUDIO ? '🎙' : '📝')
+                  .fontSize(13)
+                Text(this.itemTitle(item))
+                  .fontSize(13)
+                  .layoutWeight(1)
+                  .maxLines(1)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
+                Text(item.capturedAt.slice(5, 16))
+                  .fontSize(10)
+                  .fontColor('#999999')
+              }
+              .width('100%')
+              Row({ space: 6 }) {
+                Text(statusLabel(item))
+                  .fontSize(10)
+                  .fontColor(this.statusColor(item))
+                  .layoutWeight(1)
+                if (item.transfer === TransferStatus.DRAFT ||
+                  item.transfer === TransferStatus.LOCAL_SAVED ||
+                  item.transfer === TransferStatus.FAILED ||
+                  item.transfer === TransferStatus.QUEUED) {
+                  Button(item.transfer === TransferStatus.DRAFT ? '交给灵犀' : '重新同步')
+                    .fontSize(11)
+                    .backgroundColor('#5656D6')
+                    .onClick(async () => {
+                      await this.handToLingxi(item);
                     })
-                  Button('注入测试转写')
-                    .fontSize(12)
-                    .fontColor('#B26A00')
+                }
+                if (item.processing === ProcessingStatus.COMPLETED) {
+                  Button('现场修正')
+                    .fontSize(11)
+                    .fontColor('#1B4F8A')
+                    .backgroundColor('#E3ECF7')
                     .onClick(() => {
-                      if (this.session.injectFixtureTranscript(this.fixtureText)) {
-                        this.fixtureText = '';
-                        this.agent.say('system', '已注入模拟器测试转写(TEST_FIXTURE,非真实语音识别),候选流仅为流程演示。');
-                      } else {
-                        // D-KK03-03: never a silent no-op — a refused injection
-                        // must say so and why (only blank input or a real
-                        // transcript already on screen can refuse here).
-                        this.agent.say('system', '注入被拒绝:请输入测试转写文本;若已有真实转写,请先丢弃再试。', false);
-                      }
-                      this.refresh();
+                      this.startCorrection(item);
                     })
                 }
               }
               .width('100%')
-              .alignItems(HorizontalAlign.Start)
+              if (item.error.length > 0) {
+                Text(`⚠ ${item.error}${item.recoveryAction ? ` · ${item.recoveryAction}` : ''}`)
+                  .fontSize(10)
+                  .fontColor('#C62828')
+                  .width('100%')
+              }
+              // ③ 灵犀结果 + 原始来源（两次导航内）
+              if (item.processing === ProcessingStatus.COMPLETED && item.noteId.length > 0) {
+                Row({ space: 6 }) {
+                  Button(this.resultFor === item.captureId ? '收起结果' : '查看灵犀结果')
+                    .fontSize(11)
+                    .fontColor('#1B6E3C')
+                    .backgroundColor('#E4F2E8')
+                    .onClick(async () => {
+                      if (this.resultFor === item.captureId) {
+                        this.resultFor = '';
+                      } else {
+                        await this.viewResult(item);
+                      }
+                    })
+                  Button(this.provenanceFor === item.captureId ? '收起来源' : '原始来源')
+                    .fontSize(11)
+                    .fontColor('#555555')
+                    .backgroundColor('#EFEFEF')
+                    .onClick(async () => {
+                      if (this.provenanceFor === item.captureId) {
+                        this.provenanceFor = '';
+                      } else {
+                        await this.viewProvenance(item);
+                      }
+                    })
+                }
+                .width('100%')
+              }
+              if (this.resultFor === item.captureId) {
+                Text(`灵犀结果（note_id：${item.noteId} · rev ${item.noteRevision}）`)
+                  .fontSize(11)
+                  .fontColor('#1B6E3C')
+                  .width('100%')
+                Text(this.resultBody.slice(0, 1500))
+                  .fontSize(12)
+                  .fontColor('#333333')
+                  .width('100%')
+                  .padding(8)
+                  .borderRadius(8)
+                  .backgroundColor('#F0F7F1')
+              }
+              if (this.provenanceFor === item.captureId) {
+                Text(this.provenanceText)
+                  .fontSize(11)
+                  .fontColor('#555555')
+                  .width('100%')
+                  .padding(8)
+                  .borderRadius(8)
+                  .backgroundColor('#F0F0F5')
+              }
             }
-          }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(10)
-          .borderRadius(10)
-          .backgroundColor('#F7F7FB')
+            .width('100%')
+            .alignItems(HorizontalAlign.Start)
+            .padding(8)
+            .borderRadius(8)
+            .backgroundColor('#FFFFFF')
+          }, (item: CaptureItem) => `${item.captureId}-r${item.payloadRevision}-${item.updatedAt}`)
         }
+        .width('100%')
+        .alignItems(HorizontalAlign.Start)
+        .padding(12)
+        .borderRadius(12)
+        .backgroundColor('#F0F0F5')
 
-        // ── Degraded path: STT NOT_AVAILABLE at capture start ──
-        if (this.degradedCapture && this.session.gate === null &&
-          this.candidateStatus === CandidateStatus.NONE) {
-          Column({ space: 8 }) {
-            Text('本地语音暂不可用(NOT_AVAILABLE,无云端回退)。可以直接用下方文本框手动记录,或点关闭。')
+        // ── Agent 反馈（当前操作与历史消息分开，带时间） ──
+        Column({ space: 6 }) {
+          ForEach(this.visibleMessages, (msg: AgentMessage, idx: number) => {
+            Text(this.formatMsg(msg, idx))
               .fontSize(12)
-              .fontColor('#555555')
-              .width('100%')
-            Button('关闭')
-              .fontSize(12)
-              .fontColor('#555555')
-              .backgroundColor('#E0E0E0')
-              .onClick(() => {
-                this.degradedCapture = false;
-                this.session.dismissResult();
-                this.refresh();
-              })
-          }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(10)
-          .borderRadius(10)
-          .backgroundColor('#F7F7FB')
-        }
-
-        // ── Agent conversation (center of the product) ──
-        Column({ space: 8 }) {
-          ForEach(this.visibleMessages, (msg: AgentMessage) => {
-            Text(msg.text)
-              .fontSize(13)
               .fontColor(msg.role === 'owner' ? '#1B4F8A' : '#333333')
               .width('100%')
           }, (msg: AgentMessage) => `${msg.at}-${msg.role}`)
@@ -919,155 +832,78 @@ struct Index {
         .borderRadius(10)
         .backgroundColor('#F4F4FA')
 
-        // ── Mic denied / voice unavailable banner (manual path pointed out) ──
-        if (this.micState === MicState.PERMISSION_DENIED || this.micState === MicState.PERMISSION_REQUIRED) {
-          Column({ space: 6 }) {
-            Text(this.micState === MicState.PERMISSION_DENIED
-              ? '麦克风权限被拒绝。不授权也能继续:直接用下方文本框手动记录(来源标注为手动文本,不会被当成语音)。'
-              : '麦克风未授权。不授权也能继续:直接用下方文本框手动记录(来源标注为手动文本,不会被当成语音);或点上方按钮授权后开始录音。')
-              .fontSize(12)
-              .fontColor('#7A4A00')
-              .width('100%')
-            Button('去系统设置开启麦克风(可选)')
-              .fontSize(12)
-              .fontColor('#555555')
-              .backgroundColor('#E0E0E0')
-              .onClick(async () => {
-                await this.openMicSettings();
-              })
-          }
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .padding(10)
-          .borderRadius(10)
-          .backgroundColor('#FFF8EC')
-        }
-
-        // ── Manual text continuation (permanent, every mic state) ──
-        Row({ space: 6 }) {
-          TextInput({ text: this.manualText, placeholder: '也可以手动记录一条(文本来源,非语音)' })
-            .layoutWeight(1)
-            .onChange((v: string) => {
-              this.manualText = v;
-            })
-          Button('记录')
-            .fontSize(12)
-            .onClick(() => {
-              this.saveManualText();
-            })
-        }
-        .width('100%')
-
-        // ── Saved notes & knowledge (provenance within one tap) ──
+        // ── 声纹（可选能力，折叠；不作为采集/上传门槛） ──
         Column({ space: 6 }) {
-          Text(`已保存的笔记与知识(${this.knowledgeCount})`)
-            .fontSize(13)
-            .fontWeight(FontWeight.Medium)
-            .width('100%')
-          if (this.visibleKnowledge.length === 0) {
-            Text('还没有已保存的笔记。录音 → 转写候选 → 整理成笔记 → 保存之后,笔记会出现在这里;点开可查看正文、来源和原始转写。')
-              .fontSize(11)
-              .fontColor('#999999')
-              .width('100%')
-          }
-          ForEach(this.visibleKnowledge, (item: KnowledgeItem) => {
-            Column({ space: 3 }) {
-              Row({ space: 6 }) {
-                Text(this.knowledgeSourceLabel(item))
-                  .fontSize(10)
-                  .fontColor(this.knowledgeSourceColor(item))
-                  .padding({ left: 6, right: 6, top: 2, bottom: 2 })
-                  .borderRadius(6)
-                  .border({ width: 1, color: this.knowledgeSourceColor(item) })
-                Text(item.title)
-                  .fontSize(13)
-                  .layoutWeight(1)
-                Text(this.formatTime(item.confirmedAt))
-                  .fontSize(10)
-                  .fontColor('#999999')
-              }
-              .width('100%')
-              if (this.expandedKnowledgeId === item.id) {
-                Text(item.text)
-                  .fontSize(12)
-                  .fontColor('#555555')
-                  .width('100%')
-                Text(item.source === 'voice'
-                  ? `来源:机主本人语音(验证状态 ${item.speakerState}),你明确保存后入库。`
-                  : item.source === 'fixture'
-                    ? '来源:模拟器 TEST_FIXTURE 演示转写 — 非真实语音识别,非机主身份,真机未验证。'
-                    : '来源:手动文本输入(非语音,未做声纹验证)。')
-                  .fontSize(10)
-                  .fontColor('#999999')
-                  .width('100%')
-                if (item.originalTranscript.length > 0) {
-                  Text(`原始转写:「${item.originalTranscript}」`)
-                    .fontSize(11)
-                    .fontColor('#777777')
-                    .width('100%')
-                    .padding(6)
-                    .borderRadius(6)
-                    .backgroundColor('#F0F0F5')
-                }
-              }
-            }
-            .width('100%')
-            .alignItems(HorizontalAlign.Start)
-            .padding(6)
-            .borderRadius(8)
-            .backgroundColor('#FFFFFF')
-            .onClick(() => {
-              this.expandedKnowledgeId = this.expandedKnowledgeId === item.id ? '' : item.id;
-              this.refresh();
-            })
-          }, (item: KnowledgeItem) => item.id)
-        }
-        .width('100%')
-        .alignItems(HorizontalAlign.Start)
-        .padding(10)
-        .borderRadius(10)
-        .backgroundColor('#F0F0F5')
-
-        // ── Simulator test tooling (SECONDARY, collapsed by default) ──
-        // KK-03 first-use rule: TEST_FIXTURE tooling must never sit on the
-        // primary first-use path; it lives here for development/review only.
-        Column({ space: 6 }) {
-          Button(this.showSimTools ? '收起模拟器测试工具 ▴' : '模拟器测试工具(次要 · TEST_FIXTURE)▾')
+          Button(this.showVoiceIdentity ? '收起声纹（可选）▴' : '声纹（可选来源识别，非上传门槛）▾')
             .fontSize(11)
             .fontColor('#777777')
             .backgroundColor('#EFEFEF')
             .onClick(() => {
-              this.showSimTools = !this.showSimTools;
+              this.showVoiceIdentity = !this.showVoiceIdentity;
             })
-          if (this.showSimTools) {
-            Text('模拟器声学链不稳定时,可用明确标注的测试转写演示候选→笔记流程(修正/丢弃/整理/保存)。TEST_FIXTURE ≠ 真实语音识别,不代表机主身份,真机未验证。')
+          if (this.showVoiceIdentity) {
+            Text('声纹是可选的来源识别能力，不代替设备认证；不录入也能采集和上传。设备属主不代表资料作者。')
               .fontSize(11)
-              .fontColor('#B26A00')
+              .fontColor('#888888')
               .width('100%')
-            Row({ space: 6 }) {
-              TextInput({ text: this.fixtureText, placeholder: '演示转写(留空用默认示例)' })
-                .layoutWeight(1)
-                .onChange((v: string) => {
-                  this.fixtureText = v;
-                })
-              Button('生成 TEST_FIXTURE 演示候选')
-                .fontSize(12)
-                .fontColor('#B26A00')
-                .enabled(this.candidateStatus === CandidateStatus.NONE &&
-                  this.micState !== MicState.RECORDING &&
-                  this.noteStatus !== NoteDraftStatus.EDITING)
-                .onClick(() => {
-                  this.startFixtureDemo();
-                })
+            Text(`录入状态：${this.speakerState === SpeakerState.ENROLLED ? '已录入（本地声纹档案）' : '未录入'}${this.enrollmentText ? ` · ${this.enrollmentText}` : ''}`)
+              .fontSize(12)
+              .width('100%')
+            Button(this.speakerState === SpeakerState.ENROLLED ? '重新录入（3 句采样）' : '录入我的声纹')
+              .fontSize(12)
+              .enabled(this.micState !== MicState.RECORDING && !this.recordingBox)
+              .onClick(async () => {
+                if (!this.session.permission.isGranted()) {
+                  await this.session.requestPermission(this.uiContext());
+                  this.refreshVoice();
+                  if (!this.session.permission.isGranted()) {
+                    return;
+                  }
+                }
+                const ok = await this.session.startSession(SessionPurpose.ENROLLMENT);
+                if (ok) {
+                  this.enrollmentText = `采样 ${this.session.enrollmentCount}/3 · 请朗读一句中文，说完点停止`;
+                  //  enrollment 走既有 session 控制器（停止在下方按钮）
+                }
+              })
+            if (this.micState === MicState.RECORDING &&
+              this.session.purpose === SessionPurpose.ENROLLMENT) {
+              Row({ space: 8 }) {
+                Button('停止采样')
+                  .fontSize(12)
+                  .backgroundColor('#C62828')
+                  .onClick(async () => {
+                    await this.session.stopSession();
+                    const n = this.session.enrollmentCount;
+                    if (n >= 3) {
+                      const done = this.session.speaker.completeEnrollment();
+                      this.enrollmentText = done ? '录入完成（3/3）' : '录入失败，请重试';
+                    } else if (n > 0) {
+                      this.enrollmentText = `采样 ${n}/3 · 再录 ${3 - n} 句`;
+                    } else {
+                      this.enrollmentText = '采样无效，请重试';
+                    }
+                    this.refreshVoice();
+                  })
+                Button('取消')
+                  .fontSize(12)
+                  .fontColor('#555555')
+                  .backgroundColor('#E0E0E0')
+                  .onClick(async () => {
+                    await this.session.cancelSession();
+                    this.enrollmentText = '';
+                    this.refreshVoice();
+                  })
+              }
             }
           }
         }
         .width('100%')
         .alignItems(HorizontalAlign.Start)
 
-        // ── Technical diagnostics (secondary, collapsed by default) ──
+        // ── 技术诊断（次要，折叠） ──
         Column({ space: 4 }) {
-          Button(this.showDiagnostics ? '收起技术诊断 ▴' : '技术诊断(引擎/模型详情)▾')
+          Button(this.showDiagnostics ? '收起技术诊断 ▴' : '技术诊断（引擎/连接详情）▾')
             .fontSize(11)
             .fontColor('#777777')
             .backgroundColor('#EFEFEF')
@@ -1075,19 +911,15 @@ struct Index {
               this.showDiagnostics = !this.showDiagnostics;
             })
           if (this.showDiagnostics) {
-            Text(`STT:${this.sttNote.length > 0 ? this.sttNote : '未初始化'}`)
-              .fontSize(11)
-              .fontColor('#777777')
-              .width('100%')
-            Text(`声纹引擎:${this.speakerNote}`)
-              .fontSize(11)
-              .fontColor('#777777')
-              .width('100%')
             Text(this.engineInitText)
               .fontSize(11)
               .fontColor(this.engineInitText.includes('不可用') ? '#C62828' : '#1B6E3C')
               .width('100%')
-            Text('离线时:本地链路可用则照常完成;不可用则如实 NOT_AVAILABLE,绝不静默走云端。')
+            Text(`设备：${this.deviceIdText || '未注册'} · 工作台：${this.connectUrl || '未配置'}`)
+              .fontSize(11)
+              .fontColor('#777777')
+              .width('100%')
+            Text(`采集箱目录：应用沙箱 capturebox/ · 同步节流 3s · 轮询 5s`)
               .fontSize(11)
               .fontColor('#999999')
               .width('100%')
@@ -1098,8 +930,6 @@ struct Index {
       }
       .width('100%')
       .padding(16)
-      // Scroll centers short content vertically; pinning minHeight keeps the
-      // agent header at the top when the page is shorter than the viewport.
       .constraintSize({ minHeight: '100%' })
       .justifyContent(FlexAlign.Start)
     }
