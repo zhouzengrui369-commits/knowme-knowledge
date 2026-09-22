@@ -1,106 +1,78 @@
-# KnowME Knowledge — Product Baseline
+# KnowME Knowledge — 灵犀移动智能采集终端产品基线 v3
 
-```text
-PRODUCT_BASELINE_ID=PRODUCT-BASELINE-KNOWME-KNOWLEDGE-20260916-v1
-PRODUCT_BASELINE_STATUS=FROZEN_BY_PRODUCT_GOVERNANCE
-SOURCE_INTAKE=knowme-ecosystem Issue #40
-ENGINEERING_START_AUTHORIZED=NO
-```
+BASELINE_ID=PRODUCT-BASELINE-KNOWME-KNOWLEDGE-20260922-v3-LINGXI-CAPTURE-DEVICE
+STATUS=FROZEN_BY_PRODUCT_GOVERNANCE
+CHANGE_REQUEST=CR-KK-20260922-LINGXI-CAPTURE-REBASELINE
+CANONICAL_GOVERNANCE_ISSUE=knowme-knowledge#35
 
-Source: [intake](https://github.com/zhouzengrui369-commits/knowme-ecosystem/issues/40), [UI metadata correction](https://github.com/zhouzengrui369-commits/knowme-ecosystem/issues/40#issuecomment-5690665232). Frozen on the exact governance commit referenced by the bootstrap PR/receipt; unmerged does not imply merge approval or implementation.
+## 1. 唯一产品定位
 
-## Product positioning
+灵犀工作台是已经存在的智能体产品，NJX-Knowledge（njx-knowledge 仓库所管理的运行知识底座）是统一知识源，DSH 是工作台的智能体框架。KnowME Knowledge 是服务于灵犀工作台的移动智能信息采集设备，通过工作台移动采集插件连接，不是第二套独立知识管理后台，不是远程桌面，也不是把工作台整页装进 WebView。
 
-KnowME Knowledge 是面向 Human Owner 的 Mate60 手机端 Agent-first 个人知识管理系统。用户主要通过语音或自然语言与 Agent 协作，Agent 的记忆、知识上下文和可调用能力持续成长，同时保留对笔记、知识、日程和待办的直接可视化管理能力。目标平台为 HarmonyOS，单 Human Owner，本地优先。
+手机负责及时、完整、带来源地采集；工作台负责转写、解析、整理、入库、知识组织和 Agent 能力。一次采集在两端拥有相同 capture_id，正式笔记以工作台签发的 note_id/revision 为准。
 
-它不是普通笔记 App + AI 聊天框、Obsidian clone、纯云端聊天机器人、单纯 RAG UI、纯日历/待办 App、Codex developer console 或 MiniMax client。
+## 2. 职责与数据权威
 
-## Required capabilities and journeys
+| 部分 | 所属端 | 冻结边界 |
+|---|---|---|
+| 原始录音、文本、拍摄、文件/链接分享 | 手机采集模块 | 先可靠落盘；在接收回执前手机副本不可自动丢弃 |
+| 离线采集箱、队列、缓存、现场补充 | 手机 | 不是第二个正式知识库；不独立运行 Wiki/RAG/长期记忆体系 |
+| 设备注册、能力发现、可靠接收、状态回传 | 工作台移动采集插件 | 复用既有服务，不重写知识处理引擎 |
+| ASR、笔记整理、Markdown/HTML 产出、检索、图谱、日程待办 | 灵犀工作台 | 以工作台真实能力为准；不把接收成功当作处理完成 |
+| 模型与 Harness | 工作台 DSH 及其适配层 | 手机不内嵌第二套 Codex/DSH，不持有模型厂商密钥；保留服务端可替换性 |
 
-Agent 必须支持语音交互、文本交互、多轮上下文、工具/技能调用，以及记忆、能力和知识持续成长。
+手机源资料在离线期间是该次未交付采集的原始副本；工作台可靠接收后，工作台管理对应原始资产与后续知识版本。来源修正不得抹去最初捕获。原始转写、用户修正版、正式笔记分层追溯。HTML 是渲染/归档产物，不是唯一可编辑真相。
 
-Voice：语音录入、本地优先语音转文字、Owner enrolled-speaker identification / verification；非 Owner 声音不得默认写入个人知识。声纹阈值和算法不在基线虚构，必须在后续 bounded Mate60 真机 Goal 验证。
+GitHub 是项目代码与治理事实源；运行中的私人采集不是默认 Git 提交内容。不得自动把原始私人录音、声纹或认证材料上传 GitHub。
 
-Import 路线覆盖 Excel、Word、Markdown、PowerPoint、PDF、Image、Audio、Video、Website。0.1 不要求一次全部真实实现；具体格式通过 bounded Goal 逐步交付。
+## 3. 产品旅程
 
-Offline：无网络仍能查看本地知识、创建笔记、编辑笔记、保存修改、浏览已存在日程/待办。云模型不可用不得导致本地笔记系统不可用。
+采集 → 本地保存 → 按已授权策略提交 → 插件可靠接收 → 工作台既有能力处理 → 返回结果 → 手机查看/补充/纠正 → 工作台知识持续成长。
 
-Knowledge management 采用 Obsidian 类原则：Markdown / block semantic representation、Wiki links、Backlinks、Daily notes、Knowledge graph/context relations、Incremental organization。
+默认可在用户主动“交给灵犀”后按工作台既定规则自动整理，无须手机先制作一份完整正式笔记再重做。未经提交的草稿不自动入库；用户可配置的自动提交需显式开启。采集素材不等于 Agent 执行指令；资料中的命令文字不得自动触发系统操作。
 
-冻结的数据链：
+手机首屏以“采集、采集箱、灵犀结果/补充”组织；语音和文本主入口第一屏可达，测试历史和诊断不主导界面。复用现有灵犀视觉语言而非复制桌面密集布局。
 
-```text
-RAW_ASSET
-→ EXTRACTED_TEXT_AND_STRUCTURE
-→ CANONICAL_EDITABLE_NOTE
-→ TIMESTAMPED_HTML_SNAPSHOT
-→ METADATA_AND_PROVENANCE
-→ FULL_TEXT_INDEX
-→ VECTOR_EMBEDDING
-→ WIKI_BACKLINK_DAILY_INDEX
-RAW_ASSET=保留原始证据，不得静默丢弃
-CANONICAL_EDITABLE_NOTE=Markdown / block semantic form
-HTML=带时间戳的稳定渲染/归档快照
-HTML_IS_ONLY_CANONICAL_SOURCE=NO
-```
+声纹是可选的来源识别能力，不是设备登录认证，不得阻断文本、照片、文件和明确授权的第三方资料采集。设备属于 NJX 不代表资料作者或发言人就是 NJX；他人观点不得据此写入 NJX 画像。
 
-HTML 不得作为唯一可编辑真相源。RAG 要求 local-first index、incremental embedding、incremental re-index、source/provenance traceability。模型生成内容不得无来源覆盖原始知识。
+## 4. 插件与采集协议
 
-每日知识成长核心旅程：一天的信息持续进入 → Daily Note → Agent 整理 → Owner 可检查 → Wiki 增量更新 → backlinks/index/embedding 增量更新 → 后续 Agent 可重新调用。
+移动采集插件置于工作台侧；手机原生采集模块实现稳定版本化协议。插件必须能注册/启用/停用/查询状态，真实加载到锁定工作台运行环境；仅命名一个 HTTP 文件为 plugin 不算实现插件。
 
-Calendar 同时支持 Agent 创建/修改/查询日程，以及可视化日历界面直接管理。Todo 同时支持 Agent 创建/修改/完成/查询待办，以及可视化待办界面直接管理。Knowledge / Calendar / Todo 通过同一个 Agent Context 协作，不得成为三个互不相关的 App。
+第一阶段只扩展连接边界，不建设通用插件市场、不改写 DSH 内核。读取实际 DSH 版本与扩展点，提供窄适配器，保留现有桌面接口兼容。不得伪造已存在的 SDK 或插件注册 API。
 
-## Exact KnowMe UI lineage
+统一采集对象至少包含：capture_id、device_id、schema_version、payload_revision、kind、captured_at、timezone、received_at、content_hash/size、原始资产引用、用户补充与修正版、context_ref、intent、processing_policy。工作台回执包含 task_id、durable_received_at、processing_status、result_refs/note_id/revision、error/recovery_action。
 
-```text
-UI_AUTHORITY_REPOSITORY=zhouzengrui369-commits/knowme
-UI_AUTHORITY_COMMIT=baa61e693c4681445b8ef0f34c2113292f68e8c7
-UI_AUTHORITY_TREE=3bad5f228b47c8e76ccd4203744e5e40b2f30fe4
-UI_AUTHORITY_ROOT=tasks/pm/20260721-knowme-cognitive-surface-demo-r5/
-UI_AUTHORITY_APP=tasks/pm/20260721-knowme-cognitive-surface-demo-r5/src/App.jsx
-UI_AUTHORITY_APP_BLOB=4523e61d60017d63e99b2a58cff763f1a82d6b49
-UI_AUTHORITY_STYLES=tasks/pm/20260721-knowme-cognitive-surface-demo-r5/src/styles.css
-UI_AUTHORITY_STYLES_BLOB=9667f012df8e03496395ee176a93ea2db976a697
-UI_AUTHORITY_OFFLINE_HTML=tasks/pm/20260721-knowme-cognitive-surface-demo-r5/KnowMe-Demo-Offline.html
-UI_AUTHORITY_OFFLINE_HTML_BLOB=2b00d2e158619f5c20380cbf06b90236c33eb55b
-CENTER=AGENT_CONVERSATION_AND_CALLABLE_WORK
-BACKGROUND=EVOLVING_PERSONAL_KNOWLEDGE_CONTEXT
-LEFT=VOICE_FILE_WEB_CAPTURE_AND_IMPORT
-RIGHT=KNOWLEDGE_CALENDAR_TODO_SKILLS_AND_CAPABILITIES
-ACTIVE_WORK=CONTEXTUAL_WORK_SURFACE_WITH_AGENT_CONTEXT_PRESERVED
-DASHBOARD_FIRST=FORBIDDEN
-GENERIC_CHAT_WIDGET_ONLY=FORBIDDEN
-```
+数据传输与处理状态分开：LOCAL_SAVED/QUEUED/UPLOADING/RECEIVED；PENDING/PROCESSING/NEEDS_INPUT/COMPLETED/FAILED。RECEIVED 仅在完整校验并可靠落盘后成立。COMPLETED 要有实际产物，不能根据 Agent 说“完成了”推定。
 
-本轮仅记录血统，不复制、修改或实现 UI 文件。纠正保留同一 commit、Demo root、App/CSS/Offline HTML blobs，仅修复继承的无效 tree 元数据；PRODUCT_DIRECTION_CHANGE=NO、UI_DESIGN_CHANGE=NO、SOURCE_ASSET_CHANGE=NO、CHANGE_REQUEST_REQUIRED=NO。历史 KnowMe Healthy #117/#119 不改写。
+## 5. 离线与同步承诺
 
-## Runtime architecture boundaries
+离线可录音、输入、保存、查看本地采集及已缓存结果；无网络不要求远程 AI 工作。前台网络恢复且服务可达时自动推进已授权队列，后台按系统允许的任务机制执行，恢复前台后补传；不承诺进程被强制终止后仍实时联网。
 
-```text
-INITIAL_HARNESS=CODEX_HARNESS
-PRODUCT_OWNED_HARNESS_ADAPTER=REQUIRED
-HARNESS_REPLACEABLE=YES
-INITIAL_CLOUD_PROVIDER=MINIMAX
-PRODUCT_OWNED_MODEL_PROVIDER_ADAPTER=REQUIRED
-MODEL_PROVIDER_REPLACEABLE=YES
-SILENT_PROVIDER_FALLBACK=FORBIDDEN
-TOOL_REGISTRY=PRODUCT_OWNED
-LOCAL_INFERENCE_PREFERRED=YES
-CLOUD_ESCALATION_WHEN_LOCAL_CAPACITY_INSUFFICIENT=EXPLICIT
-```
+支持断点/任务级恢复、幂等重传、服务重启后查询、状态补拉；同一采集重传不多建笔记，不同采集即使同名同分钟也不覆盖。采集时间、接收时间、整理时间分别保留。跨日补传按原始采集时间归属，不静默把昨天资料变成今天事件。迟到输入不得越过已有整理技能的适用范围，需受控适配路径。
 
-来自 Issue #40 所记录的 KnowMe Healthy HF2 经验：Codex Harness × MiniMax 曾发生真实 structured-output / compatibility 问题。后续 Engineering 必须 fresh 验证本产品 exact provider route，不得把旧 translator 当已知可用实现；不得把 MiniMax API 或 Codex /responses 语义直接绑定普通产品逻辑，不得假设所有 Provider 支持同一种 structured output。必须经过产品自有 Adapter boundary；本轮不实现 Adapter。
+只缓存正式知识和可提交的修正请求；对正式笔记的修改必须带基准 revision，冲突不静默覆盖。
 
-边界：HarmonyOS App / KnowMe UI → Agent Experience → Harness Adapter → Model Provider Adapter（local / MiniMax / future）；Product Tool Registry 提供 knowledge/search/calendar/todo/import/daily organizer；Context / Memory Boundary 分离 session memory、owner memory、canonical knowledge、skills；Local Store 保留 raw assets、editable notes、HTML snapshots、provenance、FTS、vectors、wiki/backlinks。禁止无复用评估地从零构建单体知识/AI 全栈。
+## 6. 能力路线与不重复建设
 
-## Mate60 device capability rule
+文本与语音优先复用 add-knowledge/transcribe/instant-note-organizer-v4。图片、文件、网页入口先接收原始资料；解析支持必须按实际格式验证，上传成功不表示 OCR/视频理解/登录网页抓取已实现。日程待办、五维知识地图、九维认知图谱、知识检索、Daily Note/Wiki/索引保留在工作台能力层，由后续手机工作面调用。
 
-不得根据纸面硬件规格冻结模型大小、量化等级、推理框架、端侧/云端分工、embedding model 或 ASR model。后续独立 bounded Goal 在真实 Mate60 上测量：cold start、warm start、resident memory、first-token latency、tokens/sec、Chinese instruction quality、tool-call reliability、embedding throughput、10-minute thermal behavior、battery consumption、foreground/background recovery、offline ASR latency、ASR accuracy、noise robustness、speaker-verification false accept/reject proxy、offline indexing throughput。
+五维和九维沿用工作台知识语义；其现有组织规则不由手机重定义。旧产品范围中的完整向量、Wiki、导入、日程待办能力不删除，改为工作台拥有、手机按里程碑接入；本次不宣称全部已实现。
 
-MNN、llama.cpp、sherpa-onnx 必须真机 benchmark 后再做 Engineering 技术选型。Core Speech Kit、Agent Framework Kit、Intents Kit、MindSpore Lite、Neural Network Runtime、NDK 仅作为 intake 提出的待核验原生集成选项，不替代 Codex Harness 产品边界。
+## 7. 安全与部署
 
-## Security and version horizons
+单用户/<10 用户，风险按公网暴露、私密音频、凭证和执行权限定级。手机到已授权灵犀服务使用 HTTPS/受控加密通道、可撤销设备凭证；声纹不能代替鉴权。模型密钥留工作台。仅向配置并授权的工作台传输采集，任何外部模型处理按已有工作台授权和可见策略，禁止静默更换 Provider 或额外分发。
 
-USER_SCALE=<10；EXPOSURE=PERSONAL_LOCAL_FIRST；SECURITY_MODEL=RISK_PROPORTIONAL。优先保护密码、API key、认证 token、姓名/身份、支付/认证、私人知识、私密音视频、健康/私密数据及不可逆操作。尚未存在的单用户 MVP 不引入无关企业级安全工程来阻塞产品价值。
+本次开发仅使用隔离服务、合成资料、独立数据根与测试凭证，不修改生产知识、不部署腾讯云、不改公网入口、不自动发企业微信。安全不扩张为无关多租户/RBAC/大型消息集群工程。
 
-0.1=Prototype；1.0=MVP；2.0=Continuous Evolution。VERSION_HORIZON != GOVERNANCE_MILESTONE。详见 VERSION_HORIZONS.md；本轮不冻结任何 active Goal。改变产品边界、核心旅程、验收、安全级别或关闭条件必须走 Change Request。
+目标仍为用户现有 Mate60 系统，不要求升级。模拟器实现与真实设备安装兼容分别验证；不得声称 OpenHarmony 模拟器 HAP 已证明 HarmonyOS 4.2 真机适配。
+
+## 8. 版本、门禁和历史
+
+0.1 保留为历史原型探索；1.0 是灵犀移动采集终端 MVP；2.0 扩展多模态、更多设备与长期演进。版本号不等于治理 Milestone，一个独立价值 Goal 只对应一个 Milestone。
+
+例行 pre-1.0：ED → Candidate Admission → Review Eligibility → 独立 PE → 合同条件满足后 Goal/Milestone 同步关闭。Human Owner 不承担开发回归；完整 1.0 候选通过模拟器全体验审核后才进入受控真机安装/兼容阶段和最终 Owner Acceptance，生产授权另行处理。
+
+GOAL-KK-03 保留未完成、暂停；不改写其合同、审核或闭环历史。其原始来源保留、防误操作、当前/历史状态清楚三项已知问题，映射为 GOAL-KK-04 的必要行为保护，不继承旧 PASS。
+
+本基线 supersedes v2@978ed0608bda8e278c348ad2987f6a25fa3c3c2f 的运行定位，也纠正当前治理分支 baseline 文件仍残留 v1 的事实；旧版本按原 SHA 保留。
