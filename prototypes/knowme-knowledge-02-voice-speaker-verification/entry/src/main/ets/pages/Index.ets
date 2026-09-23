@@ -409,6 +409,11 @@ struct Index {
   // ── 采集箱动作 ────────────────────────────────────────────────────────
   private async handToLingxi(item: CaptureItem): Promise<void> {
     if (!this.bridge.configured) {
+      // D-LE2-01：被拒必须原位可见（条目下方红字 + 恢复动作），不只写在底部消息区
+      item.error = '未连接工作台，无法上传';
+      item.recoveryAction = '请先在顶部「连接」区重新连接，连接成功后重新提交';
+      item.updatedAt = Date.now();
+      this.captureStore.save(item);
       this.say('尚未连接灵犀工作台：请先在顶部「连接」区配置地址并连接。');
       this.showConnect = true;
       return;
@@ -469,6 +474,24 @@ struct Index {
             lines.push(`工作台最初转写：「${transcript.slice(0, 200)}」`);
           }
           lines.push(`接收时间：${String(v['received_at'] ?? '—')} · 整理时间：${String(v['organized_at'] ?? '—')}`);
+          // J08 来源链：全部 revision 层分别可见（原始/修正/补充，原文不覆盖）
+          const revs = v['revisions'];
+          if (Array.isArray(revs) && revs.length > 0) {
+            lines.push('—— 版本链（每层独立保存，原文不覆盖）——');
+            (revs as Array<Record<string, Object>>).forEach((rv: Record<string, Object>) => {
+              const rprov = (rv['provenance'] ?? {}) as Record<string, Object>;
+              const intent = String(rprov['intent'] ?? 'note');
+              const layer = intent === 'correction' ? '修正/补充' : '原始采集';
+              const rtext = String(rv['text_body'] ?? '');
+              const preview = rtext.length > 0 ? `「${rtext.slice(0, 60)}」` : '（音频资产）';
+              const rnote = String(rv['note_id'] ?? '');
+              lines.push(
+                `r${String(rv['payload_revision'] ?? '?')} ${layer} ${preview}` +
+                ` · ${String(rv['captured_at'] ?? '').slice(0, 16)}` +
+                ` · ${String(rv['processing_status'] ?? '')}${rnote ? ` · 结果 ${rnote.slice(0, 24)}…` : ''}`
+              );
+            });
+          }
         } catch (e) {
           // 忽略解析失败，本地信息已足够
         }
@@ -486,6 +509,15 @@ struct Index {
       return item.text.length > 24 ? `${item.text.slice(0, 24)}…` : item.text;
     }
     return `录音 ${Math.round(item.assetDurationMs / 1000)} 秒`;
+  }
+
+  /** D-LE2-05：修正模式横幅显示目标条目名，键盘开合不丢失上下文。 */
+  private correctionTargetTitle(): string {
+    const src = this.captureStore.get(this.correctionOfId);
+    if (src === null) {
+      return this.correctionOfId.slice(0, 12);
+    }
+    return this.itemTitle(src);
   }
 
   private statusColor(item: CaptureItem): string {
@@ -589,9 +621,12 @@ struct Index {
 
         // ── ① 采集（主入口，首屏可达，1 秒内明确反馈） ──
         Column({ space: 8 }) {
-          Text(this.correctionOfId.length > 0 ? '① 采集（正在写修正版）' : '① 采集')
+          Text(this.correctionOfId.length > 0
+            ? `① 采集（正在修正「${this.correctionTargetTitle()}」→ 保存为新版本，原文不覆盖）`
+            : '① 采集')
             .fontSize(14)
             .fontWeight(FontWeight.Medium)
+            .fontColor(this.correctionOfId.length > 0 ? '#1B4F8A' : '#000000')
             .width('100%')
           TextArea({ text: this.textDraft, placeholder: '输入文字，先保存在本机采集箱；不会自动上传' })
             .height(80)
@@ -757,7 +792,10 @@ struct Index {
                       }
                     })
                 }
-                if (item.processing === ProcessingStatus.COMPLETED) {
+                if (item.transfer === TransferStatus.RECEIVED) {
+                  // D-LE2-04：可靠接收后即可现场修正/补充（每次修正都是独立新
+                  // revision，服务端按 revision 链处理），不再要求等待上一次
+                  // 整理完成——否则整理超时期间 J08 补充链被事实阻断。
                   Button('现场修正')
                     .fontSize(11)
                     .fontColor('#1B4F8A')
@@ -775,19 +813,23 @@ struct Index {
                   .width('100%')
               }
               // ③ 灵犀结果 + 原始来源（两次导航内）
-              if (item.processing === ProcessingStatus.COMPLETED && item.noteId.length > 0) {
+              // D-LE2-04：原始来源自可靠接收起即可查看（来源不依赖整理完成）；
+              // 灵犀结果仍需整理完成且有 note_id。
+              if (item.transfer === TransferStatus.RECEIVED) {
                 Row({ space: 6 }) {
-                  Button(this.resultFor === item.captureId ? '收起结果' : '查看灵犀结果')
-                    .fontSize(11)
-                    .fontColor('#1B6E3C')
-                    .backgroundColor('#E4F2E8')
-                    .onClick(async () => {
-                      if (this.resultFor === item.captureId) {
-                        this.resultFor = '';
-                      } else {
-                        await this.viewResult(item);
-                      }
-                    })
+                  if (item.processing === ProcessingStatus.COMPLETED && item.noteId.length > 0) {
+                    Button(this.resultFor === item.captureId ? '收起结果' : '查看灵犀结果')
+                      .fontSize(11)
+                      .fontColor('#1B6E3C')
+                      .backgroundColor('#E4F2E8')
+                      .onClick(async () => {
+                        if (this.resultFor === item.captureId) {
+                          this.resultFor = '';
+                        } else {
+                          await this.viewResult(item);
+                        }
+                      })
+                  }
                   Button(this.provenanceFor === item.captureId ? '收起来源' : '原始来源')
                     .fontSize(11)
                     .fontColor('#555555')
