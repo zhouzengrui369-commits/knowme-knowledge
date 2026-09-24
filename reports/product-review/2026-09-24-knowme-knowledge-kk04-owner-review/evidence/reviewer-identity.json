@@ -1,0 +1,63 @@
+{
+  "verified_at": "2026-09-24T18:01:17.397034+08:00",
+  "components": {
+    "app": {
+      "repo": "knowme-knowledge",
+      "pr": 37,
+      "url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/pull/37",
+      "state": "open",
+      "draft": true,
+      "head": "c0171d4fa5a988272afa76cabd42b4b6ddbaea8d",
+      "branch": "engineering/goal-kk-04-lingxi-mobile-capture-bridge-r1",
+      "branch_head": "c0171d4fa5a988272afa76cabd42b4b6ddbaea8d",
+      "tree": "4c88cf33614e93a1b9dc64be12929cd64dd019e7",
+      "parents": [
+        "10d829195ebb7f6c4c576b0d116e45087ec2b35a"
+      ],
+      "local_head": "c0171d4fa5a988272afa76cabd42b4b6ddbaea8d",
+      "local_tree": "4c88cf33614e93a1b9dc64be12929cd64dd019e7",
+      "porcelain": ""
+    },
+    "workbench": {
+      "repo": "njx-knowledge",
+      "pr": 8,
+      "url": "https://github.com/zhouzengrui369-commits/njx-knowledge/pull/8",
+      "state": "open",
+      "draft": true,
+      "head": "92892d66d059211113379b7e49d7f034b7ec921c",
+      "branch": "engineering/goal-kk-04-mobile-capture-bridge",
+      "branch_head": "92892d66d059211113379b7e49d7f034b7ec921c",
+      "tree": "b527133111112abea4831fa6b4be2c251e7927be",
+      "parents": [
+        "e548883b1d696b8245631bad129dd3737afcc5b7"
+      ],
+      "local_head": "92892d66d059211113379b7e49d7f034b7ec921c",
+      "local_tree": "b527133111112abea4831fa6b4be2c251e7927be",
+      "porcelain": ""
+    }
+  },
+  "artifact": {
+    "sha256": "a73022244985e93a3f227b967bd771e8070dd562d499d16ddca4a91b8d721549",
+    "bytes": 39206998,
+    "build": "ED canonical 2026-09-23 13:09 +08; reviewer did not build",
+    "command": "scripts/build-hap.sh / hvigorw --mode module -p product=default -p buildMode=debug assembleHap --no-daemon"
+  },
+  "runtime": {
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56",
+    "arch": "arm64",
+    "device": "HarmonyOS emulator kk02phone, 127.0.0.1:5555, 1256x2760",
+    "emulator_version": "6.1.0.126(SP1DEVC00E120R4P11)",
+    "plugin": "mobile_capture_bridge 1.0.0",
+    "protocol": "/api/mobile-capture/v1",
+    "asr": "mlx-whisper/small",
+    "provider": "tencent-tokenhub",
+    "model": "deepseek/deepseek-flash (DeepSeek-V4.1-Flash)",
+    "organizer": "instant-note-organizer-v4 schema v4.0",
+    "external_send": "disabled",
+    "isolated_port": 18251,
+    "device_port": 18256,
+    "fault_test_proxy": "18257 -> 18252 -> 18251; transport failure adapter only",
+    "network": "Loopback hdc rport; reviewer-controlled service/plugin/proxy outages. Model uses authorized TokenHub. No whole-session packet capture."
+  },
+  "sanitized_config_sha256": "3deaa10c6f5a228ea477a830dbb3ca189a2a423580543a749697e3d3d24c58ec"
+}

@@ -1,0 +1,26 @@
+{"at": "2026-09-24T17:07:59.041802+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2072", "2017"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:07:59.260463+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2055"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:23:20.619384+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "2275"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:23:20.890185+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "2275"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:23:21.129657+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "2275"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:25:07.476107+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "1140"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:25:07.732283+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "1140"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:25:07.984051+08:00", "args": ["shell", "uitest", "uiInput", "click", "995", "1140"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:29:55.123640+08:00", "args": ["shell", "aa", "force-stop", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "force stop process successfully.\n"}
+{"at": "2026-09-24T17:29:55.279667+08:00", "args": ["shell", "aa", "start", "-a", "EntryAbility", "-b", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "start ability successfully.\n"}
+{"at": "2026-09-24T17:36:17.543731+08:00", "args": ["shell", "aa", "force-stop", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "force stop process successfully.\n"}
+{"at": "2026-09-24T17:36:17.841728+08:00", "args": ["shell", "aa", "start", "-a", "EntryAbility", "-b", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "start ability successfully.\n"}
+{"at": "2026-09-24T17:42:33.929455+08:00", "args": ["shell", "aa", "force-stop", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "force stop process successfully.\n"}
+{"at": "2026-09-24T17:42:35.113423+08:00", "args": ["uninstall", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "[Info]App uninstall path: msg:uninstall bundle successfully. \nAppMod finish\n"}
+{"at": "2026-09-24T17:42:36.601998+08:00", "args": ["install", "/Users/njx/Project/KnowME knowledge/KnowME knowledge/kk04-ed2/canonical/entry-default-unsigned.hap"], "returncode": 0, "output": "[Info]App install path:/Users/njx/Project/KnowME knowledge/KnowME knowledge/kk04-ed2/canonical/entry-default-unsigned.hap msg:install bundle successfully. \nAppMod finish\n"}
+{"at": "2026-09-24T17:42:36.787731+08:00", "args": ["shell", "aa", "start", "-a", "EntryAbility", "-b", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "start ability successfully.\n"}
+{"at": "2026-09-24T17:44:15.606228+08:00", "args": ["rport", "tcp:18257", "tcp:18252"], "returncode": 0, "output": "Forwardport result:OK\n"}
+{"at": "2026-09-24T17:44:40.377316+08:00", "args": ["shell", "uitest", "uiInput", "click", "450", "790"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:44:40.894583+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2072", "2017"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T17:44:41.209984+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2055"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T18:02:40.182816+08:00", "args": ["rport", "tcp:18256", "tcp:18251"], "returncode": 0, "output": "Forwardport result:OK\n"}
+{"at": "2026-09-24T18:02:40.667194+08:00", "args": ["shell", "aa", "start", "-a", "EntryAbility", "-b", "com.knowme.knowledge.voiceprototype"], "returncode": 0, "output": "start ability successfully.\n"}
+{"at": "2026-09-24T18:04:08.601743+08:00", "args": ["shell", "uitest", "uiInput", "click", "556", "835"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T18:04:08.976677+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2072", "2017"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T18:04:09.179717+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "2055"], "returncode": 0, "output": "No Error\n"}
+{"at": "2026-09-24T18:10:09.092882+08:00", "args": ["shell", "uitest", "uiInput", "keyEvent", "Back"], "returncode": 0, "output": "No Error\n"}

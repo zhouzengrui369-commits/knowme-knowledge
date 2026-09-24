@@ -1,0 +1,84 @@
+{
+  "at": "2026-09-24T18:16:13.376307+08:00",
+  "mobile_evidence": [
+    "108-final-queue.png",
+    "109-final-processing-bounded.png"
+  ],
+  "workbench_evidence": [
+    "wb13-recovery-duplicate.png",
+    "wb14-recovery-cards.png",
+    "wb15-recovery-existing-result.png"
+  ],
+  "last_capture": {
+    "capture_id": "cap_7da867189fd368e1f349283ad0ebd0f1",
+    "payload_revision": 1,
+    "kind": "audio",
+    "captured_at": "2026-09-24T17:46:19+08:00",
+    "captured_timezone": "America/Chicago",
+    "title_hint": "导入演示音频(合成朗读)",
+    "asset_sha256": "1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c",
+    "asset_size": 1024078,
+    "asset_duration_ms": 32001,
+    "transfer_status": "RECEIVED",
+    "processing_status": "FAILED",
+    "task_id": "task_fb3b598179a34c69",
+    "received_at": "2026-09-24T17:46:42+08:00",
+    "durable_received_at": "2026-09-24T17:46:42+08:00",
+    "organized_at": null,
+    "initial_transcript": "现在是2026年9月22日下午,这条路因用于临西移动采集链路的集成验证。今天上午9点半,航材班组接到AOG紧急需求。需要调配库存报表并通知值班经理。下午的评审会上,张公提出要复合目标合同的第三条交付编解,并把结论记录到支持库。请临西把这段画整理成一条正式笔。",
+    "corrected_text": null,
+    "note_id": "",
+    "note_revision": 0,
+    "error": "RuntimeError: 整理超时（>600s 未见 HTML 产物）",
+    "recovery_action": "重新提交或联系工作台查看日志",
+    "updated_at": "2026-09-24T18:11:46+08:00"
+  },
+  "last_task": {
+    "task_id": "task_fb3b598179a34c69",
+    "capture_id": "cap_7da867189fd368e1f349283ad0ebd0f1",
+    "payload_revision": 1,
+    "status": "FAILED",
+    "attempts": 3,
+    "error": "RuntimeError: 整理超时（>600s 未见 HTML 产物）",
+    "recovery_action": "可在手机端重新提交（幂等，不会产生重复结果）",
+    "created_at": "2026-09-24T17:46:38+08:00",
+    "updated_at": "2026-09-24T18:11:46+08:00"
+  },
+  "same_capture_files": [
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md",
+      "sha256": "5a161f02c4af50bb97eaa4612ef72d196264f4b291046ffa8f3463df3fd7b541",
+      "bytes": 8190,
+      "mtime": "2026-09-24T17:50:17.744842+08:00"
+    },
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md.html",
+      "sha256": "d30d66c67e5cbaefdcd479b8cbaef79523649af1d278f894917f7671f9d4b8a8",
+      "bytes": 23955,
+      "mtime": "2026-09-24T17:50:17.749926+08:00"
+    },
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md.raw-transcript.backup.md",
+      "sha256": "39ca31afb354ad49e70fd2d3feba07275f4620faa4c7bc1774c7dd5a8a9ccabf",
+      "bytes": 1501,
+      "mtime": "2026-09-24T17:46:44.956384+08:00"
+    },
+    {
+      "name": "202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md",
+      "sha256": "c311b74fcef1ee2880b86bda1b3bb24cd9ef36e3896b20fc6158942b003d66be",
+      "bytes": 1501,
+      "mtime": "2026-09-24T18:00:45.981203+08:00"
+    },
+    {
+      "name": "202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md.raw-transcript.backup.md",
+      "sha256": "c311b74fcef1ee2880b86bda1b3bb24cd9ef36e3896b20fc6158942b003d66be",
+      "bytes": 1501,
+      "mtime": "2026-09-24T18:00:45.981299+08:00"
+    }
+  ],
+  "observed_completed_rows": 10,
+  "rows": 11,
+  "review_interruption": "17:59 hdc empty, port18251 down after user-turn interruption; precise process-exit time unknown; resumed same runtime 18:00:45 and same emulator coldboot; no product repair",
+  "proxy": "transport failure adapter no longer running; App restored direct 18256->18251 via actual UI 106/107",
+  "conclusion": "App PROCESSING at18:10, then FAILED with >600s no HTML and retry button at18:12. Original 17:46 source has organized MD/HTML; restart 18:00 produced new source/backup for same capture/revision, yet no note bound back. Do not claim two completed formal results, infinite wait, or missing all HTML."
+}

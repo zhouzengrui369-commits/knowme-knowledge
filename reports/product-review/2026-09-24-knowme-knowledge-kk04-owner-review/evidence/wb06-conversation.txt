@@ -1,0 +1,4 @@
+Browser tab: 3, Title: "灵犀 · NJX 知识地图与认知星海", URL: "http://127.0.0.1:18251/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~						682 text 灵犀思考中 ·  0.4 s
+The focused UI element is 0 AXWebArea 灵犀 · NJX 知识地图与认知星海, URL: 127.0.0.1:18251/
