@@ -60,6 +60,12 @@ export interface CaptureItem {
   recoveryAction: string;
   attempts: number;
   updatedAt: number;
+  /**
+   * PX-KK04-04：工作台音频质量判定随同步回写（'' = 未判定/非音频）。
+   * 可选字段：旧版本 index.json 无此键，读取时用 ?? '' 归一。
+   */
+  qualityLevel?: string;
+  qualityNote?: string;
 }
 
 /** RFC 4122 v4 UUID（Math.random 足够：仅作身份标识，不作安全用途）。 */
@@ -182,6 +188,13 @@ export function makeCorrection(src: CaptureItem, newText: string, now: Date): Ca
     error: '', recoveryAction: '', attempts: 0,
     updatedAt: now.getTime()
   };
+}
+
+/** 工作台质量判定回写到采集项（仅音频；'' 表示未判定）。 */
+export function applyAudioQuality(item: CaptureItem, level: string, note: string): void {
+  item.qualityLevel = level;
+  item.qualityNote = note;
+  item.updatedAt = Date.now();
 }
 
 /** 状态中文标签（采集箱分清「未同步」与「未整理」）。 */

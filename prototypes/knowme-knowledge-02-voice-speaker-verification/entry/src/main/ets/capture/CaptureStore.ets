@@ -136,7 +136,13 @@ export class CaptureStore {
     return hit ?? null;
   }
 
-  /** 全部采集的最新 revision 列表（新的在前）。 */
+  /** 全部采集的最新 revision 列表（新的在前）。
+   *
+   * PX-KK04-02 修复：排序键必须是**稳定**的捕获时间，不能用 updatedAt。
+   * updatedAt 在每次状态流转（如「交给灵犀」入队、ACK 回写）都会变，
+   * 用它排序会让正在操作中的条目在列表里跳位，导致用户下一次点按落到错的对象上。
+   * 这里按 capturedAt 降序（同刻再按 captureId 字典序兜底），顺序与同步/整理回写无关。
+   */
   listLatest(): CaptureItem[] {
     const out: CaptureItem[] = [];
     for (const list of this.items.values()) {
@@ -144,7 +150,14 @@ export class CaptureStore {
         out.push(list[list.length - 1]);
       }
     }
-    out.sort((a, b) => b.updatedAt - a.updatedAt);
+    out.sort((a, b) => {
+      const ca = a.capturedAt ?? '';
+      const cb = b.capturedAt ?? '';
+      if (ca !== cb) {
+        return ca < cb ? 1 : -1;
+      }
+      return a.captureId < b.captureId ? 1 : -1;
+    });
     return out;
   }
 

@@ -12,7 +12,7 @@ import { connection } from '@kit.NetworkKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import {
   CaptureItem, TransferStatus, ProcessingStatus,
-  enqueue, canUpload, markReceived, markUploadFailed, applyProcessing
+  enqueue, canUpload, markReceived, markUploadFailed, applyProcessing, applyAudioQuality
 } from '../capture/CaptureCore';
 import { CaptureStore } from '../capture/CaptureStore';
 import { LingxiBridgeClient } from './LingxiBridgeClient';
@@ -28,6 +28,21 @@ interface BridgeEventRefs {
   note_id?: string;
   note_revision?: number;
   error?: string;
+  audio_quality?: Record<string, Object>;
+}
+
+/** PX-KK04-04：从服务端 refs 提取音频质量判定并回写到本地条目（卡片层如实可见）。 */
+function applyQualityFromRefs(item: CaptureItem, refs: Record<string, Object> | undefined): void {
+  if (!refs) {
+    return;
+  }
+  const q = refs['audio_quality'] as Record<string, Object> | undefined;
+  if (!q) {
+    return;
+  }
+  const level = String(q['level'] ?? '');
+  const reasons = (q['reasons'] as string[] | undefined) ?? [];
+  applyAudioQuality(item, level, reasons.join('；'));
 }
 
 interface BridgeEvent {
@@ -137,6 +152,7 @@ export class SyncController {
           const refs = ev.refs;
           applyProcessing(item, ProcessingStatus.COMPLETED,
             refs?.note_id ?? '', refs?.note_revision ?? 1);
+          applyQualityFromRefs(item, refs as Record<string, Object> | undefined);
           this.store.save(item);
           changed = true;
         } else if (type === 'ORGANIZE_FAILED') {
@@ -179,6 +195,7 @@ export class SyncController {
           applyProcessing(item, ps as ProcessingStatus,
             String(refs['note_id'] ?? ''), Number(refs['note_revision'] ?? 0),
             String(v['error'] ?? ''), String(v['recovery_action'] ?? ''));
+          applyQualityFromRefs(item, refs);
           this.store.save(item);
           changed = true;
         }

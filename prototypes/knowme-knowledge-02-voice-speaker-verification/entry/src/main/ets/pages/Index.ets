@@ -72,6 +72,14 @@ struct Index {
   @State resultBody: string = '';
   @State provenanceFor: string = '';
   @State provenanceText: string = '';
+  /** PX-KK04-02：每条采集「交给灵犀」的 in-flight guard。
+   *  提交中的 captureId 置位期间，该条按钮禁用，防止连点在异步间隙二次入队。 */
+  @State submittingId: string = '';
+  /** PX-KK04-01：连接状态机上一次实测是否在线（用于「不可达」与「已连接」的真实区分）。 */
+  @State connReachable: boolean = false;
+  /** PX-KK04-01：来源面板当前展示内容对应的 revision。
+   *  若与条目最新 revision 不一致，面板顶部明示「已过期，请刷新」，不继续把旧 revision 当当前事实。 */
+  @State provenanceRev: number = 0;
 
   aboutToAppear(): void {
     this.agentStore.init(this.uiContext());
@@ -100,15 +108,20 @@ struct Index {
       this.bridge.configure(sess.baseUrl, sess.deviceId, sess.token);
       this.bridgeConfigured = true;
       this.deviceIdText = sess.deviceId;
-      this.connectState = '已连接（本地会话恢复）';
+      // PX-KK04-01：冷启动只凭本地会话**不得**直接显示「已连接」。先置「待校验」，
+      // 实测探活成功才转「已连接」；失败转「不可达」并给恢复动作，不伪造在线状态。
+      this.connectState = '连接待校验…';
       this.showConnect = false;
-      this.refreshCapabilities();
+      this.probeConnection();
     }
 
     this.mirrorCaptures();
     this.refreshVoice();
     this.syncTimer = setInterval(() => {
       this.syncCtl.tick();
+      // PX-KK04-01：能力表面（含插件启停）不是启动一次性结果，周期实测补回，
+      // 插件后台被停用时 UI 不再停在先前的「真能力」文案上。
+      this.probeConnection();
     }, 5000);
 
     this.sherpaEngine.init(this.uiContext()).then((ok: boolean) => {
@@ -147,6 +160,24 @@ struct Index {
   private mirrorCaptures(): void {
     this.captureList = this.captureStore.listLatest();
     this.visibleMessages = this.agent.messages.slice(-5);
+  }
+
+  /**
+   * D-KK04-06（本轮 ED 实操发现）：ForEach 行键必须同时满足两个硬约束——
+   *  PX-KK04-02：对象身份稳定，列表顺序由 listLatest() 的稳定 capturedAt 排序保证，
+   *              行位置不随同步/整理回写跳动，连点不会落到错的对象上；
+   *  PX-KK04-01：状态必须真实刷新。ArkUI ForEach 对「键不变」的行复用旧子树，
+   *              若键只含 captureId，后台同步把 DRAFT→RECEIVED→COMPLETED 写进 store 后
+   *              行仍以旧 item 渲染（实测：磁盘 index.json 已 COMPLETED，UI 仍显示
+   *              「草稿（未提交）/灵犀整理中」）。
+   * 因此键 = 对象身份 + revision + 全部会被行内展示的瞬时状态；updatedAt 刻意不入键，
+   * 纯时间戳变化的轮询不触发行重建。行重建只发生在展示内容真实变化时，且因排序稳定
+   * 重建发生在原位，不会引起跳位。
+   */
+  private captureRowKey(item: CaptureItem): string {
+    const note = item.noteId.length > 0 ? '1' : '0';
+    const err = item.error.length > 0 ? '1' : '0';
+    return `${item.captureId}-r${item.payloadRevision}-${item.transfer}-${item.processing}-n${note}-e${err}-q${item.qualityLevel ?? ''}`;
   }
 
   /** J09 保护：每条反馈带时间；非本次启动产生的消息显式标「历史」，不被误读为当前指令。 */
@@ -197,25 +228,55 @@ struct Index {
     }
   }
 
-  private async refreshCapabilities(): Promise<void> {
+  /**
+   * PX-KK04-01：实测探活 + 能力表面刷新（状态真实性的唯一来源）。
+   *  每次真实探一次工作台；只在拿到服务端响应后才显示「已连接」，
+   *  网络层失败显示「不可达」并保留恢复动作，凭证失效显示「凭证失效」。
+   *  绝不凭本地会话或上一次缓存伪造在线状态。
+   */
+  private async probeConnection(): Promise<void> {
+    if (!this.bridge.configured) {
+      return;
+    }
     const r = await this.bridge.capabilities();
+    if (r.status === 0) {
+      // 网络层失败：服务不可达
+      this.connReachable = false;
+      if (!this.connectState.includes('连接中') && !this.connectState.includes('失败')) {
+        this.connectState = '不可达（点「设置」检查地址/服务后重试）';
+      }
+      this.capsText = this.capsText ? `${this.capsText}（最近一次探活失败，能力表面可能已过期）` : this.capsText;
+      return;
+    }
+    this.connReachable = true;
     if (r.ok) {
       try {
         const c = JSON.parse(r.body) as Record<string, Object>;
         const asr = c['asr'] as Record<string, Object>;
         const org = c['organizer'] as Record<string, Object>;
         const plg = c['plugin'] as Record<string, Object>;
-        this.capsText = `插件 ${plg['version']}（${plg['status']}）· ASR ${asr['engine']}` +
-          ` · 整理 ${org['skill']} · 外发 ${String(c['processing_policy'])}`;
-        this.capsText = `插件 ${plg['version']}（${plg['status']}）· ASR ${asr['engine']}/${asr['model']}` +
+        const status = String(plg['status'] ?? '');
+        this.capsText = `插件 ${plg['version']}（${status}）· ASR ${asr['engine']}/${asr['model']}` +
           ` · 整理 ${org['skill']} · 隔离环境不外发`;
+        if (status !== 'enabled') {
+          this.connectState = `已连接 · 插件已停用（到工作台启用后自动恢复）`;
+        } else if (!this.connectState.includes('已连接') || this.connectState.includes('停用')) {
+          this.connectState = '已连接';
+        }
       } catch (e) {
         this.capsText = '能力查询成功（解析从略）';
+        if (!this.connectState.includes('已连接')) {
+          this.connectState = '已连接';
+        }
       }
     } else if (r.status === 401) {
       this.connectState = '凭证失效，请重新连接';
       this.showConnect = true;
     }
+  }
+
+  private async refreshCapabilities(): Promise<void> {
+    await this.probeConnection();
   }
 
   private async revokeNow(): Promise<void> {
@@ -418,12 +479,21 @@ struct Index {
       this.showConnect = true;
       return;
     }
+    // PX-KK04-02：in-flight guard——同一 capture 提交尚未返回前禁止再次入队
+    if (this.submittingId === item.captureId) {
+      return;
+    }
     if (authorizeDraft(item) || item.transfer === TransferStatus.FAILED) {
-      enqueue(item);
-      this.captureStore.save(item);
-      this.mirrorCaptures();
-      this.say(`已交给灵犀：${item.kind === 'audio' ? '录音' : '文本'}进入同步队列，网络可用时自动上传。`);
-      await this.syncCtl.kick();
+      this.submittingId = item.captureId;
+      try {
+        enqueue(item);
+        this.captureStore.save(item);
+        this.mirrorCaptures();
+        this.say(`已交给灵犀：${item.kind === 'audio' ? '录音' : '文本'}进入同步队列，网络可用时自动上传。`);
+        await this.syncCtl.kick();
+      } finally {
+        this.submittingId = '';
+      }
     }
   }
 
@@ -442,7 +512,11 @@ struct Index {
         const body = JSON.parse(r.body) as Record<string, Object>;
         this.resultFor = item.captureId;
         this.resultTitle = String(body['note_id'] ?? item.noteId);
-        this.resultBody = String(body['body_md'] ?? '');
+        // PX-KK04-06：默认结果层先给可读正文；YAML frontmatter 属技术细节，
+        // 不主导首屏（完整元数据仍可在「原始来源」面板查看）。
+        this.resultBody = String(body['body_md'] ?? '')
+          .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '')
+          .trim();
       } catch (e) {
         this.say('结果解析失败。');
       }
@@ -473,6 +547,20 @@ struct Index {
           if (transcript.length > 0) {
             lines.push(`工作台最初转写：「${transcript.slice(0, 200)}」`);
           }
+          // PX-KK04-04：真实音频质量判定如实展示（静默/过短/转写循环），并给恢复路径。
+          const refs = (v['result_refs'] ?? {}) as Record<string, Object>;
+          const q = refs['audio_quality'] as Record<string, Object> | undefined;
+          if (q) {
+            const lvl = String(q['level'] ?? 'ok');
+            const reasons = (q['reasons'] as string[] | undefined) ?? [];
+            const qline = lvl === 'ok'
+              ? `✓ 音频质量正常（peak=${String(q['peak'] ?? 0)} rms=${String(q['rms'] ?? 0)} 时长${String(q['duration_ms'] ?? 0)}ms）`
+              : `⚠ 音频质量可疑（${lvl}）: ${reasons.join('；')}（peak=${String(q['peak'] ?? 0)} rms=${String(q['rms'] ?? 0)}）`;
+            lines.push(qline);
+            if (lvl !== 'ok') {
+              lines.push('可重新录制、改用文字修正，或保留原件仅存档（不自动丢弃）。');
+            }
+          }
           lines.push(`接收时间：${String(v['received_at'] ?? '—')} · 整理时间：${String(v['organized_at'] ?? '—')}`);
           // J08 来源链：全部 revision 层分别可见（原始/修正/补充，原文不覆盖）
           const revs = v['revisions'];
@@ -498,6 +586,7 @@ struct Index {
       }
     }
     this.provenanceFor = item.captureId;
+    this.provenanceRev = item.payloadRevision;
     this.provenanceText = lines.join('\n');
   }
 
@@ -571,7 +660,9 @@ struct Index {
           Row({ space: 8 }) {
             Text(`连接：${this.connectState}`)
               .fontSize(12)
-              .fontColor(this.connectState.includes('已连接') ? '#1B6E3C' : '#7A4A00')
+              .fontColor(this.connectState.includes('不可达') || this.connectState.includes('失效')
+                ? '#C62828'
+                : (this.connectState.includes('已连接') && !this.connectState.includes('停用') ? '#1B6E3C' : '#7A4A00'))
               .layoutWeight(1)
             Button(this.showConnect ? '收起' : '设置')
               .fontSize(11)
@@ -686,9 +777,15 @@ struct Index {
                 await this.startBoxRecording();
               })
           }
-          Text(`麦克风：${this.micState === MicState.PERMISSION_DENIED ? '权限被拒绝（可用文字采集）' : '就绪/按需授权'} · 录音原件保存在本机，上传前不删除`)
+          // PX-KK04-06：首次使用者立即可懂——区分「首次未授权/被系统拒绝/已授权」三态，
+          // 明确告知可在系统设置随时恢复，不诱导放弃；文字采集始终可用。
+          Text(this.micState === MicState.PERMISSION_DENIED
+            ? '麦克风：你之前在系统弹窗里拒绝了录音权限。不影响文字采集；若想录音，到「系统设置 › 应用 › 本应用 › 权限」打开麦克风即可，随时可改。'
+            : (this.micState === MicState.PERMISSION_REQUIRED
+              ? '麦克风：首次录音时系统会弹窗请求授权，点「允许」就能录；不授权也能用文字采集。'
+              : '麦克风：已授权 · 录音原件保存在本机，上传前不删除'))
             .fontSize(10)
-            .fontColor('#999999')
+            .fontColor(this.micState === MicState.PERMISSION_DENIED ? '#B26A00' : '#999999')
             .width('100%')
           if (!this.recordingBox) {
             Row({ space: 8 }) {
@@ -770,9 +867,12 @@ struct Index {
                   item.transfer === TransferStatus.LOCAL_SAVED ||
                   item.transfer === TransferStatus.FAILED ||
                   item.transfer === TransferStatus.QUEUED) {
-                  Button(item.transfer === TransferStatus.DRAFT ? '交给灵犀' : '重新同步')
+                  Button(this.submittingId === item.captureId
+                    ? '提交中…'
+                    : (item.transfer === TransferStatus.DRAFT ? '交给灵犀' : '重新同步'))
                     .fontSize(11)
-                    .backgroundColor('#5656D6')
+                    .backgroundColor(this.submittingId === item.captureId ? '#9A9AC8' : '#5656D6')
+                    .enabled(this.submittingId !== item.captureId)
                     .onClick(async () => {
                       await this.handToLingxi(item);
                     })
@@ -810,6 +910,19 @@ struct Index {
                 Text(`⚠ ${item.error}${item.recoveryAction ? ` · ${item.recoveryAction}` : ''}`)
                   .fontSize(10)
                   .fontColor('#C62828')
+                  .width('100%')
+              }
+              // PX-KK04-04：音频质量判定必须出现在卡片层（结果入口），
+              // 近静音/过弱/转写循环等不得只显示普通「已整理」。
+              if (item.kind === CaptureKind.AUDIO &&
+                (item.qualityLevel ?? '') !== '' && item.qualityLevel !== 'ok') {
+                Text(`⚠ 音频质量可疑（${item.qualityLevel}）${item.qualityNote ? `：${item.qualityNote}` : ''}`)
+                  .fontSize(10)
+                  .fontColor('#B26A00')
+                  .width('100%')
+                Text('可重新录制、点「现场修正」改文字，或仅保留原件存档（原件不会被覆盖）。')
+                  .fontSize(10)
+                  .fontColor('#B26A00')
                   .width('100%')
               }
               // ③ 灵犀结果 + 原始来源（两次导航内）
@@ -856,8 +969,20 @@ struct Index {
                   .padding(8)
                   .borderRadius(8)
                   .backgroundColor('#F0F7F1')
+                Text('技术细节（原始转写 / 质量判定 / 时间戳 / 哈希）见下方「原始来源」面板。')
+                  .fontSize(10)
+                  .fontColor('#999999')
+                  .width('100%')
+                  .padding({ left: 8, right: 8, bottom: 4 })
               }
               if (this.provenanceFor === item.captureId) {
+                if (this.provenanceRev !== item.payloadRevision) {
+                  Text(`⚠ 此面板是 revision ${this.provenanceRev} 的来源，当前已到 revision ${item.payloadRevision}；点「收起来源」再开可刷新。`)
+                    .fontSize(10)
+                    .fontColor('#B26A00')
+                    .width('100%')
+                    .padding({ left: 8, right: 8, top: 4 })
+                }
                 Text(this.provenanceText)
                   .fontSize(11)
                   .fontColor('#555555')
@@ -872,7 +997,7 @@ struct Index {
             .padding(8)
             .borderRadius(8)
             .backgroundColor('#FFFFFF')
-          }, (item: CaptureItem) => `${item.captureId}-r${item.payloadRevision}-${item.updatedAt}`)
+          }, (item: CaptureItem) => this.captureRowKey(item))
         }
         .width('100%')
         .alignItems(HorizontalAlign.Start)

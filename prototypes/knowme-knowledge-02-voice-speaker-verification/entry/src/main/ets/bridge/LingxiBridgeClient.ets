@@ -77,6 +77,12 @@ export class LingxiBridgeClient {
   private token: string = '';
   deviceId: string = '';
 
+  /** PX-KK04-01：工作台「实测可达性」。
+   *  true = 最近一次请求拿到了服务端响应（哪怕 4xx/5xx，也证明服务在线、凭证状态可查）；
+   *  false = 最近一次请求是网络层失败（status 0：连接拒绝/超时/断网）。仅供 UI 如实展示，不作缓存，
+   *  每次真实请求都会刷新。 */
+  public lastReachable: boolean = false;
+
   configure(baseUrl: string, deviceId: string, token: string): void {
     this.baseUrl = baseUrl.replace(/\/+$/, '');
     this.deviceId = deviceId;
@@ -114,9 +120,13 @@ export class LingxiBridgeClient {
       }, (err, resp) => {
         req.destroy();
         if (err) {
+          // PX-KK04-01：网络层失败 = 服务不可达（连接拒绝/超时/断网）
+          this.lastReachable = false;
           resolve({ ok: false, status: 0, body: '', error: `网络错误: ${JSON.stringify(err)}` });
           return;
         }
+        // PX-KK04-01：拿到任何 HTTP 响应都证明服务在线（凭证是否有效另行区分）
+        this.lastReachable = true;
         const status = resp.responseCode;
         const text = typeof resp.result === 'string' ? resp.result : JSON.stringify(resp.result);
         resolve({ ok: status >= 200 && status < 300, status: status, body: text, error: '' });
