@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">灵犀</string>
+    <string name="channel_capture">录音</string>
+    <string name="channel_sync">同步</string>
+</resources>
