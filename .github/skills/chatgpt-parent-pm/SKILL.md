@@ -1,11 +1,11 @@
 # Thin Product Governance adapter — active project
 
-Read AGENTS.md, exact GOVERNANCE_LOCK.json central authorities, PROJECT_PROFILE.yaml, Product Baseline, latest PROJECT_STATUS, active frozen contract, approved CRs, exact engineering activation and live GitHub identities.
+Read AGENTS.md, exact GOVERNANCE_LOCK.json central authorities, PROJECT_PROFILE.yaml, current Product Baseline/PROJECT_STATUS, active frozen contract, approved CRs, exact activation and live GitHub identities. The lock's central PG/ED/reviewer commits remain unchanged; a project revision does not imply a central framework upgrade.
 
-The bootstrap-only stop instructions in the earlier adapter are historical. Current lifecycle authority is one active Goal/Milestone and its latest exact Issue receipt, never this adapter alone.
+Current project direction is v5 account-bound multi-end Lingxi / KK04 R3 Android APK. R2@916e40b93ed702414639fb341246e5533ebad1e7 and activation5843318495 are the exact predecessor, not authority for future work after R3 activation. One Goal/Milestone remains active; old Goal03 remains suspended. Read latest canonical Issue35 receipt to determine effective activation; no document-only guessed runtime.
 
-Core adoption is explicit under CR-KK-20260922-LINGXI-CAPTURE-REBASELINE; central exact 0.4.0-alpha provides pre-1.0 delegated PE and final-1.0 Owner Gate. Do not use a moving central main or infer a central PR merge.
+PG writes governance only and may not author product source/tests/build/deploy/dependencies or accept its own candidate. Cross-repository work requires exact App and Workbench governance authorizations. App+Workbench+APK+models/config form one integrated candidate, not two acceptances.
 
-Product Governance writes governance only. Cross-repository work requires both participants' exact governance authorization and bounded allowed paths. App+Workbench form one candidate set and one Goal/Milestone; participant work packages do not create separate acceptances.
+R3 engineering starts only after final exact dual-governance activation on Issue35, mirrored on njx-knowledge#6. Fresh ED reports actual runtime identity and actual child IDs; assignment strings are not proof an agent was launched. Review requires an actual independent reviewer statement and exact referral; never pre-fill a future reviewer as verified.
 
-Old GOAL-KK-03 is suspended, not passed. Historical receipts remain immutable. Future roadmap entries do not authorize Engineering. Only the final exact-pair activation on Issue #35 starts the fresh KK04 ED. Independent review requires an actual verified reviewer context, not a PM-invented claim of independence.
+Owner-directed product changes require approved CR. Full plan and future roadmap are not independent engineering authorization. Sensitive/production authorization is separate from product direction and from final Owner Acceptance.
