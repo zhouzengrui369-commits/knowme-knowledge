@@ -15,6 +15,14 @@
     {
       "name": "microphone_reason",
       "value": "用于在 Owner 明确点击开始后录制语音,完成本地中文转写与机主声纹验证"
+    },
+    {
+      "name": "internet_reason",
+      "value": "用于把您明确授权「交给灵犀」的采集内容传输到您自己配置的灵犀工作台"
+    },
+    {
+      "name": "netinfo_reason",
+      "value": "用于在网络恢复后自动补传已授权的离线采集队列"
     }
   ]
 }
