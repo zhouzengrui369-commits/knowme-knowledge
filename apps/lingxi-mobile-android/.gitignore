@@ -10,4 +10,6 @@
 !debug.keystore
 app/libs/*.aar
 scripts/.downloads/
+# 模型大件不入 git：由 scripts/provision-asr.sh 按固定 URL+sha256 取回
+app/src/main/assets/asr/*.onnx
 .kotlin/

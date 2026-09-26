@@ -25,6 +25,8 @@ class LingxiApp : Application() {
         sessionStore = SessionStore(this)
         database = LingxiDatabase.build(this)
         connectionState = ConnectionStateStore(this)
+        // 首启后台 provision 随包 ASR 模型；完成前 UI 如实显示 NOT_PROVISIONED
+        com.lingxi.mobile.asr.SherpaAsrEngine(this).provisionIfNeeded()
 
         val nm = getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(

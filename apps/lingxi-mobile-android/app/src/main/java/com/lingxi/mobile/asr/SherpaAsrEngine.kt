@@ -18,16 +18,45 @@ class SherpaAsrEngine(
 
     private val modelDir: File get() = File(context.filesDir, "asr")
 
+    @Volatile
+    private var provisioning = false
+
     override fun provisionState(): AsrEngine.ProvisionState {
         val dir = modelDir
-        if (!dir.isDirectory) return AsrEngine.ProvisionState.NOT_PROVISIONED
-        val required = dir.listFiles()?.filter { it.isFile }.orEmpty()
-        if (required.isEmpty()) return AsrEngine.ProvisionState.NOT_PROVISIONED
+        val need = listOf("encoder.onnx", "decoder.onnx", "joiner.onnx", "tokens.txt")
+        val ready = dir.isDirectory && need.all { File(dir, it).let { f -> f.exists() && f.length() > 0 } }
+        if (!ready) return AsrEngine.ProvisionState.NOT_PROVISIONED
         return if (sherpaAvailable()) {
             AsrEngine.ProvisionState.READY
         } else {
             AsrEngine.ProvisionState.INCOMPATIBLE_DEVICE
         }
+    }
+
+    /**
+     * 首启把随包 assets/asr 拷到 filesDir/asr（模型以文件路径模式加载）。
+     * 完成前 provisionState() 如实返回 NOT_PROVISIONED，UI 不假装在转写。
+     */
+    fun provisionIfNeeded(onDone: (() -> Unit)? = null) {
+        if (provisionState() == AsrEngine.ProvisionState.READY || provisioning) return
+        provisioning = true
+        Thread {
+            try {
+                val am = context.assets
+                val names = am.list("asr")?.filter { it != "PROVENANCE.md" } ?: emptyList()
+                modelDir.mkdirs()
+                for (name in names) {
+                    val dst = File(modelDir, name)
+                    if (dst.exists() && dst.length() > 0) continue
+                    am.open("asr/$name").use { input ->
+                        dst.outputStream().use { output -> input.copyTo(output) }
+                    }
+                }
+                onDone?.invoke()
+            } finally {
+                provisioning = false
+            }
+        }.start()
     }
 
     private fun sherpaAvailable(): Boolean = runCatching {
