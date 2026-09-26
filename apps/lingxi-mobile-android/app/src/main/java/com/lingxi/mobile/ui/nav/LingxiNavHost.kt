@@ -64,7 +64,24 @@ fun LingxiNavHost() {
             startDestination = Dest.LINGXI,
             modifier = Modifier.padding(padding),
         ) {
-            composable(Dest.LINGXI) { LingxiHomeScreen() }
+            composable(Dest.LINGXI) {
+                LingxiHomeScreen(
+                    onGoPair = {
+                        nav.navigate(Dest.PROFILE) {
+                            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onGoRecords = {
+                        nav.navigate(Dest.RECORDS) {
+                            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                )
+            }
             composable(Dest.RECORDS) { RecordsScreen() }
             composable(Dest.KNOWLEDGE) { KnowledgeScreen() }
             composable(Dest.PROFILE) { ProfileScreen() }

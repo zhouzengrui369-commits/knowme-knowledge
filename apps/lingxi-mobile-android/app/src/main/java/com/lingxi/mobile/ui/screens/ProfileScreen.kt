@@ -41,9 +41,10 @@ fun ProfileScreen() {
         Text("我的", style = MaterialTheme.typography.titleLarge)
 
         if (session == null) {
-            var baseUrl by remember { mutableStateOf("http://192.168.1.10:8787") }
-            var pairCode by remember { mutableStateOf("") }
-            var status by remember { mutableStateOf("") }
+            // 真机联调修复（GOAL-KK-04）：切 Tab 不丢表单（原 remember 会重置）
+            var baseUrl by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("http://192.168.1.10:8787") }
+            var pairCode by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
+            var status by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
             val pairing = remember { PairingRepository(app, app.sessionStore) }
 
             Text("绑定账户", style = MaterialTheme.typography.titleMedium)

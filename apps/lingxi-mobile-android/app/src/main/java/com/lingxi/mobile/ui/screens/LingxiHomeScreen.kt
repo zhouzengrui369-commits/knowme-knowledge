@@ -27,7 +27,7 @@ import com.lingxi.mobile.ui.state.StatusStrip
  * 未登录：通用壳 + 引导，不出现真实知识（合同 master plan §4）。
  */
 @Composable
-fun LingxiHomeScreen() {
+fun LingxiHomeScreen(onGoPair: () -> Unit = {}, onGoRecords: () -> Unit = {}) {
     val app = LocalContext.current.applicationContext as LingxiApp
     val state by app.connectionState.state.collectAsState()
     val session = app.sessionStore.active()
@@ -50,7 +50,7 @@ fun LingxiHomeScreen() {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
                 )
-                Button(onClick = { /* 导航到 我的-绑定 */ }) {
+                Button(onClick = onGoPair) {
                     Text("去绑定账户")
                 }
             }
@@ -87,13 +87,13 @@ fun LingxiHomeScreen() {
                     Modifier.fillMaxWidth().padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Button(onClick = { /* → 记录 tab 启动录音 */ }, modifier = Modifier.weight(1f)) {
+                    Button(onClick = onGoRecords, modifier = Modifier.weight(1f)) {
                         Text("语音")
                     }
-                    OutlinedButton(onClick = { /* 文本输入草稿 */ }, modifier = Modifier.weight(1f)) {
+                    OutlinedButton(onClick = onGoRecords, modifier = Modifier.weight(1f)) {
                         Text("文字")
                     }
-                    OutlinedButton(onClick = { /* 附件（相机/文件/分享） */ }, modifier = Modifier.weight(1f)) {
+                    OutlinedButton(onClick = onGoRecords, modifier = Modifier.weight(1f)) {
                         Text("附件")
                     }
                 }

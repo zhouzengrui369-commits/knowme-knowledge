@@ -1,0 +1,2 @@
+--------- beginning of system
+09-26 23:58:10.260 E/ActivityManager(24233): Try to startService, serviceRecord:processName: com.huawei.systemmanager:service; pkgName: com.huawei.systemmanager

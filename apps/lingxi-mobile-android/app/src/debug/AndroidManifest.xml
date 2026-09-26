@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- R3 真机联调修复（GOAL-KK-04）：隔离工作台走 http://127.0.0.1（adb reverse 隧道），
+     targetSdk34 默认禁明文导致 CLEARTEXT 报错。仅 debug 变体放行明文，release 保持严格。 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:usesCleartextTraffic="true" />
+</manifest>

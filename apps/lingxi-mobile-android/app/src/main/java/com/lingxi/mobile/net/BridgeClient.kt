@@ -3,6 +3,7 @@ package com.lingxi.mobile.net
 import com.lingxi.mobile.data.prefs.SessionStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -33,55 +34,56 @@ class BridgeClient(
         data class Unreachable(val cause: String) : Result<Nothing>()
     }
 
+    // 真机联调修复：与服务端 routes_v2.py 的 snake_case 契约显式对齐
     @Serializable
     data class CaptureSubmit(
-        val captureId: String,
-        val schemaVersion: Int = 2,
-        val payloadRevision: Int,
-        val deviceId: String,
+        @SerialName("capture_id") val captureId: String,
+        @SerialName("schema_version") val schemaVersion: Int = 2,
+        @SerialName("payload_revision") val payloadRevision: Int,
+        @SerialName("device_id") val deviceId: String,
         val kind: String,
-        val capturedAt: String,
-        val timezone: String,
-        val contentHash: String?,
-        val size: Long?,
+        @SerialName("captured_at") val capturedAt: String,
+        @SerialName("captured_timezone") val timezone: String,
+        @SerialName("content_hash") val contentHash: String?,
+        @SerialName("content_size") val size: Long?,
         val text: String?,
         val intent: String = "organize",
-        val orphanRecovery: Boolean = false,
-        val originTaskId: String? = null,
+        @SerialName("orphan_recovery") val orphanRecovery: Boolean = false,
+        @SerialName("origin_task_id") val originTaskId: String? = null,
     )
 
     @Serializable
     data class CaptureSubmitResponse(
-        val taskId: String,
-        val durableReceivedAt: String,
+        @SerialName("task_id") val taskId: String,
+        @SerialName("durable_received_at") val durableReceivedAt: String,
     )
 
     @Serializable
     data class CaptureStatus(
-        val captureId: String,
-        val transferStatus: String,
-        val processingStatus: String,
-        val taskId: String?,
-        val noteId: String?,
-        val revision: Int?,
+        @SerialName("capture_id") val captureId: String,
+        @SerialName("transfer_status") val transferStatus: String,
+        @SerialName("processing_status") val processingStatus: String,
+        @SerialName("task_id") val taskId: String?,
+        @SerialName("note_id") val noteId: String?,
+        @SerialName("note_revision") val revision: Int?,
         val error: String?,
     )
 
     @Serializable
     data class TaskStatus(
-        val taskId: String,
+        @SerialName("task_id") val taskId: String,
         val status: String,
-        val executorSide: String, // phone | mac
-        val resultRefs: List<String> = emptyList(),
+        @SerialName("executor_side") val executorSide: String, // phone | mac
+        @SerialName("result_refs") val resultRefs: Map<String, String> = emptyMap(),
         val cancelable: Boolean = false,
     )
 
     @Serializable
     data class OrphanResult(
-        val taskId: String,
-        val noteId: String,
+        @SerialName("task_id") val taskId: String,
+        @SerialName("note_id") val noteId: String,
         val revision: Int,
-        val resultRefs: List<String> = emptyList(),
+        @SerialName("result_refs") val resultRefs: Map<String, String> = emptyMap(),
     )
 
     suspend fun submitCapture(session: SessionStore.ActiveSession, body: CaptureSubmit): Result<CaptureSubmitResponse> =

@@ -20,6 +20,14 @@ class LingxiApp : Application() {
     lateinit var connectionState: ConnectionStateStore
         private set
 
+    /** Outbox 推进器（真机联调接线）：文字采集显式提交后由 UI 触发 tick()。 */
+    val syncEngine: com.lingxi.mobile.sync.SyncEngine by lazy {
+        com.lingxi.mobile.sync.SyncEngine(
+            this, database, sessionStore,
+            com.lingxi.mobile.net.BridgeClient(), connectionState,
+        )
+    }
+
     override fun onCreate() {
         super.onCreate()
         sessionStore = SessionStore(this)
