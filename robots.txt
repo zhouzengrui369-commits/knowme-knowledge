@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zhouzengrui369-commits.github.io/knowme-knowledge/sitemap.xml
