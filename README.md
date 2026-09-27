@@ -13,7 +13,7 @@ KnowMe Knowledge（灵犀知识）探索一种新的个人 AI 工作方式：
 
 **Current mobile focus: Huawei Mate60 / Android · 当前移动端重点：华为 Mate60 / Android**
 
-[官网 / Official Site](https://zhouzengrui369-commits.github.io/knowme-knowledge/) · [关于灵犀 / About](https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html) · [FAQ](https://zhouzengrui369-commits.github.io/knowme-knowledge/faq.html) · [公开进展 / Updates](https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html) · [公开关注指标 / Signals](https://zhouzengrui369-commits.github.io/knowme-knowledge/signals.html)
+[官网 / Official Site](https://zhouzengrui369-commits.github.io/knowme-knowledge/) · [English](https://zhouzengrui369-commits.github.io/knowme-knowledge/en/) · [关于灵犀 / About](https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html) · [FAQ](https://zhouzengrui369-commits.github.io/knowme-knowledge/faq.html) · [公开进展 / Updates](https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html) · [公开关注指标 / Signals](https://zhouzengrui369-commits.github.io/knowme-knowledge/signals.html)
 
 [![GitHub stars](https://img.shields.io/github/stars/zhouzengrui369-commits/knowme-knowledge?style=flat-square&label=Stars)](https://github.com/zhouzengrui369-commits/knowme-knowledge/stargazers)
 [![GitHub watchers](https://img.shields.io/github/watchers/zhouzengrui369-commits/knowme-knowledge?style=flat-square&label=Watch)](https://github.com/zhouzengrui369-commits/knowme-knowledge/watchers)
