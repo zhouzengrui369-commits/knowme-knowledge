@@ -13,7 +13,7 @@ KnowMe Knowledge（灵犀知识）探索一种新的个人 AI 工作方式：
 
 **Current mobile focus: Huawei Mate60 / Android · 当前移动端重点：华为 Mate60 / Android**
 
-[官网 / Official Site](https://zhouzengrui369-commits.github.io/knowme-knowledge/) · [关于灵犀 / About](https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html) · [公开进展 / Updates](https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html)
+[官网 / Official Site](https://zhouzengrui369-commits.github.io/knowme-knowledge/) · [关于灵犀 / About](https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html) · [FAQ](https://zhouzengrui369-commits.github.io/knowme-knowledge/faq.html) · [公开进展 / Updates](https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html) · [公开关注指标 / Signals](https://zhouzengrui369-commits.github.io/knowme-knowledge/signals.html)
 
 [![GitHub stars](https://img.shields.io/github/stars/zhouzengrui369-commits/knowme-knowledge?style=flat-square&label=Stars)](https://github.com/zhouzengrui369-commits/knowme-knowledge/stargazers)
 [![GitHub watchers](https://img.shields.io/github/watchers/zhouzengrui369-commits/knowme-knowledge?style=flat-square&label=Watch)](https://github.com/zhouzengrui369-commits/knowme-knowledge/watchers)
@@ -153,7 +153,7 @@ KnowMe 关注的是一个比“AI 助手”更大的问题：
 
 - ⭐ **Star** — 让更多对 Personal AI / Agent 感兴趣的人看到这个项目
 - 👀 **Watch** — 跟踪新的产品演示、里程碑与工程进展
-- 💬 **Issues** — 分享真实使用场景、问题或改进建议
+- 💬 **[公开交流 Issue #43](https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/43)** — 分享真实使用场景、问题或合作方向
 - 🔗 **Share** — 把项目分享给正在研究 AI Agent、知识管理或个人 AI 的朋友
 
 > 我们更欢迎真实场景和具体问题，而不是为了功能数量而增加功能。
