@@ -37,3 +37,45 @@
 - 首页状态条 身份/服务/模型/工具 的主动实测时机未接入 tick 后刷新（tick 已实测 capabilities，状态条在记录页操作后可见刷新）
 - J03 真实麦克风录音、J13 离线 CER、J14-J23、七项 PX 回归：未开始
 - 证据截图目录：reports/integration/goal-kk-04-r3-account-agent/device/
+
+
+---
+
+## 2026-09-27 晚（二轮真机段）
+
+隔离根改持久化：`/tmp/kk04-r3-iso` 因 macOS 清 /tmp 蒸发 → `KK04_ISO_ROOT` 默认改
+`/Users/njx/Project/kk04-r3-engineering/.kk04-r3-iso`（e2e runner 同步修，workbench @0ccb8e7）。
+
+### J20/J22 退出+吊销链（PASS）
+1. 先 `GET /capabilities`（旧凭据）→ 200；
+2. 手机「退出当前账户」→ 服务端 `POST /devices/revoke` 200 → 界面立即翻回绑定表单（响应式修复生效）；
+3. 再 `GET /capabilities`（同凭据）→ **401 DEVICE_REVOKED**。
+凭据 dev_4fbafe97138045f6 撤销后改绑新设备 dev_b2c8f81be72943ec。
+证据：`j20-exit-flip.png`。
+
+### J03 语音采集+离线转写（PASS：管线；silent 空转写如实）
+- 录音 11.8s（环绕声·无人声）→ WAV 原件 377,600B 保全；
+- ASR 实接 sherpa-onnx（生态 V2 界面："转写中…（还没听清）"证明会話已开），结束空转写——
+  **如实标 qualityWarning=transcript_empty，不伪造文字**；
+- DB：capture `cap-e502acaecdaa4d9a9895`（kind=voice,DRAFT）+ revision initial_transcript(author=device-asr,len=0)；
+- 证据：`j03-recording.png` / `j03-voice-draft.png`。
+
+### 真机暴露并修复（App 仓 @303b54b）
+- #7 四屏 session 一次性读→StateFlow 响应式（退出/绑定不重绘的假象）；
+- #8 录音链挂 ASR + persist 语音草稿（此前 AsrStreamBus 零消费，模型只 provision 不用）；
+- #9 stopCapture cancel recordJob 致 persist 挂起全丢（实测：33s wav 在、DB 无行）→ 不 cancel；中断路径 NonCancellable；
+- refresh() 从 prefs.edit{} 事务内挪出。
+
+### 遗留（如实）
+- DRAFT 采集行暂无「交给灵犀」按钮（仅文字录入框可提交）；
+- 工作台暂无二进制资产上传端点：语音件只能以文本（转写）交换，WAV 原件不出本机；
+- 绑定态页仍残留退出提示（rememberSaveable 未随重置），小瑕疵；
+- J13 离线 CER 需真人说话样本，待用户配合。
+
+APK 演进链（新增）：
+| v | sha256 | 变更 |
+|---|---|---|
+| v6 | b4c03424… | 响应式 StateFlow + revoke 接线 |
+| v7 | 94476d5e… | bind refresh 挪出事务 |
+| v8 | e93f69ae… | ASR 会話接线 + persist 语音草稿 |
+| v9 | abd90fe6… | stopCapture 不 cancel + NonCancellable 中断保全 |
