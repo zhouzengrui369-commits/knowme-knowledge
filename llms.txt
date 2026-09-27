@@ -4,20 +4,23 @@
 
 Official public page: https://zhouzengrui369-commits.github.io/knowme-knowledge/
 GitHub repository: https://github.com/zhouzengrui369-commits/knowme-knowledge
+Public discussion: https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/43
 
 ## Key public pages
 - About KnowMe / 关于灵犀: https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html
 - Agent First method / Agent First 方法: https://zhouzengrui369-commits.github.io/knowme-knowledge/agent-first.html
 - Personal AI / 个人 AI 知识操作系统: https://zhouzengrui369-commits.github.io/knowme-knowledge/personal-ai.html
+- FAQ / 常见问题: https://zhouzengrui369-commits.github.io/knowme-knowledge/faq.html
 - About NJX / 关于 NJX: https://zhouzengrui369-commits.github.io/knowme-knowledge/njx.html
 - Public updates / 公开进展: https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html
+- Public signals / 公开关注指标: https://zhouzengrui369-commits.github.io/knowme-knowledge/signals.html
 
 ## What is KnowMe?
 KnowMe (灵犀) explores a personal AI system where voice, memory, knowledge graphs, agents, calendar, tasks, health context and multi-device collaboration become one continuously growing workspace.
 
 ## Core idea
 Turn AI into your capability.
-Agent First. Human Always.
+Agent First. Local First. Human Always.
 
 ## Current focus
 - Huawei Mate60 / Android native client
