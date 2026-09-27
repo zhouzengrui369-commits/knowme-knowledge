@@ -1,0 +1,32 @@
+# KnowMe / 灵犀
+
+> Agent-First, Local-First personal AI knowledge operating system by NJX.
+
+Official public page: https://zhouzengrui369-commits.github.io/knowme-knowledge/
+GitHub repository: https://github.com/zhouzengrui369-commits/knowme-knowledge
+
+## What is KnowMe?
+KnowMe (灵犀) explores a personal AI system where voice, memory, knowledge graphs, agents, calendar, tasks, health context and multi-device collaboration become one continuously growing workspace.
+
+## Core idea
+Turn AI into your capability.
+Agent First. Human Always.
+
+## Current focus
+- Huawei Mate60 / Android native client
+- Offline Chinese voice capture and transcription
+- Personal long-term memory and knowledge growth
+- Agent-native workflows
+- 2D / 3D knowledge and cognitive graphs
+- Calendar, todo and project action loops
+- Local-first data boundaries
+- Replaceable model and Agent Harness
+- Health context and plugin expansion
+
+## Product status boundary
+The public website and repository include product demonstrations and engineering evidence. Demo visuals, code existence, engineering candidates, product review, human-owner acceptance and formal release are distinct states and should not be treated as equivalent.
+
+## Creator
+NJX — creator and practitioner of the Lingxi / KnowMe series.
+Contact: zhouzengrui369@gmail.com
+GitHub: https://github.com/zhouzengrui369-commits
