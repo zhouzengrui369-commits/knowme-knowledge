@@ -6,6 +6,7 @@ Official public page: https://zhouzengrui369-commits.github.io/knowme-knowledge/
 GitHub repository: https://github.com/zhouzengrui369-commits/knowme-knowledge
 Public discussion: https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/43
 RSS feed: https://zhouzengrui369-commits.github.io/knowme-knowledge/feed.xml
+Full AI-readable context: https://zhouzengrui369-commits.github.io/knowme-knowledge/llms-full.txt
 
 ## Key public pages
 - English overview: https://zhouzengrui369-commits.github.io/knowme-knowledge/en/
