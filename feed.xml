@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>灵犀 KnowMe · Public Updates</title>
+    <link>https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html</link>
+    <description>灵犀 KnowMe 的公开建设与可验证进展。</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 27 Sep 2026 04:30:00 GMT</lastBuildDate>
+    <item>
+      <title>建立公开搜索与 AI 可发现性基础</title>
+      <link>https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html</link>
+      <guid isPermaLink="false">knowme-public-discovery-2026-09-27</guid>
+      <pubDate>Sun, 27 Sep 2026 00:00:00 GMT</pubDate>
+      <description>补充 robots.txt、sitemap.xml、llms.txt、结构化公开页面、FAQ、公开关注指标和 IndexNow 提交，使搜索引擎、AI 与第一次接触项目的人更容易理解灵犀 KnowMe。</description>
+    </item>
+  </channel>
+</rss>
