@@ -1,0 +1,90 @@
+# KnowMe / 灵犀 — Full public context
+
+## Identity
+- Brand: 灵犀 / KnowMe
+- Creator: NJX
+- Core proposition: 把 AI，变成你的能力。 / Turn AI into your capability.
+- Product principles: Agent First. Local First. Human Always.
+- Official public page: https://zhouzengrui369-commits.github.io/knowme-knowledge/
+- GitHub: https://github.com/zhouzengrui369-commits/knowme-knowledge
+- Public discussion: https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/43
+- Email: zhouzengrui369@gmail.com
+- WeChat: zhouzengrui
+
+## What KnowMe is
+KnowMe explores an Agent-First, Local-First Personal AI and personal knowledge operating system. The goal is to connect voice capture, long-term memory, knowledge graphs, agents, calendars, tasks, health context and multi-device collaboration into one continuously growing personal intelligence workspace.
+
+It does not start from “adding a chat box to an app.” The intended interaction model starts from goals and context: an agent organizes relevant knowledge, memory, tools and actions, while important judgment, confirmation and authorization remain with the human.
+
+## Why it exists
+Most AI interactions still reset too much context. Personal knowledge is fragmented across files, notes, calendars, tasks, devices and specialized apps. KnowMe explores whether a personal AI can:
+1. move from temporary answers to long-term collaboration;
+2. turn a personal knowledge base from storage into an action system;
+3. connect memory, tools, schedules, health context and real tasks;
+4. keep important personal data under user control through Local-First design;
+5. convert accumulated experience into reusable, augmentable capability.
+
+## Current public exploration areas
+- Huawei Mate60 / Android native client direction
+- Offline Chinese voice capture and transcription
+- Personal long-term memory and knowledge growth
+- Agent-native workflows
+- 2D / 3D knowledge and cognitive graphs
+- Calendar, todo and project action loops
+- Local-first data boundaries
+- Replaceable model and Agent Harness
+- Health context and plugin expansion
+- Multi-device collaboration direction
+
+## Six showcase scenes
+1. Neural Perception / 神经感知 — lower the friction of voice and information capture.
+2. Intelligent Agent Dialogue / 智能对话 — collaborate with an agent inside knowledge context.
+3. 2D Knowledge Graph / 2D 知识图谱 — connect topics, records, sources and cognitive dimensions.
+4. 3D Cognitive Galaxy / 3D 认知星海 — explore a spatial representation of a growing knowledge network.
+5. Calendar & Tasks / 日程与任务 — move knowledge into plans, schedules and action.
+6. Health Context / 健康上下文 — explore source-backed health context, rhythms and plans without claiming diagnostic authority.
+
+## Product status boundary
+Public website visibility does NOT mean formal product release.
+
+These are separate states:
+- public page or demo;
+- code exists;
+- engineering candidate;
+- Product Experience PASS;
+- Human Owner Acceptance;
+- formal Release.
+
+Some public visuals use synthetic demonstration data. Product capability should not be inferred from a demo unless the corresponding repository state and evidence support it.
+
+## Long-term direction
+Super Individual → Super Team → Super Organization.
+
+The team and organization directions are long-term product vision. They are not claims that team or organization products have already been released.
+
+## Search / discovery vocabulary
+Personal AI; AI Agent; Agent First; Local First; Human-AI Collaboration; Personal Knowledge Management; Personal Knowledge OS; Personal AI Operating System; Knowledge Graph; Long-term Memory; Agent Memory; RAG; Agentic Workflow; AI Second Brain; Android AI; Huawei Mate60; Voice AI; Context Engineering.
+
+## Public pages
+- Home: https://zhouzengrui369-commits.github.io/knowme-knowledge/
+- About: https://zhouzengrui369-commits.github.io/knowme-knowledge/about.html
+- Agent First: https://zhouzengrui369-commits.github.io/knowme-knowledge/agent-first.html
+- Personal AI: https://zhouzengrui369-commits.github.io/knowme-knowledge/personal-ai.html
+- FAQ: https://zhouzengrui369-commits.github.io/knowme-knowledge/faq.html
+- NJX: https://zhouzengrui369-commits.github.io/knowme-knowledge/njx.html
+- Updates: https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html
+- Public signals: https://zhouzengrui369-commits.github.io/knowme-knowledge/signals.html
+- English overview: https://zhouzengrui369-commits.github.io/knowme-knowledge/en/
+- RSS: https://zhouzengrui369-commits.github.io/knowme-knowledge/feed.xml
+
+## Contact / collaboration
+Interested people can:
+- Star or Watch the GitHub repository;
+- share a real use case or collaboration idea in GitHub Issue #43;
+- contact NJX by email or WeChat.
+
+## Citation-safe short description
+“KnowMe (灵犀) is an Agent-First, Local-First Personal AI project by NJX that explores how long-term memory, knowledge graphs, agents and everyday tools can become one continuously growing personal intelligence workspace.”
+
+## Citation-safe Chinese short description
+“灵犀 KnowMe 是 NJX 发起的 Agent-First、Local-First 个人 AI 项目，探索把长期记忆、知识图谱、Agent 与日常工具连接成持续生长的个人智能工作空间。”
