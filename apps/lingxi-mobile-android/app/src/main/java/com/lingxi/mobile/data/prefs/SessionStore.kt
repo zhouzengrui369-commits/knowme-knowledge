@@ -3,6 +3,9 @@ package com.lingxi.mobile.data.prefs
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * 当前账户会话。设备凭据仅存本机私有 prefs（不入 Git、不进同步、不打印）。
@@ -22,8 +25,19 @@ class SessionStore(context: Context) {
         val lastSyncAt: String?,
     )
 
+    /**
+     * 响应式会话（真机联调修复 #7）：UI 必须 collect 这里，不能一次性 active()。
+     * 否则 bind/unbind 后界面不重绘，看起来"点了没反应"。
+     */
+    private val _session = MutableStateFlow(readActive())
+    val sessionFlow: StateFlow<ActiveSession?> = _session.asStateFlow()
+
+    private fun refresh() { _session.value = readActive() }
+
     /** 未登录返回 null — UI 据此渲染通用壳 + 引导，不出现任何真实知识。 */
-    fun active(): ActiveSession? {
+    fun active(): ActiveSession? = readActive()
+
+    private fun readActive(): ActiveSession? {
         val accountId = prefs.getString(KEY_ACCOUNT, null) ?: return null
         val workspaceId = prefs.getString(KEY_WORKSPACE, null) ?: return null
         val deviceId = prefs.getString(KEY_DEVICE, null) ?: return null
@@ -39,19 +53,29 @@ class SessionStore(context: Context) {
         )
     }
 
-    fun bind(session: ActiveSession) = prefs.edit {
-        putString(KEY_ACCOUNT, session.accountId)
-        putString(KEY_WORKSPACE, session.workspaceId)
-        putString(KEY_DEVICE, session.deviceId)
-        putString(KEY_BASE, session.serverBaseUrl)
-        putString(KEY_TOKEN, session.deviceToken)
-        remove(KEY_LAST_SYNC)
+    fun bind(session: ActiveSession) {
+        // refresh 必须在事务提交之后调用：edit{} 内读到的仍是旧值
+        prefs.edit {
+            putString(KEY_ACCOUNT, session.accountId)
+            putString(KEY_WORKSPACE, session.workspaceId)
+            putString(KEY_DEVICE, session.deviceId)
+            putString(KEY_BASE, session.serverBaseUrl)
+            putString(KEY_TOKEN, session.deviceToken)
+            remove(KEY_LAST_SYNC)
+        }
+        refresh()
     }
 
-    fun markSynced(isoTime: String) = prefs.edit { putString(KEY_LAST_SYNC, isoTime) }
+    fun markSynced(isoTime: String) {
+        prefs.edit { putString(KEY_LAST_SYNC, isoTime) }
+        refresh()
+    }
 
     /** 退出当前账户。未同步内容不清：由账户目录隔离 + outbox 表保证仍在原账户。 */
-    fun unbind() = prefs.edit { clear() }
+    fun unbind() {
+        prefs.edit { clear() }
+        refresh()
+    }
 
     /** 切换账户：先结算当前会话（等价 unbind），再由调用方 bind 新账户。旧账户数据零继承。 */
     fun switchTo(newSession: ActiveSession) {

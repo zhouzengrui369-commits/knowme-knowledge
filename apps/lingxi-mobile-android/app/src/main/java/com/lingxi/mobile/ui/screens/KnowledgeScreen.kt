@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun KnowledgeScreen() {
     val app = LocalContext.current.applicationContext as LingxiApp
-    val session = app.sessionStore.active()
+    val session by app.sessionStore.sessionFlow.collectAsState()
     val conn by app.connectionState.state.collectAsState()
     var query by remember { mutableStateOf("") }
 

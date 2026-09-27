@@ -30,7 +30,7 @@ import com.lingxi.mobile.ui.state.StatusStrip
 fun LingxiHomeScreen(onGoPair: () -> Unit = {}, onGoRecords: () -> Unit = {}) {
     val app = LocalContext.current.applicationContext as LingxiApp
     val state by app.connectionState.state.collectAsState()
-    val session = app.sessionStore.active()
+    val session by app.sessionStore.sessionFlow.collectAsState()
 
     Column(Modifier.fillMaxSize()) {
         StatusStrip(state)

@@ -11,6 +11,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen() {
     val app = LocalContext.current.applicationContext as LingxiApp
-    val session = app.sessionStore.active()
+    val session by app.sessionStore.sessionFlow.collectAsState()
     val scope = rememberCoroutineScope()
 
     Column(
@@ -40,7 +41,11 @@ fun ProfileScreen() {
     ) {
         Text("我的", style = MaterialTheme.typography.titleLarge)
 
-        if (session == null) {
+        val cur = session
+        var exitNote by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
+        var offlineExitArmed by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+
+        if (cur == null) {
             // 真机联调修复（GOAL-KK-04）：切 Tab 不丢表单（原 remember 会重置）
             var baseUrl by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("http://192.168.1.10:8787") }
             var pairCode by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
@@ -77,17 +82,45 @@ fun ProfileScreen() {
             }) { Text("绑定") }
             if (status.isNotBlank()) Text(status, style = MaterialTheme.typography.bodySmall)
         } else {
-            Text("账户：${session.accountId.take(8)}…", style = MaterialTheme.typography.bodyMedium)
-            Text("工作区：${session.workspaceId.take(8)}…", style = MaterialTheme.typography.bodyMedium)
-            Text("设备：${session.deviceId}", style = MaterialTheme.typography.bodyMedium)
-            Text("服务器：${session.serverBaseUrl}", style = MaterialTheme.typography.bodyMedium)
+            Text("账户：${cur.accountId.take(8)}…", style = MaterialTheme.typography.bodyMedium)
+            Text("工作区：${cur.workspaceId.take(8)}…", style = MaterialTheme.typography.bodyMedium)
+            Text("设备：${cur.deviceId}", style = MaterialTheme.typography.bodyMedium)
+            Text("服务器：${cur.serverBaseUrl}", style = MaterialTheme.typography.bodyMedium)
             Text(
-                "最后同步：${session.lastSyncAt ?: "从未"}",
+                "最后同步：${cur.lastSyncAt ?: "从未"}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary,
             )
-            OutlinedButton(onClick = { app.sessionStore.unbind() }) {
-                Text("退出当前账户（未同步内容保留在本机）")
+            OutlinedButton(onClick = {
+                scope.launch {
+                    exitNote = "正在撤销服务端设备凭据…"
+                    when (val r = app.bridgeClient.revokeDevice(cur)) {
+                        is com.lingxi.mobile.net.BridgeClient.Result.Ok -> {
+                            app.sessionStore.unbind()
+                            exitNote = "已退出，服务端凭据已吊销（撤销后该设备立即失效）"
+                        }
+                        is com.lingxi.mobile.net.BridgeClient.Result.Rejected -> {
+                            app.sessionStore.unbind()
+                            exitNote = "已退出；服务端撤销返回 ${r.code}（${r.message}）"
+                        }
+                        is com.lingxi.mobile.net.BridgeClient.Result.Unreachable -> {
+                            // 不静默丢掉凭据：先如实告知，由用户决定是否离线退出
+                            offlineExitArmed = true
+                            exitNote = "工作台不可达：${r.cause}。服务端凭据仍未撤销，离线退出后它将保留有效。"
+                        }
+                    }
+                }
+            }) { Text("退出当前账户（未同步内容保留在本机）") }
+
+            if (offlineExitArmed) {
+                OutlinedButton(onClick = {
+                    app.sessionStore.unbind()
+                    offlineExitArmed = false
+                    exitNote = "已离线退出（服务端凭据未撤销，联网后需在工作台手动吊销）"
+                }) { Text("仍然离线退出") }
+            }
+            if (exitNote.isNotBlank()) {
+                Text(exitNote, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)
             }
         }
 

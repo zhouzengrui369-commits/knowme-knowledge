@@ -103,6 +103,10 @@ class BridgeClient(
         get(session, "/api/mobile-capture/v2/results/orphan?capture_id=$captureId")
             .mapNullable404 { json.decodeFromString(OrphanResult.serializer(), it) }
 
+    /** 设备撤销（J22）：退出账户时同步吊销服务端凭据，撤销后服务端应立即 401。 */
+    suspend fun revokeDevice(session: SessionStore.ActiveSession): Result<String> =
+        post(session, "/api/mobile-capture/v2/devices/revoke", "{}")
+
     suspend fun ping(session: SessionStore.ActiveSession): Result<String> =
         get(session, "/api/mobile-capture/v2/capabilities").map { it }
 

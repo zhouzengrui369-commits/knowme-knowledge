@@ -20,11 +20,19 @@ class LingxiApp : Application() {
     lateinit var connectionState: ConnectionStateStore
         private set
 
+    val bridgeClient: com.lingxi.mobile.net.BridgeClient by lazy {
+        com.lingxi.mobile.net.BridgeClient()
+    }
+
+    /** 离线 ASR 引擎：provision 与录音链共用同一实例（真机联调接线 #8）。 */
+    val asrEngine: com.lingxi.mobile.asr.SherpaAsrEngine by lazy {
+        com.lingxi.mobile.asr.SherpaAsrEngine(this)
+    }
+
     /** Outbox 推进器（真机联调接线）：文字采集显式提交后由 UI 触发 tick()。 */
     val syncEngine: com.lingxi.mobile.sync.SyncEngine by lazy {
         com.lingxi.mobile.sync.SyncEngine(
-            this, database, sessionStore,
-            com.lingxi.mobile.net.BridgeClient(), connectionState,
+            this, database, sessionStore, bridgeClient, connectionState,
         )
     }
 
@@ -34,7 +42,7 @@ class LingxiApp : Application() {
         database = LingxiDatabase.build(this)
         connectionState = ConnectionStateStore(this)
         // 首启后台 provision 随包 ASR 模型；完成前 UI 如实显示 NOT_PROVISIONED
-        com.lingxi.mobile.asr.SherpaAsrEngine(this).provisionIfNeeded()
+        asrEngine.provisionIfNeeded()
 
         val nm = getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(

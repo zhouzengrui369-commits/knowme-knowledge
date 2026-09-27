@@ -23,6 +23,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.RandomAccessFile
 
@@ -81,12 +82,23 @@ class CaptureService : Service() {
 
         audioRecord = rec
         val startedAt = System.currentTimeMillis()
-        _state.value = CaptureState(Phase.RECORDING, 0, outFile.absolutePath, null)
-        startFg("录音中")
+        // 真机联调接线 #8：录音链直挂离线 ASR。模型未就绪也照常录音，如实标注仅录音。
+        val asr = (application as LingxiApp).asrEngine
+        val asrSession = runCatching {
+            if (asr.provisionState() == com.lingxi.mobile.asr.AsrEngine.ProvisionState.READY) {
+                asr.openSession()
+            } else null
+        }.getOrNull()
+        _state.value = CaptureState(
+            Phase.RECORDING, 0, outFile.absolutePath, null,
+            asrLive = asrSession != null,
+        )
+        startFg(if (asrSession != null) "录音中（离线转写已就绪）" else "录音中（模型未就绪，仅保全音频）")
 
         recordJob = scope.launch {
             val buf = ByteArray(minBuf)
             var totalBytes = 0L
+            var lastPartialPush = 0L
             val partFile = File(outFile.parentFile, outFile.name + ".part")
             try {
                 rec.startRecording()
@@ -98,41 +110,132 @@ class CaptureService : Service() {
                         if (n > 0) {
                             raf.write(buf, 0, n)
                             totalBytes += n
-                            _state.value = _state.value.copy(
-                                durationMs = System.currentTimeMillis() - startedAt,
-                            )
+                            val nowMs = System.currentTimeMillis()
+                            // 直接喂引擎；bus 保留给未来的第二消费方
+                            asrSession?.accept(buf.copyOf(n))
                             AsrStreamBus.offer(buf.copyOf(n))
+                            _state.value = if (nowMs - lastPartialPush > 600) {
+                                lastPartialPush = nowMs
+                                _state.value.copy(
+                                    durationMs = nowMs - startedAt,
+                                    transcriptPartial = asrSession?.let {
+                                        runCatching { it.current().text }.getOrDefault("")
+                                    } ?: "",
+                                )
+                            } else {
+                                _state.value.copy(durationMs = nowMs - startedAt)
+                            }
                         }
                     }
                     finalizeWav(raf, totalBytes)
                 }
                 partFile.renameTo(outFile)
+                val finalText = asrSession?.let { runCatching { it.finish().text }.getOrDefault("") } ?: ""
+                persistVoiceDraft(
+                    startedAt = startedAt,
+                    wavPath = outFile.absolutePath,
+                    transcript = finalText,
+                    interrupted = false,
+                )
                 _state.value = _state.value.copy(
                     phase = Phase.PRESERVED,
                     bytes = totalBytes,
+                    transcriptPartial = finalText,
+                    transcriptFinal = finalText,
                 )
                 stopSelf()
             } catch (t: Throwable) {
                 // 系统终止/中断：片段已分批落盘——诚实报停而非假装完成
+                val partialFinal = asrSession?.let { s ->
+                    runCatching { s.finish().text }.getOrDefault("")
+                } ?: ""
+                // 协程可能已被 cancel（如 onDestroy）：保全动作必须 NonCancellable，否则草稿静默丢失
+                withContext(kotlinx.coroutines.NonCancellable) {
+                    persistVoiceDraft(
+                        startedAt = startedAt,
+                        wavPath = partFile.takeIf { it.exists() && it.length() > 44 }?.absolutePath
+                            ?: outFile.absolutePath,
+                        transcript = partialFinal,
+                        interrupted = true,
+                    )
+                }
                 _state.value = _state.value.copy(
                     phase = Phase.INTERRUPTED,
                     bytes = totalBytes,
                     error = t.message,
+                    transcriptPartial = partialFinal,
+                    transcriptFinal = partialFinal,
                 )
                 stopForeground(STOP_FOREGROUND_DETACH)
                 stopSelf()
+            } finally {
+                runCatching { asrSession?.close() }
             }
         }
     }
 
     private fun stopCapture(completed: Boolean) {
+        // 真机修复 #9：只改 phase，不 cancel recordJob——
+        // 取消会让 finalize/persist 里的挂起函数直接抛 CancellationException，草稿静默丢失。
         _state.value = _state.value.copy(phase = if (completed) Phase.STOPPING else Phase.INTERRUPTED)
-        recordJob?.cancel()
-        audioRecord?.apply {
-            runCatching { stop() }
-            release()
+    }
+
+    /**
+     * 语音草稿落盘（R3 真机联调接线 #8）：
+     * 与文字采集同构——原件（WAV）与初始转写层分存；status=DRAFT，绝不自动上传；
+     * 转写为空是合法状态（静音段/噪声），如实记 qualityWarning，不伪造文字。
+     */
+    private suspend fun persistVoiceDraft(
+        startedAt: Long,
+        wavPath: String,
+        transcript: String,
+        interrupted: Boolean,
+    ) {
+        val app = application as LingxiApp
+        val session = app.sessionStore.active()
+        val f = File(wavPath)
+        if (!f.exists() || f.length() <= 44) {
+            // 连头都没有的声音不是有效采集，不落假数据
+            return
         }
-        audioRecord = null
+        val nowIso = java.time.OffsetDateTime.now().toString()
+        val startedIso = java.time.Instant.ofEpochMilli(startedAt)
+            .atZone(java.time.ZoneId.systemDefault()).toOffsetDateTime().toString()
+        val captureId = "cap-" + java.util.UUID.randomUUID().toString().replace("-", "").take(20)
+        val sha = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(f.readBytes()).joinToString("") { "%02x".format(it) }
+        app.database.captures().insert(
+            com.lingxi.mobile.data.db.CaptureEntity(
+                captureId = captureId,
+                accountId = session?.accountId ?: "local",
+                workspaceId = session?.workspaceId ?: "local",
+                deviceId = session?.deviceId ?: "dev-local",
+                payloadRevision = 1,
+                kind = "voice",
+                capturedAt = startedIso,
+                timezone = java.time.ZoneId.systemDefault().id,
+                originalAssetPath = wavPath,
+                assetSha256 = sha,
+                assetSize = f.length(),
+                title = if (transcript.isNotBlank()) transcript.take(24) else "语音采集（无转写）",
+                // 中断保全片段也是 DRAFT：是否交给灵犀仍由用户决定
+                status = "DRAFT",
+                noteId = null,
+                noteRevision = null,
+                error = if (interrupted) "recording_interrupted" else null,
+                qualityWarning = if (transcript.isBlank()) "transcript_empty" else null,
+            ),
+        )
+        app.database.revisions().upsert(
+            com.lingxi.mobile.data.db.RevisionEntity(
+                captureId = captureId,
+                layer = "initial_transcript",
+                body = transcript,
+                author = "device-asr",
+                createdAt = nowIso,
+                baseRevision = null,
+            ),
+        )
     }
 
     private fun markFailed(error: String) {
@@ -194,6 +297,9 @@ class CaptureService : Service() {
         val error: String? = null,
         val paused: Boolean = false,
         val bytes: Long = 0,
+        val asrLive: Boolean = false,
+        val transcriptPartial: String = "",
+        val transcriptFinal: String = "",
     )
 
     companion object {

@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecordsScreen() {
     val app = LocalContext.current.applicationContext as LingxiApp
-    val session = app.sessionStore.active()
+    val session by app.sessionStore.sessionFlow.collectAsState()
     val captureState by CaptureService.state.collectAsState()
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -87,12 +87,31 @@ fun RecordsScreen() {
             }
         }
 
+        // 实时转写（R3 真机联调接线 #8）：录音中原样回显；未接入引擎如实说明
+        if (captureState.phase == CaptureService.Phase.RECORDING) {
+            Text(
+                if (captureState.asrLive) {
+                    if (captureState.transcriptPartial.isNotBlank()) {
+                        "转写中：" + captureState.transcriptPartial
+                    } else "转写中…（还没听清）"
+                } else "离线模型未就绪：仅录音保全，转写不可用",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+        }
+        if (captureState.phase == CaptureService.Phase.PRESERVED && captureState.transcriptFinal.isNotBlank()) {
+            Text(
+                "已定稿：" + captureState.transcriptFinal.take(120),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
         // 真实采集列表（当前账户）
         if (session == null) {
             Text("未绑定账户：本地可离线保存，绑定后自动同步。", color = MaterialTheme.colorScheme.secondary)
         }
         TextCaptureSection(app)
-        CaptureList(app.sessionStore.active()?.accountId)
+        CaptureList(session?.accountId)
     }
 }
 
