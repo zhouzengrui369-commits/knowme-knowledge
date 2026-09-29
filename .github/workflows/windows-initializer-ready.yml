@@ -1,0 +1,41 @@
+name: Windows initializer verified readiness
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-initializer-ready.yml]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - name: Apply exact readiness correction to the pinned public evaluation
+        shell: python
+        run: |
+          import urllib.request,textwrap,hashlib,json
+          from pathlib import Path
+          sha='c435536cc3ebda66bde85de0a781511a2b8c9200'
+          url='https://raw.githubusercontent.com/zhouzengrui369-commits/knowme-knowledge/'+sha+'/.github/workflows/windows-initializer-15b-diagnostic.yml'
+          with urllib.request.urlopen(url,timeout=30) as response:source=response.read().decode('utf-8')
+          program=textwrap.dedent(source.split('        run: |\n',1)[1].split('      - uses:',1)[0])
+          old="if status==200 and any(x.get('id')=='lingxi-initializer' for x in body.get('data',[])):break"
+          new="if status==200 and any(x.get('id')=='lingxi-initializer' for x in body.get('data',[])):\n                        health_status,health=call('/health')\n                        if health_status==200 and health.get('status')=='ok':break\n                    time.sleep(.2)"
+          assert program.count(old)==1
+          program=program.replace(old,new)
+          compiled=compile(program,'pinned-upstream-evaluation-readiness-fix','exec')
+          context={'__name__':'__main__'}
+          try:exec(compiled,context)
+          finally:
+              path=Path('eval15/RECEIPT.json')
+              if path.exists():
+                  data=json.loads(path.read_text(encoding='utf-8'));data['readiness_fix']='Authenticated model identity AND health status ok before inference';data['evaluation_source_commit']=sha;data['evaluated_program_sha256']=hashlib.sha256(program.encode()).hexdigest();path.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: initializer-ready15-receipt
+          path: |
+            eval15/RECEIPT.json
+            eval15/*.log
+          retention-days: 7
+          if-no-files-found: warn
