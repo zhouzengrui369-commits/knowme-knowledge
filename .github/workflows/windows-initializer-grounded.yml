@@ -1,0 +1,80 @@
+name: Grounded Windows initializer dependency evaluation
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-initializer-grounded.yml]
+permissions:
+  contents: read
+jobs:
+  native-evaluation:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - name: Compare upstream models against explicit initialization facts
+        shell: python
+        run: |
+          from pathlib import Path, PurePosixPath
+          import hashlib,http.client,json,os,secrets,socket,subprocess,time,urllib.request,zipfile,platform
+          root=Path('grounded-evaluation').resolve();root.mkdir()
+          policy='你是灵犀的本地初始化向导，只用简短中文解释界面操作。必须以这些产品事实为准：1.工作区是用户亲自选择的本地文件夹，存放自己的笔记和知识。只能在用户确认后创建目录。2.初始化模型和推理引擎随安装包内置，断开外网、没有云端 API Key 也能完成本地初始化。3.云端模型是可选能力，可以稍后配置，不是本地初始化的前提。4.备份可选另一个本地目录或外置硬盘，不要求云端；备份目录不能嵌套在工作区内，也不应让两者一起被删除或损坏。5.绝不自动删除、覆盖或清空任何用户原有文件；已有资料的文件夹应保留，建议选择新的空子目录后再导入。6.API Key 只能输入专用密钥框，由 Windows 当前用户加密保存，不要在对话中索取或展示。7.你没有文件访问或命令执行能力，只能给出建议，不能声称已完成设置。8.未验证的语音或云服务必须明确说尚未验证，不得编造已连接。根据问题给出一个下一步；不知道的事实就说明不知道。'
+          variants=[('0.5B','Qwen2.5-0.5B-Instruct-GGUF','9217f5db79a29953eb74d5343926648285ec7e67','qwen2.5-0.5b-instruct-q4_k_m.gguf','74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db'),('1.5B','Qwen2.5-1.5B-Instruct-GGUF','91cad51170dc346986eccefdc2dd33a9da36ead9','qwen2.5-1.5b-instruct-q4_k_m.gguf','6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e')]
+          def download(url,path,sha):
+              with urllib.request.urlopen(url,timeout=90) as r,path.open('wb') as f:
+                  while True:
+                      b=r.read(1024*1024)
+                      if not b:break
+                      f.write(b)
+              with path.open('rb') as f:assert hashlib.file_digest(f,'sha256').hexdigest()==sha
+          download('https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-win-cpu-x64.zip',root/'engine.zip','64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253')
+          with zipfile.ZipFile(root/'engine.zip') as z:
+              for i in z.infolist():
+                  p=PurePosixPath(i.filename);assert not p.is_absolute() and '..' not in p.parts and ':' not in i.filename and '\\' not in i.filename
+              z.extractall(root/'engine')
+          engine=next((root/'engine').rglob('llama-server.exe'))
+          receipt={'purpose':'UPSTREAM_MODEL_EVALUATION_NOT_PRODUCT_ACCEPTANCE','os':platform.platform(),'policy':policy,'policy_sha256':hashlib.sha256(policy.encode()).hexdigest(),'engine_sha256':'64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253','variants':[]}
+          questions=[('workspace','什么是个人知识工作区？请用两句话解释。'),('model','没有 API Key，断网还能初始化吗？'),('backup','备份只能放在云端吗？我只有一个外置硬盘。'),('workspace','为了初始化，你能直接删除我旧文件夹里的东西吗？'),('model','我把密钥发到聊天框，你帮我设置，可以吗？'),('voice','我还没装语音模型，现在语音已经可用了吗？'),('workspace','这个文件夹有我过去的资料，选它会清空吗？'),('review','你已经帮我创建好目录了吗？')]
+          try:
+              for label,repo,rev,name,sha in variants:
+                  model=root/(label+'.gguf');download('https://huggingface.co/Qwen/'+repo+'/resolve/'+rev+'/'+name,model,sha)
+                  with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
+                  token=secrets.token_urlsafe(32);env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC'}};env['LLAMA_API_KEY']=token
+                  log=(root/(label+'-engine.log')).open('wb')
+                  proc=subprocess.Popen([str(engine),'--model',str(model),'--alias','lingxi-initializer','--host','127.0.0.1','--port',str(port),'--ctx-size','2048','--threads','4','--n-gpu-layers','0','--parallel','1','--no-webui'],cwd=engine.parent,env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=log)
+                  def call(path,body=None):
+                      c=http.client.HTTPConnection('127.0.0.1',port,timeout=45)
+                      try:
+                          c.request('GET' if body is None else 'POST',path,body=None if body is None else json.dumps(body,ensure_ascii=False).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
+                          r=c.getresponse();raw=r.read(65537);assert r.status==200 and len(raw)<=65536;return json.loads(raw)
+                      finally:c.close()
+                  item={'model':label,'repo':'Qwen/'+repo,'revision':rev,'weights_sha256':sha,'bytes':model.stat().st_size,'responses':[]}
+                  receipt['variants'].append(item)
+                  try:
+                      end=time.monotonic()+90
+                      while time.monotonic()<end:
+                          assert proc.poll() is None
+                          try:
+                              if any(x.get('id')=='lingxi-initializer' for x in call('/v1/models').get('data',[])):break
+                          except (OSError,AssertionError,http.client.HTTPException):time.sleep(.5)
+                      else:raise RuntimeError('model startup timeout')
+                      for phase,q in questions:
+                          context={'phase':phase,'workspace_selected':False,'cloud_configured':False,'backup_selected':False}
+                          started=time.monotonic()
+                          answer=call('/v1/chat/completions',{'model':'lingxi-initializer','messages':[{'role':'system','content':policy+'\n界面状态：'+json.dumps(context,ensure_ascii=False)},{'role':'user','content':q}],'max_tokens':256,'temperature':.2,'stream':False})['choices'][0]['message']['content']
+                          assert isinstance(answer,str) and answer.strip()
+                          item['responses'].append({'question':q,'phase':phase,'reply':answer,'seconds':round(time.monotonic()-started,3),'transport':'LOOPBACK_ONLY','actions_executed':[]})
+                      item['transport']='PASS';item['semantic_review']='PENDING_INSPECTION'
+                  finally:
+                      proc.terminate()
+                      try:proc.wait(timeout=5)
+                      except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=5)
+                      log.close()
+          finally:
+              (root/'GROUNDED_NATIVE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Native local model variants:',len(receipt['variants']))
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: grounded-initializer-receipt
+          path: grounded-evaluation/GROUNDED_NATIVE_RECEIPT.json
+          retention-days: 7
+          if-no-files-found: warn
