@@ -42,22 +42,24 @@ jobs:
               env['npm_config_cache']=str(root/'npm-cache')
               metadata=json.loads(subprocess.check_output([str(exe),str(npm),'view','@deepseek-ai/dsh@0.1.2-rc.1','--json'],env=env,text=True,timeout=60))
               (root/'DSH_REGISTRY_METADATA.json').write_text(json.dumps(metadata,indent=2),encoding='utf-8')
-              overrides={}
-              for name,version in metadata.get('dependencies',{}).items():
-                  if name.startswith('@deepseek-ai/') and version.startswith('^'):
-                      overrides[name]=version[1:]
+              overrides={name:version[1:] for name,version in metadata.get('dependencies',{}).items() if name.startswith('@deepseek-ai/') and version.startswith('^')}
               (dep/'package.json').write_text(json.dumps({'name':'lingxi-upstream-runtime','version':'0.0.0','private':True,'dependencies':{'@deepseek-ai/dsh':'0.1.2-rc.1'},'overrides':overrides},indent=2),encoding='utf-8')
               run=subprocess.run([str(exe),str(npm),'install','--ignore-scripts','--no-audit','--no-fund'],cwd=dep,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=360)
               (root/'NPM_INSTALL.log').write_text(run.stdout,encoding='utf-8');run.check_returncode()
               package=dep/'node_modules/@deepseek-ai/dsh/package.json'
               meta=json.loads(package.read_text(encoding='utf-8'));receipt['dsh']={'name':meta['name'],'version':meta['version'],'package_json_sha256':hashlib.sha256(package.read_bytes()).hexdigest(),'scripts_ignored':True,'lock_sha256':hashlib.sha256((dep/'package-lock.json').read_bytes()).hexdigest()}
+              assert receipt['dsh']['package_json_sha256']=='606a68d02cf561bc7d6ce9bdf86ae2b06761e727b35959a363e856ea20f64805'
               entry=dep/'node_modules/@deepseek-ai/dsh/lib/bin.js'
-              for args in [['--version'],['--help']]:
-                  r=subprocess.run([str(exe),str(entry),*args],cwd=dep,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=45)
-                  receipt.setdefault('cli_smoke',[]).append({'args':args,'returncode':r.returncode,'output':r.stdout[-12000:]})
+              for args in [['--version'],['--help'],['--profile','acp','--dump-default-config']]:
+                  r=subprocess.run([str(exe),str(entry),*args],cwd=dep,env=env,text=True,encoding='utf-8',errors='replace',stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=90)
+                  receipt.setdefault('cli_smoke',[]).append({'args':args,'returncode':r.returncode,'output':r.stdout[-30000:]})
+              with zipfile.ZipFile(root/'harness-windows.zip','w',zipfile.ZIP_DEFLATED) as z:
+                  for p in dep.rglob('*'):
+                      if p.is_file():z.write(p,p.relative_to(dep).as_posix())
               wheels=root/'wheels';wheels.mkdir()
+              subprocess.run([sys.executable,'-m','pip','wheel','--no-deps','--wheel-dir',str(wheels),'proxy_tools==0.1.0'],check=True,timeout=90)
               req=['fastapi==0.115.12','uvicorn==0.34.3','python-multipart==0.0.20','httpx==0.28.1','PyYAML==6.0.2','tzdata==2025.2','pywebview==6.2.1','openpyxl==3.1.5','python-docx==1.2.0','python-pptx==1.0.2','pdfplumber==0.11.7','PyMuPDF==1.26.1','numpy==2.2.6']
-              subprocess.run([sys.executable,'-m','pip','download','--only-binary=:all:','--platform','win_amd64','--python-version','313','--implementation','cp','--abi','cp313','--dest',str(wheels),*req],check=True,timeout=300)
+              subprocess.run([sys.executable,'-m','pip','download','--find-links',str(wheels),'--only-binary=:all:','--platform','win_amd64','--python-version','313','--implementation','cp','--abi','cp313','--dest',str(wheels),*req],check=True,timeout=300)
               receipt['python_wheels']=[{'name':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(wheels.glob('*.whl'))]
               get('https://www.python.org/ftp/python/3.13.5/python-3.13.5-embed-amd64.zip',root/'python-3.13.5-embed-amd64.zip')
               get('https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-win-cpu-x64.zip',root/'llama-windows.zip','64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253')
@@ -65,24 +67,22 @@ jobs:
               get('https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/'+revision+'/qwen2.5-1.5b-instruct-q4_k_m.gguf',root/'qwen2.5-1.5b-instruct-q4_k_m.gguf','6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e')
               get('https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/'+revision+'/LICENSE',root/'QWEN_LICENSE')
               get('https://raw.githubusercontent.com/ggml-org/llama.cpp/368560a1e3b9a3bc83af741b0b2bc9e46fb420d2/LICENSE',root/'LLAMA_LICENSE')
-              with zipfile.ZipFile(root/'harness-windows.zip','w',zipfile.ZIP_DEFLATED) as z:
-                  for p in dep.rglob('*'):
-                      if p.is_file():z.write(p,p.relative_to(dep).as_posix())
               receipt['completion']='COLLECTED_NOT_PRODUCT_APPROVAL'
           finally:
               (root/'UPSTREAM_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: upstream-kit-r3-receipt
+          name: upstream-kit-r3b-receipt
           path: |
             upstream-windows/UPSTREAM_RECEIPT.json
             upstream-windows/DSH_REGISTRY_METADATA.json
             upstream-windows/NPM_INSTALL.log
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
-          name: upstream-kit-r3-windows
+          name: upstream-kit-r3b-windows
           compression-level: 0
           path: |
             upstream-windows/*.zip
@@ -91,25 +91,4 @@ jobs:
             upstream-windows/*SHASUMS256.txt
             upstream-windows/wheels/*.whl
             upstream-windows/UPSTREAM_RECEIPT.json
-          retention-days: 3
-  upstream-linux-tools:
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    steps:
-      - name: Download public NSIS compiler and Linux Node tools
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p upstream-linux/debs
-          cd upstream-linux/debs
-          apt-get download nsis nsis-common
-          cd ..
-          curl -fsSLO https://nodejs.org/dist/v22.19.0/node-v22.19.0-linux-x64.tar.xz
-          curl -fsSLo NODE_SHASUMS256.txt https://nodejs.org/dist/v22.19.0/SHASUMS256.txt
-          grep ' node-v22.19.0-linux-x64.tar.xz$' NODE_SHASUMS256.txt | sha256sum -c -
-          sha256sum debs/*.deb > DEB_SHASUMS256.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: upstream-kit-r3-linux-tools
-          path: upstream-linux/
           retention-days: 3
