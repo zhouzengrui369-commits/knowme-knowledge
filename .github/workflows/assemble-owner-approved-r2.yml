@@ -1,0 +1,70 @@
+name: Assemble exact Owner-approved R5 portal R2
+on:
+  push:
+    branches: [assembly/owner-approved-r5-portal-r2-20260929]
+    paths:
+      - .github/workflows/assemble-owner-approved-r2.yml
+permissions:
+  contents: write
+  pages: read
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Verify approved bytes and create unattached Git blob
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        shell: python
+        run: |
+          import base64, hashlib, json, os, urllib.request, urllib.error, zlib
+          repo = os.environ['REPO']
+          if repo != 'zhouzengrui369-commits/knowme-knowledge':
+              raise SystemExit('Unexpected repository')
+          base_sha = 'bb7af4e3a19d19fd231ca7dc08468a11643e90d5'
+          raw = 'https://raw.githubusercontent.com/' + repo + '/'
+          def read_public(path):
+              with urllib.request.urlopen(raw + path, timeout=40) as response:
+                  return response.read()
+          base = read_public(base_sha + '/index.html')
+          if hashlib.sha256(base).hexdigest() != 'fae68a63a2ba3e3a32d0b63c1591e1bfe91d5276ad26510349468eb9c087691e':
+              raise SystemExit('R5 baseline fingerprint mismatch')
+          packed = b''.join(read_public(os.environ['SOURCE_COMMIT'] + '/.release-assembly/r2-delta-' + str(i) + '.b64').strip() for i in range(1,5))
+          delta = zlib.decompress(base64.b64decode(packed, validate=True))
+          if len(delta) != 37222 or hashlib.sha256(delta).hexdigest() != '4f15cf32611ba89d883e028026e0ab1a3446371c3cb86d3e63cdbadd847d3410':
+              raise SystemExit('Approved increment fingerprint mismatch')
+          closing = b'</body></html>'
+          if base.count(closing) != 1:
+              raise SystemExit('Ambiguous R5 insertion point')
+          result = base.replace(closing, delta + closing)
+          digest = hashlib.sha256(result).hexdigest()
+          expected = '89925eb5a991d7ed83a462badbd031b56347905fd05a0ee71b5b7bd8fed2fc4b'
+          if len(result) != 3070635 or digest != expected or result.replace(delta,b'') != base:
+              raise SystemExit('Approved R2 or original R5 preservation mismatch')
+          blob_sha = hashlib.sha1(b'blob ' + str(len(result)).encode() + b'\0' + result).hexdigest()
+          if blob_sha != '813a2e7c3492e605238d64476307556770511cfe':
+              raise SystemExit('Approved Git blob mismatch')
+          headers = {'Authorization':'Bearer ' + os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'}
+          api = 'https://api.github.com/repos/' + repo
+          body = json.dumps({'encoding':'base64','content':base64.b64encode(result).decode()}).encode()
+          request = urllib.request.Request(api + '/git/blobs', data=body, headers=headers, method='POST')
+          with urllib.request.urlopen(request, timeout=60) as response:
+              created = json.load(response)
+          if created.get('sha') != blob_sha:
+              raise SystemExit('GitHub blob did not match approved bytes')
+          print('APPROVED_R2_BLOB=' + blob_sha)
+          print('APPROVED_R2_SHA256=' + digest)
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as summary:
+              summary.write('## Exact Owner-approved R2 assembled\n\nBlob: `' + blob_sha + '`\n\nSHA256: `' + digest + '`\n\nOriginal R5 byte preservation: PASS. No branch, main, Pages source or deployment was changed by this assembly step.\n')
+          try:
+              request = urllib.request.Request(api + '/pages',headers=headers)
+              with urllib.request.urlopen(request,timeout=20) as response:
+                  pages = json.load(response)
+              info = {k:pages.get(k) for k in ['html_url','status','build_type','source','cname']}
+              print('PAGES_CONFIGURATION=' + json.dumps(info))
+              with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as summary:
+                  summary.write('\nPages read-only configuration:\n```json\n' + json.dumps(info,indent=2) + '\n```\n')
+          except urllib.error.HTTPError as exc:
+              print('Pages read-only configuration unavailable: HTTP ' + str(exc.code))
