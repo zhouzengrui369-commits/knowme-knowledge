@@ -1,0 +1,121 @@
+name: Verify live Owner-approved R5 portal R2
+on:
+  push:
+    branches: [assembly/owner-approved-r5-portal-r2-20260929]
+    paths: [.github/workflows/verify-live-approved-r2.yml]
+permissions:
+  contents: read
+jobs:
+  public-browser-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Install isolated browser
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Verify public bytes and operate portal journeys
+        shell: python
+        run: |
+          import hashlib, json, time, urllib.request
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          out = Path('verification-r2'); out.mkdir()
+          url = 'https://zhouzengrui369-commits.github.io/knowme-knowledge/'
+          expected = '89925eb5a991d7ed83a462badbd031b56347905fd05a0ee71b5b7bd8fed2fc4b'
+          report = {'deployment_commit':'9651e57d0ba50b652cde75e0370389c92d0077cb','url':url,'checks':[], 'screenshots':[]}
+          live = url + '?verified_release=9651e57d0ba50b652cde75e0370389c92d0077cb'
+          for attempt in range(10):
+              try:
+                  request = urllib.request.Request(live,headers={'Cache-Control':'no-cache'})
+                  with urllib.request.urlopen(request,timeout=20) as response:
+                      data = response.read(); report['http_status'] = response.status
+                  digest = hashlib.sha256(data).hexdigest()
+                  if digest == expected:
+                      break
+              except Exception as exc:
+                  report['last_fetch_error'] = str(exc)
+              time.sleep(6)
+          else:
+              (out/'report.json').write_text(json.dumps(report,indent=2))
+              raise SystemExit('Public content did not match approved R2 before retry limit')
+          report['served_sha256']=digest; report['served_bytes']=len(data)
+          report['checks'].append('PUBLIC_BYTES_EQUAL_APPROVED_R2')
+          def save_report():
+              (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              try:
+                  for label,w,h in [('desktop',1440,900),('mobile',390,844)]:
+                      context = browser.new_context(viewport={'width':w,'height':h},device_scale_factor=1,locale='zh-CN')
+                      page = context.new_page(); page.set_default_timeout(12000)
+                      errors=[]; page.on('pageerror',lambda e: errors.append(str(e)))
+                      page.goto(live,wait_until='load',timeout=60000)
+                      page.wait_for_function("window.LingxiPortalPrototype?.version === 'R5-INCREMENT-R2'")
+                      page.evaluate('document.fonts.ready'); page.wait_for_timeout(900)
+                      def check(name,yes):
+                          if not yes: raise AssertionError(label + ': ' + name)
+                          report['checks'].append(label + ':' + name)
+                      def shot(name):
+                          filename = name + '-' + label + '.png'
+                          page.screenshot(path=str(out/filename),animations='disabled')
+                          report['screenshots'].append(filename)
+                      def follow(key):
+                          page.locator('a[href="#/portal/' + key + '"]:visible').first.click()
+                          page.wait_for_function('(k)=>window.LingxiPortalPrototype.route()===k',arg=key)
+                          page.wait_for_timeout(200)
+                          check('ROUTE_' + key,page.locator('#lp-main').is_visible())
+                          check('WIDTH_' + key,page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'))
+                      check('R5_HOME',page.locator('#hero-title').inner_text().replace('\n','').find('变成你的能力')>=0)
+                      check('R5_FIVE_SCENES',page.locator('.km-tab').count()==5)
+                      shot('home')
+                      if label=='mobile':
+                          page.locator('.menu-toggle').click()
+                          check('MOBILE_MENU_OPEN',page.locator('#navLinks').is_visible())
+                          shot('menu')
+                          page.locator('.menu-toggle').click()
+                      page.locator('.hero-actions a[href="#/portal/start"]').click()
+                      page.wait_for_function("window.LingxiPortalPrototype.route()==='start'")
+                      check('HOME_TO_START',page.locator('#lp-main').is_visible()); shot('start')
+                      follow('register'); check('REGISTER_PASSWORD_DISABLED',page.locator('#lp-password').is_disabled()); shot('register')
+                      page.locator('[data-lp-form] button[type=submit]').click()
+                      check('REGISTER_NO_FAKE_SUCCESS','没有创建账号' in page.locator('[data-lp-feedback]').inner_text())
+                      follow('login'); check('LOGIN_PASSWORD_DISABLED',page.locator('#lp-password').is_disabled()); shot('login')
+                      page.locator('[data-lp-form] button[type=submit]').click()
+                      check('LOGIN_NO_FAKE_SESSION','没有建立登录会话' in page.locator('[data-lp-feedback]').inner_text())
+                      follow('download'); check('NO_FAKE_INSTALLER',page.locator('button:disabled').count()>0); shot('download')
+                      page.locator('[data-lp-action=release]').click()
+                      check('DOWNLOAD_STATUS','安装包尚未发布' in page.locator('[data-lp-feedback]').inner_text())
+                      follow('account'); check('SIGNED_OUT_ACCOUNT','尚未登录' in page.locator('#lp-main').inner_text()); shot('account')
+                      page.locator('[data-lp-account=devices]').click()
+                      check('ACCOUNT_TABS',page.locator('#lp-ap-devices').is_visible())
+                      follow('owner'); check('OWNER_PREVIEW_TRUTHFUL','没有真实权限验证或用户数据' in page.locator('#lp-main').inner_text())
+                      check('NO_FAKE_OWNER_METRICS',all(t.strip()=='—' for t in page.locator('.lp-metric-value:visible').all_text_contents())); shot('owner')
+                      for key in ['users','access','usage','feedback','overview']:
+                          page.locator('[data-lp-owner='+key+']').click()
+                          check('OWNER_TAB_'+key,page.locator('#lp-op-'+key).is_visible())
+                      page.locator('#lp-main a[href="#top"]').click()
+                      page.wait_for_function("!document.querySelector('#main').hidden")
+                      check('RETURN_TO_R5',page.locator('#main').is_visible())
+                      if label=='desktop':
+                          page.evaluate('window.KnowMeShowcase?.pause(true)')
+                          page.locator('#product').scroll_into_view_if_needed()
+                          for i in range(5):
+                              page.locator('.km-tab').nth(i).click(); page.wait_for_timeout(800)
+                              check('R5_SCENE_'+str(i+1),page.locator('.km-tab').nth(i).get_attribute('aria-selected')=='true')
+                          shot('r5-demo')
+                      report[label+'_page_errors']=errors
+                      context.close(); save_report()
+              finally:
+                  browser.close(); save_report()
+          report['result']='PASS_PUBLIC_BYTES_AND_BROWSER_JOURNEYS'; save_report()
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+      - name: Save public verification screenshots and receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lingxi-r5-portal-r2-live-verification
+          path: verification-r2/
+          retention-days: 90
+          if-no-files-found: warn
