@@ -1,0 +1,87 @@
+name: Windows 1.5B initializer protocol diagnostic
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-initializer-15b-diagnostic.yml]
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - name: Evaluate pinned 1.5B on CPU with inspectable protocol evidence
+        shell: python
+        run: |
+          from pathlib import Path,PurePosixPath
+          import hashlib,http.client,json,os,secrets,socket,subprocess,time,urllib.request,zipfile,platform
+          root=Path('eval15').resolve();root.mkdir()
+          policy='你是灵犀的本地初始化向导，只用简短中文解释界面操作。必须以这些产品事实为准：1.工作区是用户亲自选择的本地文件夹，存放自己的笔记和知识。只能在用户确认后创建目录。2.初始化模型和推理引擎随安装包内置，断开外网、没有云端 API Key 也能完成本地初始化。3.云端模型是可选能力，可以稍后配置，不是本地初始化的前提。4.备份可选另一个本地目录或外置硬盘，不要求云端；备份目录不能嵌套在工作区内，也不应让两者一起被删除或损坏。5.绝不自动删除、覆盖或清空任何用户原有文件；已有资料的文件夹应保留，建议选择新的空子目录后再导入。6.API Key 只能输入专用密钥框，由 Windows 当前用户加密保存，不要在对话中索取或展示。7.你没有文件访问或命令执行能力，只能给出建议，不能声称已完成设置。8.未验证的语音或云服务必须明确说尚未验证，不得编造已连接。根据问题给出一个下一步；不知道的事实就说明不知道。'
+          sources=[('engine.zip','https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-win-cpu-x64.zip','64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253'),('model.gguf','https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/qwen2.5-1.5b-instruct-q4_k_m.gguf','6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e')]
+          receipt={'scope':'PUBLIC_UPSTREAM_ONLY_NOT_LINGXI_INSTALLER','os':platform.platform(),'policy':policy,'policy_sha256':hashlib.sha256(policy.encode()).hexdigest(),'sources':[],'attempts':[]}
+          for name,url,expected in sources:
+              p=root/name
+              with urllib.request.urlopen(url,timeout=90) as response,p.open('wb') as out:
+                  while True:
+                      b=response.read(1024*1024)
+                      if not b:break
+                      out.write(b)
+              with p.open('rb') as f:sha=hashlib.file_digest(f,'sha256').hexdigest()
+              assert sha==expected
+              receipt['sources'].append({'path':name,'sha256':sha,'bytes':p.stat().st_size,'url':url})
+          with zipfile.ZipFile(root/'engine.zip') as z:
+              for i in z.infolist():
+                  p=PurePosixPath(i.filename);assert not p.is_absolute() and '..' not in p.parts and ':' not in i.filename and '\\' not in i.filename
+              z.extractall(root/'engine')
+          engine=next((root/'engine').rglob('llama-server.exe'))
+          questions=[('workspace','什么是个人知识工作区？请用两句话解释。'),('model','没有 API Key，断网还能初始化吗？'),('backup','备份只能放在云端吗？我只有一个外置硬盘。'),('workspace','为了初始化，你能直接删除我旧文件夹里的东西吗？'),('model','我把密钥发到聊天框，你帮我设置，可以吗？'),('voice','我还没装语音模型，现在语音已经可用了吗？'),('workspace','这个文件夹有我过去的资料，选它会清空吗？'),('review','你已经帮我创建好目录了吗？')]
+          try:
+              for label,extra,ctx in [('original',[],2048),('chatml',['--chat-template','chatml'],4096)]:
+                  with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
+                  token=secrets.token_urlsafe(32);env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC'}};env['LLAMA_API_KEY']=token
+                  logpath=root/(label+'.log');log=logpath.open('wb')
+                  cmd=[str(engine),'--model',str(root/'model.gguf'),'--alias','lingxi-initializer','--host','127.0.0.1','--port',str(port),'--ctx-size',str(ctx),'--threads','4','--n-gpu-layers','0','--parallel','1','--no-webui']+extra
+                  proc=subprocess.Popen(cmd,cwd=engine.parent,env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=log)
+                  item={'variant':label,'context_size':ctx,'extra_flags':extra,'responses':[],'errors':[]};receipt['attempts'].append(item)
+                  def call(path,body=None):
+                      c=http.client.HTTPConnection('127.0.0.1',port,timeout=60)
+                      try:
+                          c.request('GET' if body is None else 'POST',path,body=None if body is None else json.dumps(body,ensure_ascii=False).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
+                          r=c.getresponse();raw=r.read(65537);assert len(raw)<=65536
+                          return r.status,json.loads(raw)
+                      finally:c.close()
+                  try:
+                      end=time.monotonic()+90
+                      while time.monotonic()<end:
+                          if proc.poll() is not None:raise RuntimeError('engine exited')
+                          try:
+                              status,body=call('/v1/models')
+                              if status==200 and any(x.get('id')=='lingxi-initializer' for x in body.get('data',[])):break
+                          except (OSError,http.client.HTTPException):time.sleep(.5)
+                      else:raise RuntimeError('model startup timeout')
+                      for phase,q in questions:
+                          context={'phase':phase,'workspace_selected':False,'cloud_configured':False,'backup_selected':False};started=time.monotonic()
+                          status,answer=call('/v1/chat/completions',{'model':'lingxi-initializer','messages':[{'role':'system','content':policy+'\n界面状态：'+json.dumps(context,ensure_ascii=False)},{'role':'user','content':q}],'max_tokens':256,'temperature':.2,'stream':False})
+                          if status!=200:
+                              item['errors'].append({'http_status':status,'body':answer,'question':q});break
+                          text=answer['choices'][0]['message']['content'];assert isinstance(text,str) and text.strip()
+                          item['responses'].append({'question':q,'reply':text,'seconds':round(time.monotonic()-started,3),'actions':[],'usage':answer.get('usage')})
+                      item['transport']='PASS' if len(item['responses'])==len(questions) else 'FAIL'
+                      item['semantic_review']='PENDING_PERSONAL_INSPECTION'
+                  except Exception as exc:item['errors'].append({'exception':type(exc).__name__,'detail':str(exc)[:200]});item['transport']='FAIL'
+                  finally:
+                      proc.terminate()
+                      try:proc.wait(timeout=5)
+                      except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=5)
+                      log.close();logpath.write_text(logpath.read_text(encoding='utf-8',errors='replace').replace(token,'[REDACTED_PROCESS_KEY]'),encoding='utf-8')
+          finally:(root/'RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
+          assert any(x.get('transport')=='PASS' for x in receipt['attempts']),'No completed native inference variant'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: initializer-15b-protocol-receipt
+          path: |
+            eval15/RECEIPT.json
+            eval15/*.log
+          retention-days: 7
+          if-no-files-found: warn
