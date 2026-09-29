@@ -1,0 +1,69 @@
+name: Public upstream kit bounded transport
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/upstream-kit-transport-r3.yml]
+permissions:
+  actions: read
+  contents: read
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify original public artifact and split model bytes
+        shell: python
+        env:
+          ARTIFACT_TOKEN: ${{ github.token }}
+        run: |
+          import hashlib,http.client,json,os,urllib.request,zipfile
+          from pathlib import Path,PurePosixPath
+          conn=http.client.HTTPSConnection('api.github.com',timeout=60)
+          conn.request('GET','/repos/zhouzengrui369-commits/knowme-knowledge/actions/artifacts/11068638005/zip',headers={'Authorization':'Bearer '+os.environ['ARTIFACT_TOKEN'],'User-Agent':'upstream-kit-transport','Accept':'application/vnd.github+json'})
+          res=conn.getresponse();assert res.status==302;location=res.getheader('Location');conn.close()
+          out=Path('transport');out.mkdir();archive=Path('upstream.zip')
+          with urllib.request.urlopen(location,timeout=120) as response,archive.open('wb') as f:
+              while b:=response.read(1024*1024):f.write(b)
+          with archive.open('rb') as f:assert hashlib.file_digest(f,'sha256').hexdigest()=='9d8b83efed9d4f440f9f55de7e4c40998c043231e33e4219ddecb23ff77f1c0e'
+          parts=[]
+          with zipfile.ZipFile(archive) as z,zipfile.ZipFile(out/'public-runtime-no-model.zip','w',zipfile.ZIP_STORED) as other:
+              for i in z.infolist():
+                  path=PurePosixPath(i.filename);assert not path.is_absolute() and '..' not in path.parts
+                  if i.filename.endswith('.gguf'):
+                      total=hashlib.sha256()
+                      with z.open(i) as f:
+                          n=0
+                          while b:=f.read(400*1024*1024):
+                              p=out/f'model.gguf.part{n}';p.write_bytes(b);total.update(b)
+                              parts.append({'name':p.name,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()});n+=1
+                      assert total.hexdigest()=='6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e'
+                  else:
+                      with z.open(i) as src,other.open(i.filename,'w') as dst:
+                          while b:=src.read(1024*1024):dst.write(b)
+          (out/'TRANSPORT_MANIFEST.json').write_text(json.dumps({'scope':'PUBLIC_UPSTREAM_ONLY','parent_artifact':11068638005,'parts':parts},indent=2))
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-runtime-no-model-r3
+          path: |
+            transport/public-runtime-no-model.zip
+            transport/TRANSPORT_MANIFEST.json
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-qwen15-r3-part0
+          path: transport/model.gguf.part0
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-qwen15-r3-part1
+          path: transport/model.gguf.part1
+          compression-level: 0
+          retention-days: 3
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-qwen15-r3-part2
+          path: transport/model.gguf.part2
+          compression-level: 0
+          retention-days: 3
