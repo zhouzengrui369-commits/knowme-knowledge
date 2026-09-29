@@ -1,0 +1,104 @@
+name: Windows initializer public dependency smoke
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-initializer-dependencies.yml]
+permissions:
+  contents: read
+jobs:
+  upstream-only:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download pinned upstream resources and run native local inference
+        shell: python
+        run: |
+          from pathlib import Path, PurePosixPath
+          import hashlib,http.client,json,os,secrets,socket,subprocess,time,urllib.request,zipfile,platform
+          root=Path('upstream-dependencies').resolve();root.mkdir()
+          model_revision='9217f5db79a29953eb74d5343926648285ec7e67'
+          model_name='qwen2.5-0.5b-instruct-q4_k_m.gguf'
+          engine_commit='368560a1e3b9a3bc83af741b0b2bc9e46fb420d2'
+          sources=[
+            ('engine.zip','https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-win-cpu-x64.zip','64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253'),
+            ('model.gguf','https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/'+model_revision+'/'+model_name,'74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db'),
+            ('LICENSE-llama.txt','https://raw.githubusercontent.com/ggml-org/llama.cpp/'+engine_commit+'/LICENSE',None),
+            ('LICENSE-Qwen.txt','https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/'+model_revision+'/LICENSE',None)
+          ]
+          receipt={'purpose':'PUBLIC_UPSTREAM_DEPENDENCIES_ONLY_NOT_LINGXI_INSTALLER','os':platform.platform(),'private_repository_read':False,'sources':[],'native_inference':[]}
+          for name,url,expected in sources:
+              dest=root/name
+              with urllib.request.urlopen(url,timeout=90) as response,dest.open('wb') as handle:
+                  while True:
+                      chunk=response.read(1024*1024)
+                      if not chunk:break
+                      handle.write(chunk)
+              with dest.open('rb') as handle:sha=hashlib.file_digest(handle,'sha256').hexdigest()
+              if expected:assert sha==expected,(name,'hash mismatch')
+              receipt['sources'].append({'path':name,'url':url,'sha256':sha,'bytes':dest.stat().st_size})
+          assert (root/'model.gguf').open('rb').read(4)==b'GGUF'
+          with zipfile.ZipFile(root/'engine.zip') as archive:
+              for info in archive.infolist():
+                  p=PurePosixPath(info.filename)
+                  assert not p.is_absolute() and '..' not in p.parts and ':' not in info.filename and '\\' not in info.filename
+                  assert (info.external_attr>>16)&0o170000 != 0o120000
+              archive.extractall(root/'engine')
+          engines=list((root/'engine').rglob('llama-server.exe'));assert len(engines)==1
+          engine=engines[0]
+          with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
+          token=secrets.token_urlsafe(32)
+          env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC'}}
+          env['LLAMA_API_KEY']=token
+          cmd=[str(engine),'--model',str(root/'model.gguf'),'--alias','lingxi-initializer','--host','127.0.0.1','--port',str(port),'--ctx-size','2048','--threads','4','--n-gpu-layers','0','--parallel','1','--no-webui']
+          log=(root/'native-engine.log').open('wb')
+          proc=subprocess.Popen(cmd,cwd=engine.parent,env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=log)
+          def call(path,body=None):
+              c=http.client.HTTPConnection('127.0.0.1',port,timeout=45)
+              try:
+                  c.request('GET' if body is None else 'POST',path,body=None if body is None else json.dumps(body,ensure_ascii=False).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
+                  r=c.getresponse();raw=r.read(65537);assert r.status==200 and len(raw)<=65536
+                  return json.loads(raw)
+              finally:c.close()
+          try:
+              end=time.monotonic()+90
+              while time.monotonic()<end:
+                  assert proc.poll() is None,'native engine exited'
+                  try:
+                      data=call('/v1/models')
+                      if any(x.get('id')=='lingxi-initializer' for x in data.get('data',[])):break
+                  except (OSError,AssertionError,http.client.HTTPException):time.sleep(.5)
+              else:raise RuntimeError('local model startup timeout')
+              for question in ['什么是个人知识工作区？请用两句话解释。','我还没有云端 API Key，可以先做本地初始化吗？','备份目录为什么不应放在工作区里面？','初始化时可以自动删除用户原来的文件吗？']:
+                  started=time.monotonic()
+                  result=call('/v1/chat/completions',{'model':'lingxi-initializer','messages':[{'role':'system','content':'你是软件的本地初始化向导，用简短中文解释工作区和备份。用户还没有云端密钥。你不能读文件或执行操作，不索取密钥。'},{'role':'user','content':question}],'max_tokens':192,'temperature':.2,'stream':False})
+                  text=result['choices'][0]['message']['content'];assert isinstance(text,str) and text.strip()
+                  receipt['native_inference'].append({'question':question,'reply':text,'seconds':round(time.monotonic()-started,3),'transport':'LOOPBACK_ONLY','executed_actions':[]})
+              receipt['inference_transport']='PASS';receipt['semantic_review']='PENDING_HUMAN_INSPECTION';receipt['lingxi_full_runtime']='NOT_TESTED'
+          finally:
+              proc.terminate()
+              try:proc.wait(timeout=5)
+              except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=5)
+              log.close()
+              (root/'NATIVE_DEPENDENCY_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Native upstream inference responses:',len(receipt['native_inference']))
+          print('No private product source read; no site deployment; not an application installer.')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: windows-initializer-dependency-receipt
+          path: |
+            upstream-dependencies/NATIVE_DEPENDENCY_RECEIPT.json
+            upstream-dependencies/native-engine.log
+          retention-days: 7
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: success()
+        with:
+          name: windows-initializer-upstream-bundle
+          path: |
+            upstream-dependencies/engine/
+            upstream-dependencies/model.gguf
+            upstream-dependencies/LICENSE-*.txt
+            upstream-dependencies/NATIVE_DEPENDENCY_RECEIPT.json
+          retention-days: 3
+          if-no-files-found: error
