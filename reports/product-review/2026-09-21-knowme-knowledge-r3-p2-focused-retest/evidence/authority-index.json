@@ -1,0 +1,29 @@
+{
+  "reviewer_authority": {
+    "repo": "zhouzengrui369-commits/product-experience-reviewer-skill",
+    "commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
+    "tree": "eaa62967737b17cc8ad07e46e297e0a52b2c3092",
+    "core_sha256": "041a475d8cbc3404ed1e6df66c52377aecfcd631721d18a0ec9de59783f2b676"
+  },
+  "central_parent_commit": "118594ff0b853732a2da22270d9499573ff2201e",
+  "central_parent_tree": "84b57f804076fa34bf83218496575d07cfc457df",
+  "baseline_commit": "978ed0608bda8e278c348ad2987f6a25fa3c3c2f",
+  "contract_commit": "168af57a2e7bd74385cecd97da1717982ac12ab1",
+  "candidate_commit": "3317469085d8dc10a88818369ffcc2922904079c",
+  "archived_local_document_sha256": {
+    "AGENTS.md": "61b0f4e62b17e03590c137f02e33026f8569dfdc35790875bcca6a53475b64e9",
+    "governance-lock.json": "95edc90665fbf3755ad092d7e204a4e776858b49b7380c94847f9c9a7bb42efd",
+    "core-parent.md": "255b6ce25d76b70dd5c22063133b774d1607a32a308387276aee5b0aa987aca0",
+    "state-machine.json": "d2f334bcce6d265d02adfbda05b2aa725dc82ac22760d7938024f44cc1d8cfc9",
+    "local-governance-skill.md": "5cd36ef049b06d4863d13f0c1e58d81bd04e57bf6890c4b29ac00dd83aecd7a3",
+    "profile.yaml": "762e771cad7f6a7ce02fb7b77dd3b369856ceaebb4cd2d507dd0783d9cae125c",
+    "ecosystem-policy.md": "01e442d6454dc9986e7101966c98f529e6fbbd49ec226faeedb511bd9f625733",
+    "baseline-v2.md": "2376a3a5e568b26f808298df918813cf801477a0a010a17c7a731a0d5b01227e",
+    "PROJECT_STATUS.md": "8df3f3ce2c7817df47df7437bb890bc8360e1706dec42ff7fe482712f16895ae",
+    "contract-r3.md": "1bc6a149cd90a226b4138a711bb8893b5ff27cf4146cd116667df0b21905bf49",
+    "correction-handoff.md": "a56b24c6159300842e58ad1cb0671022c3733eb575026b4ece726c003318c9fe",
+    "candidate-manifest.md": "75f97518ba32b63ea67a957d43c6601a0dd9cd6632864c8345d1a173f962a1c5",
+    "admission.md": "c25285d8d577dfe6755413ce6d9cbfbd39ac1c9eeb32bbe65e18bdcdfef64b5c",
+    "referral.md": "4f92975531e4ee284d96dc1e2dc7ff2c5c67a359de8a546a49cb02c9cf0ceac8"
+  }
+}

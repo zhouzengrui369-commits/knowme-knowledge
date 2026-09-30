@@ -1,0 +1,62 @@
+{
+  "verified_at": "2026-09-21T13:25:36.868038+08:00",
+  "candidate_sha": "3317469085d8dc10a88818369ffcc2922904079c",
+  "candidate_tree": "c688e8d6da0fe5fdaa12f2412158eb0c6d86ee15",
+  "candidate_parent": "6d3a4c1ec4bbaf38aa1b11183fe6adaf1807da94",
+  "pr": {
+    "url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/pull/27",
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "head": "3317469085d8dc10a88818369ffcc2922904079c",
+    "branch": "engineering/goal-kk-02-r3-px02-p2-correction-r1"
+  },
+  "branch_head": "3317469085d8dc10a88818369ffcc2922904079c",
+  "worktree": {
+    "head": "3317469085d8dc10a88818369ffcc2922904079c",
+    "tree": "c688e8d6da0fe5fdaa12f2412158eb0c6d86ee15",
+    "status": ""
+  },
+  "artifact_checks": {
+    "default/entry-default-unsigned.hap": {
+      "sha256": "05111cd04294f937839345e09b1af08aadefdc8b6cac1147f7eb4202622ca7f8",
+      "bytes": 79018039
+    },
+    "ohosTest/entry-ohosTest-unsigned.hap": {
+      "sha256": "8a3e260725b76081a01d50938f7ac31a70945fecda8d7c1a03281106536b9c63",
+      "bytes": 79871745
+    }
+  },
+  "runtime_params": {
+    "const.ohos.fullname": "OpenHarmony-6.1.1.125",
+    "const.ohos.apiversion": "24",
+    "const.product.software.version": "emulator 6.1.0.126(SP1DEVC00E120R4P11)",
+    "const.product.cpu.abilist": "arm64-v8a"
+  },
+  "admission": {
+    "url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/13#issuecomment-5755322906",
+    "updated_at": "2026-09-21T04:18:22Z"
+  },
+  "referral": {
+    "url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/issues/13#issuecomment-5755454617",
+    "updated_at": "2026-09-21T04:35:12Z"
+  },
+  "installation_evidence": "environment-commands.jsonl; matching pair installed with hdc install -r before capture 01; both reported successfully",
+  "source_or_tests_inspected": false,
+  "product_code_or_build_changed": false,
+  "technical_tests_run": false,
+  "real_device": false,
+  "initial_knowledge_count": 2,
+  "final_knowledge_count": 4,
+  "initial_microphone": "granted",
+  "final_microphone": "granted",
+  "initial_voice_profile": "not enrolled",
+  "final_voice_profile": "not enrolled",
+  "WLAN": "initial enabled; not changed during this review",
+  "declared_build_command": {
+    "command": "scripts/build-hap.sh",
+    "source": "https://github.com/zhouzengrui369-commits/knowme-knowledge/blob/3317469085d8dc10a88818369ffcc2922904079c/prototypes/knowme-knowledge-02-voice-speaker-verification/README.md",
+    "executed_by_reviewer": false,
+    "note": "README historical scope text does not supersede frozen Contract R3"
+  }
+}
