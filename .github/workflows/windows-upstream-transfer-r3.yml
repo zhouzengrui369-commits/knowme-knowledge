@@ -1,0 +1,69 @@
+name: Public model transport and cross-platform runtime R3
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-upstream-transfer-r3.yml]
+permissions:
+  contents: read
+jobs:
+  upstream:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    steps:
+      - name: Chunk verified upstream weights and prepare Linux test engine
+        shell: python
+        run: |
+          from pathlib import Path
+          import urllib.request,hashlib,json,tarfile,zipfile,subprocess,os
+          r=Path('upstream-transfer').resolve();r.mkdir()
+          def dl(url,p,want=None):
+              p.parent.mkdir(parents=True,exist_ok=True)
+              with urllib.request.urlopen(url,timeout=90) as f,p.open('wb') as o:
+                  while b:=f.read(1048576):o.write(b)
+              with p.open('rb') as f:sha=hashlib.file_digest(f,'sha256').hexdigest()
+              if want:assert sha==want
+              return sha
+          sha='6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e'
+          dl('https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/qwen2.5-1.5b-instruct-q4_k_m.gguf',r/'model.gguf',sha)
+          parts=[]
+          with (r/'model.gguf').open('rb') as f:
+              for i in range(3):
+                  data=f.read(380*1024*1024);p=r/f'model.part{i+1}';p.write_bytes(data);parts.append({'file':p.name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()})
+              assert f.read(1)==b''
+          (r/'MODEL_PARTS.json').write_text(json.dumps({'full_sha256':sha,'parts':parts},indent=2))
+          dl('https://nodejs.org/dist/v24.8.0/node-v24.8.0-linux-x64.tar.xz',r/'node-linux.tar.xz')
+          dl('https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-ubuntu-x64.zip',r/'llama-linux.zip','5879a9009aa4e092e2fc816d85ff65ef2a9fb09170b843695b282897dcd526d5')
+          subprocess.run(['tar','xf',str(r/'node-linux.tar.xz'),'-C',str(r)],check=True)
+          node=r/'node-v24.8.0-linux-x64';env=os.environ.copy();env['PATH']=str(node/'bin')+os.pathsep+env['PATH']
+          h=r/'harness-linux';h.mkdir();(h/'package.json').write_text(json.dumps({'name':'public-upstream-test','version':'0.0.0','private':True,'dependencies':{'@deepseek-ai/dsh':'0.1.2-rc.1'}}))
+          subprocess.run([str(node/'bin/npm'),'install','--omit=dev','--no-audit','--no-fund'],cwd=h,env=env,check=True,timeout=360)
+          subprocess.run(['tar','czf',str(r/'harness-linux.tar.gz'),'-C',str(r),'harness-linux'],check=True)
+          print('Only publicly available upstream dependencies; no private source or user content.')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: qwen15-r3-part1
+          path: upstream-transfer/model.part1
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: qwen15-r3-part2
+          path: upstream-transfer/model.part2
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: qwen15-r3-part3
+          path: upstream-transfer/model.part3
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-linux-test-runtime-r3
+          path: |
+            upstream-transfer/node-linux.tar.xz
+            upstream-transfer/llama-linux.zip
+            upstream-transfer/harness-linux.tar.gz
+            upstream-transfer/MODEL_PARTS.json
+          compression-level: 0
+          retention-days: 7
