@@ -1,0 +1,77 @@
+name: Public native dependency verification R3
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/upstream-native-verification-r3.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  linux-support:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Collect platform counterparts for local protocol verification
+        run: |
+          mkdir support && cd support
+          npm pack --ignore-scripts @koromix/koffi-linux-x64@3.3.2 node-addon-require-builtin-linux-x64-gnu@0.1.6 @vscode/ripgrep-linux-x64@1.18.0
+          sha256sum *.tgz > SHA256SUMS.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-linux-protocol-support-r3
+          path: support/
+          retention-days: 3
+  windows-imports:
+    runs-on: windows-latest
+    timeout-minutes: 8
+    steps:
+      - name: Validate embedded Python against locked public wheels
+        shell: python
+        env:
+          ARTIFACT_TOKEN: ${{ github.token }}
+        run: |
+          import hashlib,http.client,json,os,subprocess,sys,urllib.request,zipfile
+          from pathlib import Path,PurePosixPath
+          out=Path('native');out.mkdir()
+          conn=http.client.HTTPSConnection('api.github.com',timeout=40)
+          conn.request('GET','/repos/zhouzengrui369-commits/knowme-knowledge/actions/artifacts/11069000170/zip',headers={'Authorization':'Bearer '+os.environ['ARTIFACT_TOKEN'],'User-Agent':'native-public-dependency-probe'})
+          res=conn.getresponse();assert res.status==302;location=res.getheader('Location');conn.close()
+          archive=out/'upstream.zip'
+          with urllib.request.urlopen(location,timeout=120) as r,archive.open('wb') as f:
+              while b:=r.read(1048576):f.write(b)
+          with archive.open('rb') as f:assert hashlib.file_digest(f,'sha256').hexdigest()=='34bc9115222c4b103df515cd19dca0ff3cd3797d3ddd05d93720eb6916c2e029'
+          def unpack(path,dest):
+              with zipfile.ZipFile(path) as z:
+                  for i in z.infolist():
+                      p=PurePosixPath(i.filename);assert not p.is_absolute() and '..' not in p.parts
+                  z.extractall(dest)
+          unpack(archive,out/'outer');unpack(out/'outer/public-runtime-no-model.zip',out/'kit')
+          kit=out/'kit';python_zip=next(kit.rglob('python-3.13.5-embed-amd64.zip'));unpack(python_zip,out/'python')
+          site=out/'python/Lib/site-packages';site.mkdir(parents=True)
+          for wheel in kit.rglob('*.whl'):
+              with zipfile.ZipFile(wheel) as z:
+                  for i in z.infolist():
+                      parts=PurePosixPath(i.filename).parts
+                      if len(parts)>2 and parts[0].endswith('.data'):
+                          if parts[1] not in ('purelib','platlib'):continue
+                          parts=parts[2:]
+                      p=site.joinpath(*parts)
+                      if i.is_dir():p.mkdir(parents=True,exist_ok=True)
+                      else:p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(i))
+          (out/'python/python313._pth').write_text('python313.zip\n.\nLib/site-packages\nimport site\n')
+          probe="import sys,json; import fastapi,uvicorn,multipart,httpx,yaml,openpyxl,docx,pptx,pymupdf,webview; print(json.dumps({'python':sys.version,'platform':sys.platform,'modules':'PASS','scope':'UPSTREAM_IMPORTS_NOT_PRODUCT_TEST'}))"
+          r=subprocess.run([str((out/'python/python.exe').resolve()),'-c',probe],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=75)
+          (out/'PYTHON_IMPORT_RECEIPT.json').write_text(json.dumps({'returncode':r.returncode,'stdout':r.stdout,'stderr':r.stderr,'product_source_read':False},indent=2),encoding='utf-8')
+          r.check_returncode()
+          harness_zip=next(kit.rglob('harness-windows.zip'));unpack(harness_zip,out/'harness')
+          node_zip=next(kit.rglob('node-v22.19.0-win-x64.zip'));unpack(node_zip,out/'node')
+          node=(out/'node/node-v22.19.0-win-x64/node.exe').resolve()
+          probe="const koffi = await import('koffi'); const s=await import('@deepseek-ai/dsh-subprocess-local'); console.log(JSON.stringify({platform:process.platform,koffi:!!koffi,subprocess:!!s,scope:'UPSTREAM_NATIVE_MODULES_NOT_PRODUCT_TEST'}));"
+          r=subprocess.run([str(node),'--input-type=module','-e',probe],cwd=out/'harness',capture_output=True,text=True,timeout=45)
+          (out/'NODE_IMPORT_RECEIPT.json').write_text(json.dumps({'returncode':r.returncode,'stdout':r.stdout,'stderr':r.stderr,'product_source_read':False},indent=2),encoding='utf-8');r.check_returncode()
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: public-windows-native-imports-r3
+          path: native/*RECEIPT.json
+          retention-days: 3
