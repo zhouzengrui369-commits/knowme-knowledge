@@ -1,0 +1,90 @@
+[
+  {
+    "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+    "payload_revision": 1,
+    "kind": "text",
+    "asset_duration_ms": 0,
+    "received_at": "2026-09-24T17:08:42+08:00",
+    "organized_at": "2026-09-24T17:11:26+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241708移动采集PX24首次体验会议原定九点-896d20de",
+    "error": null
+  },
+  {
+    "capture_id": "cap_273ebf0223f5a2cfd27b2a11f870816e",
+    "payload_revision": 1,
+    "kind": "audio",
+    "asset_duration_ms": 313340,
+    "received_at": "2026-09-24T17:20:59+08:00",
+    "organized_at": "2026-09-24T17:23:10+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e",
+    "error": null
+  },
+  {
+    "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+    "payload_revision": 2,
+    "kind": "text",
+    "asset_duration_ms": 0,
+    "received_at": "2026-09-24T17:25:07+08:00",
+    "organized_at": "2026-09-24T17:26:54+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de",
+    "error": null
+  },
+  {
+    "capture_id": "cap_dc6f326f5ddb6be0fe1e4d12ab139c34",
+    "payload_revision": 1,
+    "kind": "audio",
+    "asset_duration_ms": 32001,
+    "received_at": "2026-09-24T17:26:03+08:00",
+    "organized_at": "2026-09-24T17:29:00+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34",
+    "error": null
+  },
+  {
+    "capture_id": "cap_c898ada0698571bfe3960f3ec516b1e0",
+    "payload_revision": 1,
+    "kind": "text",
+    "asset_duration_ms": 0,
+    "received_at": "2026-09-24T17:31:00+08:00",
+    "organized_at": "2026-09-24T17:33:26+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0",
+    "error": null
+  },
+  {
+    "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+    "payload_revision": 3,
+    "kind": "text",
+    "asset_duration_ms": 0,
+    "received_at": "2026-09-24T17:32:34+08:00",
+    "organized_at": "2026-09-24T17:36:57+08:00",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de",
+    "error": null
+  },
+  {
+    "capture_id": "cap_b949934f7c2db324d0b5f727135b001e",
+    "payload_revision": 1,
+    "kind": "text",
+    "asset_duration_ms": 0,
+    "received_at": "2026-09-24T17:35:46+08:00",
+    "organized_at": null,
+    "processing_status": "PENDING",
+    "note_id": "",
+    "error": null
+  },
+  {
+    "capture_id": "cap_935f0d7588fd8184e7aadbd65aed99ad",
+    "payload_revision": 1,
+    "kind": "audio",
+    "asset_duration_ms": 228440,
+    "received_at": "2026-09-24T17:36:48+08:00",
+    "organized_at": null,
+    "processing_status": "PROCESSING",
+    "note_id": "",
+    "error": null
+  }
+]

@@ -1,0 +1,7 @@
+Browser tab: 3, Title: "灵犀 · NJX 知识地图与认知星海", URL: "http://127.0.0.1:18251/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 449-450, 453
++				455 text 数字大脑 5+9 ›
++				456 text ›
++					457 text 开始信息采集
+The focused UI element is 409 button (expanded) 查看来源说明, Secondary Actions: Collapse

@@ -1,0 +1,52 @@
+Browser tab: 3, Title: "灵犀 · NJX 知识地图与认知星海", URL: "http://127.0.0.1:18251/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 23-43, 47, 49-50, 70-71, 98-99, 207-208
++			257 container
++				258 text 数据来源 2 ›
++			259 container
++				260 text 数字大脑 5+9 ›
++			261 container njx-ch-entry
++				262 text 对话记录
++				263 text 9
++				264 text ›
++			265 container njx-timeline
++				266 text 知识添加记录
++				267 text 1 条
++				268 pop up button (collapsed, settable) Description: 按日期回看, Value: 2026-09-24（今天） · 2, ID: njx-tl-date, Secondary Actions: Expand
++					269 menu
++						270 (selected) 2026-09-24（今天） · 2
++				271 container njx-tl-body
++					272 text 17:08 笔记 笔记：202609241708移动采集PX24首次体验会议原定九点-896d20de
+~				45 button 开始信息采集, Help: 开启后后台录音自动转文字，写进「添加知识」的正文；随时点开查看进度，再点「保存并整理」入库。
++					273 text 开始信息采集
+~				48 button 添加知识
++				274 container njx-dim-legend
++					275 text 知识地图
++					276 text 5
++					277 text 认知图谱
++					278 text 9
++					279 text 点任意维度看摘要，中列随之切换
++			280 container njx-rtab-body
++				281 text 轨迹
++				282 text 2026-09-24 · 我的行动 1 条
++				283 pop up button (collapsed, settable) Value: 2026-09-24（今天）, ID: njx-tr-date, Secondary Actions: Expand
++					284 menu
++						285 (selected) 2026-09-24（今天）
++				286 container njx-tr-list
++					287 text 行动
++					288 text 1
++					289 text 已完成
++					290 text 0
++					291 text 日程
++					292 text 0
++					293 text 工作台
++					294 text 1
++					295 button 全部 1
++					296 button 灵犀工作台 1
++					297 button 全部 1
++					298 button 未完成 1
++					299 button 已完成 0
++					300 container
++						301 text 17:08 笔记 记录了一篇笔记　202609241708移动采集PX24首次体验会议原定九点-896d20de ▸
+~	255 button Description: 打开灵犀对话, Help: 展开完整对话, ID: njx-dock-toggle
+The focused UI element is 0 AXWebArea 灵犀 · NJX 知识地图与认知星海, URL: 127.0.0.1:18251/
