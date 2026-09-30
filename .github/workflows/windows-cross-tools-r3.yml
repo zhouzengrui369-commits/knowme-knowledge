@@ -1,0 +1,48 @@
+name: Public cross-build tools R3
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-cross-tools-r3.yml]
+permissions:
+  contents: read
+jobs:
+  tools:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Collect compiler and compatibility tools only
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends nsis wine64
+          mkdir -p cross-tools
+          dpkg-query -W nsis nsis-common wine64 libwine > cross-tools/DEBIAN_PACKAGES.txt
+          python3 - <<'PY'
+          import pathlib,tarfile,subprocess,json,hashlib,urllib.request
+          out=pathlib.Path('cross-tools')
+          paths=[]
+          for package in ['nsis','nsis-common','wine64','libwine']:
+              for s in subprocess.check_output(['dpkg-query','-L',package],text=True).splitlines():
+                  p=pathlib.Path(s)
+                  if p.is_file() or p.is_symlink(): paths.append(p)
+          with tarfile.open(out/'compiler-wine.tar.gz','w:gz') as t:
+              for p in sorted(set(paths)):t.add(p,arcname=str(p).lstrip('/'),recursive=False)
+          def get(url,name,sha=None):
+              p=out/name
+              with urllib.request.urlopen(url,timeout=120) as r,p.open('wb') as f:
+                  while b:=r.read(1048576):f.write(b)
+              actual=hashlib.sha256(p.read_bytes()).hexdigest()
+              if sha:assert actual==sha
+              return actual
+          get('https://nodejs.org/dist/v22.19.0/SHASUMS256.txt','NODE_SHASUMS256.txt')
+          sums={x.split()[1]:x.split()[0] for x in (out/'NODE_SHASUMS256.txt').read_text().splitlines()}
+          get('https://nodejs.org/dist/v22.19.0/node-v22.19.0-linux-x64.tar.xz','node-linux.tar.xz',sums['node-v22.19.0-linux-x64.tar.xz'])
+          get('https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-ubuntu-x64.zip','llama-linux.zip','5879a9009aa4e092e2fc816d85ff65ef2a9fb09170b843695b282897dcd526d5')
+          (out/'MANIFEST.json').write_text(json.dumps({'scope':'PUBLIC_UPSTREAM_TOOLS_ONLY_NO_PRODUCT_SOURCE','files':[{'name':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.iterdir()) if p.is_file()]},indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: public-cross-tools-r3
+          path: cross-tools/
+          compression-level: 0
+          retention-days: 3
