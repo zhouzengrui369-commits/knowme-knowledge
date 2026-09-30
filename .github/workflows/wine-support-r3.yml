@@ -1,0 +1,24 @@
+name: Public Wine support resources
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/wine-support-r3.yml]
+permissions:
+  contents: read
+jobs:
+  support:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Download public Debian package support only
+        run: |
+          sudo apt-get update -qq
+          mkdir support && cd support
+          apt-get download libz-mingw-w64 wine
+          for f in *.deb; do dpkg-deb -x "$f" root; done
+          sha256sum *.deb > SHA256SUMS.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-wine-support-r3
+          path: support/
+          retention-days: 3
