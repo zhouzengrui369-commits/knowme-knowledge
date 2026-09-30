@@ -1,0 +1,27 @@
+{
+  "reviewer_authority_commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
+  "core_sha256": "041a475d8cbc3404ed1e6df66c52377aecfcd631721d18a0ec9de59783f2b676",
+  "central_parent_commit": "118594ff0b853732a2da22270d9499573ff2201e",
+  "baseline_commit": "978ed0608bda8e278c348ad2987f6a25fa3c3c2f",
+  "contract_commit": "f38e48956dfcd8820cc090f04026839132508ece",
+  "candidate": "d02014f185595ab9f73c423017842d2d2d268252",
+  "archived_document_sha256": {
+    "AGENTS.md": "61b0f4e62b17e03590c137f02e33026f8569dfdc35790875bcca6a53475b64e9",
+    "governance-lock.json": "95edc90665fbf3755ad092d7e204a4e776858b49b7380c94847f9c9a7bb42efd",
+    "core-parent.md": "255b6ce25d76b70dd5c22063133b774d1607a32a308387276aee5b0aa987aca0",
+    "state-machine.json": "d2f334bcce6d265d02adfbda05b2aa725dc82ac22760d7938024f44cc1d8cfc9",
+    "local-governance-skill.md": "5cd36ef049b06d4863d13f0c1e58d81bd04e57bf6890c4b29ac00dd83aecd7a3",
+    "profile.yaml": "762e771cad7f6a7ce02fb7b77dd3b369856ceaebb4cd2d507dd0783d9cae125c",
+    "ecosystem-policy.md": "01e442d6454dc9986e7101966c98f529e6fbbd49ec226faeedb511bd9f625733",
+    "baseline-v2.md": "2376a3a5e568b26f808298df918813cf801477a0a010a17c7a731a0d5b01227e",
+    "candidate-baseline-snapshot-v1.md": "1982a9a0c0c93b52ec305b8bb3f6547e32535898da3c7fc480e16bd715d15361",
+    "PROJECT_STATUS.md": "901a245b9a378a4314511119ed110df676d077941623970f9a4a448a8ecc69f9",
+    "contract.md": "07c0a96b6aac16122df7ee6f706b504dfe3562b21ebe10a205ef0e64eb7bb2e7",
+    "owner-policy.md": "66fc5f62ad97e12f8f5460eeab452e7c98a32ebbe0ce7edc9ec5adb731ffaa79",
+    "handoff.md": "0703d64d02f500219c74f9ed8922f07d6a91499006189d5e0b943feefc29f7e7",
+    "candidate-manifest.md": "463df54df05bbb7d00af86d1883b191b85611babf996c53aded5350efaa371a9",
+    "candidate-readme.md": "c828a33959297bc5d679fefa609a8cf8fa81596d18cde5f7847dc7ec5b3d1710",
+    "activation.md": "a3cdbaf212fd58942a618d52d55d1a61915617ae86ba027f2a3dcc872e295328",
+    "admission.md": "d363bcd4379c3084ec984518634f7bfa7441d075f7f9b6c35974598319fe30f3"
+  }
+}

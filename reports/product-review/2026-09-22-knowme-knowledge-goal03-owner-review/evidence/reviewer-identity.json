@@ -1,0 +1,71 @@
+{
+  "captured_at": "2026-09-22T09:40:40.307832+08:00",
+  "candidate_sha": "d02014f185595ab9f73c423017842d2d2d268252",
+  "tree": "fa5ab666c6df25420cdb619fec55a19a88aa72af",
+  "parent": [
+    "15ff3a8a59fe6c2c0012bbe17b19154ce6adbfb8"
+  ],
+  "pr_head": "d02014f185595ab9f73c423017842d2d2d268252",
+  "branch_head": "d02014f185595ab9f73c423017842d2d2d268252",
+  "pr_base": "42eaaa76748d08e875ed843d8a5543d922219ab4",
+  "worktree": "/Users/njx/Project/KnowME knowledge/KnowME knowledge/kk03-le-final3",
+  "git_identity": {
+    "returncode": 0,
+    "output": "d02014f185595ab9f73c423017842d2d2d268252\nfa5ab666c6df25420cdb619fec55a19a88aa72af\n15ff3a8a59fe6c2c0012bbe17b19154ce6adbfb8",
+    "stderr": ""
+  },
+  "git_status": {
+    "returncode": 0,
+    "output": "",
+    "stderr": ""
+  },
+  "host_os": {
+    "returncode": 0,
+    "output": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56",
+    "stderr": ""
+  },
+  "host_arch": {
+    "returncode": 0,
+    "output": "arm64",
+    "stderr": ""
+  },
+  "hdc_version": {
+    "returncode": 0,
+    "output": "Ver: 3.2.0d",
+    "stderr": ""
+  },
+  "device_version": {
+    "returncode": 0,
+    "output": "OpenHarmony-6.1.1.125",
+    "stderr": ""
+  },
+  "api": {
+    "returncode": 0,
+    "output": "24",
+    "stderr": ""
+  },
+  "device_arch": {
+    "returncode": 0,
+    "output": "aarch64",
+    "stderr": ""
+  },
+  "network_route": {
+    "returncode": 0,
+    "output": "/bin/sh: ip: inaccessible or not found",
+    "stderr": ""
+  },
+  "artifact_hashes": {
+    "/Users/njx/Project/KnowME knowledge/KnowME knowledge/kk03-le-final3/prototypes/knowme-knowledge-02-voice-speaker-verification/entry/build/default/outputs/default/entry-default-unsigned.hap": "11570648fada5a99bbca2f45ed79c4439260fe8185a9ba6515bfafdad8efcab8",
+    "/Users/njx/Project/KnowME knowledge/KnowME knowledge/kk03-le-final3/prototypes/knowme-knowledge-02-voice-speaker-verification/entry/build/default/outputs/ohosTest/entry-ohosTest-unsigned.hap": "9c3771916ef99bd2cc4e9e6ca82365dfb09f7e07a4b491d6bdb2ab69210f120c"
+  },
+  "runtime": "com.knowme.knowledge.voiceprototype / EntryAbility",
+  "model_provider": "local sherpa-onnx voice prototype; deterministic note organizer, no real LLM/RAG",
+  "build_command": {
+    "declared": "scripts/build-hap.sh",
+    "reviewer_executed": false,
+    "source": "candidate-readme.md @ d02014f185595ab9f73c423017842d2d2d268252"
+  },
+  "network_boundary": "WLAN not changed; AppInfo shows mobile data and WLAN setting, but no effective route or packet capture established; ip tool unavailable. UI and ED no-cloud statements are not independent network proof.",
+  "configuration": "Clean reinstall of verified main and ohosTest HAP; microphone denied then granted by UI; synthetic Tingting enrollment; no backend credentials used",
+  "prior_review": "PR #28 / predecessor Goal02 different candidate; not transferable PASS"
+}
