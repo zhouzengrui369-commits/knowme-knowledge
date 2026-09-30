@@ -1,0 +1,111 @@
+name: Windows upstream runtime closure R3
+on:
+  push:
+    branches: [build/windows-initializer-deps-0929]
+    paths: [.github/workflows/windows-upstream-runtime-r3.yml]
+permissions:
+  contents: read
+jobs:
+  nsis-linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - name: Collect distribution packaging tool only
+        run: |
+          mkdir -p upstream-nsis
+          cd upstream-nsis
+          sudo apt-get update -qq
+          apt-get download nsis nsis-common
+          sha256sum *.deb > SHA256SUMS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: upstream-nsis-linux-r3
+          path: upstream-nsis/
+          retention-days: 7
+  windows-runtime:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.13.5'
+      - name: Collect only public Python, Node, DSH and model assets
+        shell: python
+        run: |
+          from pathlib import Path, PurePosixPath
+          import hashlib,json,os,subprocess,sys,urllib.request,zipfile,time
+          root=Path('upstream-runtime').resolve();root.mkdir()
+          manifest={'purpose':'PUBLIC_UPSTREAM_DEPENDENCIES_ONLY','private_product_source':False,'owner_credentials':False,'downloads':[]}
+          def get(url,path,expected=None):
+              path.parent.mkdir(parents=True,exist_ok=True)
+              with urllib.request.urlopen(url,timeout=90) as r,path.open('wb') as f:
+                  while b:=r.read(1024*1024):f.write(b)
+              with path.open('rb') as f:sha=hashlib.file_digest(f,'sha256').hexdigest()
+              if expected and expected!=sha:raise RuntimeError('upstream digest mismatch: '+path.name)
+              manifest['downloads'].append({'url':url,'path':path.relative_to(root).as_posix(),'bytes':path.stat().st_size,'sha256':sha})
+          def unzip(src,dest):
+              with zipfile.ZipFile(src) as z:
+                  for n in z.namelist():
+                      p=PurePosixPath(n)
+                      assert not p.is_absolute() and '..' not in p.parts and ':' not in n and '\\' not in n
+                  z.extractall(dest)
+          get('https://www.python.org/ftp/python/3.13.5/python-3.13.5-embed-amd64.zip',root/'python-embed.zip')
+          unzip(root/'python-embed.zip',root/'python')
+          (root/'python/python313._pth').write_text('python313.zip\n.\nLib/site-packages\n../../app\nimport site\n',encoding='utf-8')
+          packages=['fastapi','uvicorn','python-multipart','pywebview','requests','httpx','PyYAML','openpyxl','python-docx','python-pptx','pypdf','psutil','tzdata','markdown','beautifulsoup4']
+          subprocess.run([sys.executable,'-m','pip','install','--disable-pip-version-check','--only-binary=:all:','--target',str(root/'python/Lib/site-packages'),'--report',str(root/'PYTHON_INSTALL_REPORT.json'),*packages],check=True,timeout=300)
+          get('https://nodejs.org/dist/v24.8.0/SHASUMS256.txt',root/'NODE_SHASUMS256.txt')
+          sums=(root/'NODE_SHASUMS256.txt').read_text();nodefile='node-v24.8.0-win-x64.zip';want=next(l.split()[0] for l in sums.splitlines() if l.endswith('  '+nodefile))
+          get('https://nodejs.org/dist/v24.8.0/'+nodefile,root/'node.zip',want);unzip(root/'node.zip',root/'node-expand')
+          (root/'node-expand/node-v24.8.0-win-x64').rename(root/'node')
+          env=os.environ.copy();env['PATH']=str(root/'node')+os.pathsep+env['PATH']
+          harness=root/'harness';harness.mkdir()
+          (harness/'package.json').write_text(json.dumps({'name':'lingxi-public-runtime','version':'0.0.0','private':True,'dependencies':{'@deepseek-ai/dsh':'0.1.2-rc.1'}}))
+          npm=root/'node/node_modules/npm/bin/npm-cli.js'
+          subprocess.run([str(root/'node/node.exe'),str(npm),'install','--omit=dev','--no-audit','--no-fund'],cwd=harness,env=env,check=True,timeout=360)
+          pkg=harness/'node_modules/@deepseek-ai/dsh/package.json';meta=json.loads(pkg.read_text())
+          manifest['dsh']={'name':meta['name'],'version':meta['version'],'license':meta.get('license'),'package_json_sha256':hashlib.sha256(pkg.read_bytes()).hexdigest(),'bin':meta.get('bin')}
+          assert meta['version']=='0.1.2-rc.1'
+          bindef=meta['bin'];entry=bindef['dsh'] if isinstance(bindef,dict) else bindef
+          smoke=subprocess.run([str(root/'node/node.exe'),str(pkg.parent/entry),'--version'],cwd=harness,env=env,capture_output=True,text=True,timeout=60)
+          (root/'DSH_VERSION_SMOKE.txt').write_text(smoke.stdout+'\n'+smoke.stderr,encoding='utf-8');manifest['dsh']['version_smoke_exit']=smoke.returncode
+          get('https://github.com/ggml-org/llama.cpp/releases/download/b6512/llama-b6512-bin-win-cpu-x64.zip',root/'llama-win.zip','64624b3c5799ca62e4a3a3d0543af5171a35a87f09f7fc0353518d0a357fc253')
+          unzip(root/'llama-win.zip',root/'initializer/engine')
+          get('https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/qwen2.5-1.5b-instruct-q4_k_m.gguf',root/'initializer/model.gguf','6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e')
+          get('https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/91cad51170dc346986eccefdc2dd33a9da36ead9/LICENSE',root/'initializer/licenses/QWEN-LICENSE.txt')
+          get('https://raw.githubusercontent.com/ggml-org/llama.cpp/368560a1e3b9a3bc83af741b0b2bc9e46fb420d2/LICENSE',root/'initializer/licenses/LLAMA-LICENSE.txt')
+          manifest['files']=[]
+          for p in sorted(root.rglob('*')):
+              if p.is_file():
+                  with p.open('rb') as f:sha=hashlib.file_digest(f,'sha256').hexdigest()
+                  manifest['files'].append({'path':p.relative_to(root).as_posix(),'bytes':p.stat().st_size,'sha256':sha})
+          (root/'UPSTREAM_MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Public upstream closure ready:',len(manifest['files']),'files; DSH',meta['version'])
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: upstream-runtime-r3-report
+          path: |
+            upstream-runtime/UPSTREAM_MANIFEST.json
+            upstream-runtime/DSH_VERSION_SMOKE.txt
+            upstream-runtime/PYTHON_INSTALL_REPORT.json
+            upstream-runtime/harness/package-lock.json
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: upstream-windows-runtime-r3
+          path: |
+            upstream-runtime/python/
+            upstream-runtime/node/
+            upstream-runtime/harness/
+            upstream-runtime/initializer/engine/
+            upstream-runtime/initializer/licenses/
+            upstream-runtime/UPSTREAM_MANIFEST.json
+          retention-days: 7
+          compression-level: 6
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: upstream-qwen15-r3
+          path: upstream-runtime/initializer/model.gguf
+          retention-days: 7
+          compression-level: 0
