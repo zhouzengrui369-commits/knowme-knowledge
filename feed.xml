@@ -5,7 +5,14 @@
     <link>https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html</link>
     <description>灵犀 KnowMe 的公开建设与可验证进展。</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 27 Sep 2026 04:30:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 06 Oct 2026 05:57:52 GMT</lastBuildDate>
+    <item>
+      <title>统一网页账号入口，明确工作台版本与验证边界</title>
+      <link>https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html#release-status-2026-10-06</link>
+      <guid isPermaLink="false">knowme-public-release-status-2026-10-06</guid>
+      <pubDate>Tue, 06 Oct 2026 05:57:52 GMT</pubDate>
+      <description>公开状态快照：已有工作台版本 1.4.13.1005；macOS arm64 2.0.0-alpha.1 是封装工程验证包，尚非完整灵犀客户端；原有界面继承与完整功能一致性尚未完成，仅通过 DMG 打包与受限锁定态启动验证，尚未公开发布或提供下载，签名、公证及真实登录尚未验证。网页 ChatGPT 登录与账户资料已接入；桌面服务及邮箱、手机号方式尚未接通。现有 Windows 安装测试候选独立保留。</description>
+    </item>
     <item>
       <title>建立公开搜索与 AI 可发现性基础</title>
       <link>https://zhouzengrui369-commits.github.io/knowme-knowledge/updates.html</link>
