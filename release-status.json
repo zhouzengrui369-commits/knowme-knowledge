@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-06T05:57:52Z",
+  "canonical_url": "https://knowme-owner-preview-1945e70a.zhouzengrui2015.chatgpt.site/index.html#/portal/start",
+  "stable": {
+    "version": "1.4.13.1005",
+    "release_date": "2026-10-05",
+    "availability": "existing_workbench_release_no_public_binary",
+    "download_url": null
+  },
+  "candidate": {
+    "version": "2.0.0-alpha.1",
+    "platform": "macos-arm64",
+    "build_status": "built_locked_start_verified",
+    "verified_features": [
+      "dmg_packaging",
+      "limited_locked_startup"
+    ],
+    "unavailable_features": [
+      "public_download",
+      "signing",
+      "notarization",
+      "installation_verified",
+      "real_login",
+      "product_acceptance"
+    ],
+    "size_bytes": 142401557,
+    "sha256": "416f5f3787edc33c8e0daacb33b0197c119af11fb448c9186e7af8b26f54b944",
+    "signing_status": "not_verified",
+    "notarization_status": "not_verified",
+    "authentication_status": "not_tested",
+    "product_acceptance": "not_granted",
+    "publication_status": "not_published",
+    "download_url": null,
+    "ui_inheritance": "not_completed",
+    "functional_parity": "not_completed",
+    "status_label": "封装工程验证包，尚非完整灵犀客户端"
+  },
+  "account": {
+    "chatgpt": "web_login_available",
+    "email": "not_connected",
+    "phone": "not_connected",
+    "profile": "available",
+    "desktop_login": "not_connected",
+    "devices": "not_connected",
+    "workspaces": "not_connected",
+    "entitlements": "not_connected",
+    "wizard": "not_connected",
+    "sync": "not_connected"
+  },
+  "available_downloads": [
+    {
+      "version": "1.1.0.0929-r5-formfix-test",
+      "platform": "windows-x64",
+      "channel": "installation_test_candidate",
+      "download_url": "https://github.com/zhouzengrui369-commits/knowme-knowledge/releases/download/lingxi-windows-1.1.0.0929-r5-formfix-test/Lingxi-1.1.0.0929-r5-formfix-20261002-windows-x64-setup.exe",
+      "sha256": "5edaa69fddd1af7b6a2f606a955fa99ebe09f2799892e132821a4afd16c0a5cb"
+    }
+  ],
+  "source_authority": {
+    "revision": "lingxi-public-status-2026-10-06-r2",
+    "mode": "checked_in_snapshot",
+    "canonical_feed": "https://knowme-owner-preview-1945e70a.zhouzengrui2015.chatgpt.site/api/public/release-status"
+  }
+}
