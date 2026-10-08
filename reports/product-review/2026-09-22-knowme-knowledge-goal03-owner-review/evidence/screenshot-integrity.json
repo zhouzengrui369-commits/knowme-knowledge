@@ -1,0 +1,332 @@
+[
+  {
+    "file": "evidence/published/02-entry-stable.png",
+    "raw_file": "02-entry-stable.png",
+    "raw_sha256": "921795950868b1542e51699612e2e04e1b1140065995b35c47843986b081b941",
+    "published_sha256": "7384c38bc2aa6fd84db095db7d59e7b2e56acb2322f71e00ee70c034ecf0dc34",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/06-record-timer.png",
+    "raw_file": "06-record-timer.png",
+    "raw_sha256": "0b9327eff4a844a00d0c200cfee7dc0407c95408a8300dece7544effdd49bdda",
+    "published_sha256": "08aa8d830f75da6684cdc5e6594c5ba85e92d7e33874b4b50b5150e0735ed149",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/09-clean-stable.png",
+    "raw_file": "09-clean-stable.png",
+    "raw_sha256": "cd728329c55381979af1b4007d5e03d4a8456c8398825c40696eef2adcd7896c",
+    "published_sha256": "2c7f893cc5711ed852fd605d4e46293083259d563522e78027c41f98279f2ab6",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/10-mic-request.png",
+    "raw_file": "10-mic-request.png",
+    "raw_sha256": "e8a513d8c6bbe569ce0ff6c9d019a9bebc5b9a80efcc565e0ab9ea57c91d777f",
+    "published_sha256": "b7d83c46c3d4b25e252d66d0e0ecb29a205379371ebe50c7933f3743d92936d7",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/13-denied-return.png",
+    "raw_file": "13-denied-return.png",
+    "raw_sha256": "5e435c482fa8088a590e08e953814722510bae0893b77519d4cb82f908d6f8c3",
+    "published_sha256": "d0e2c3adec1512ae2bd3d4cd1cc38c8aa51a45ae04059cdaddc408516872ee13",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/16-manual-hide.png",
+    "raw_file": "16-manual-hide.png",
+    "raw_sha256": "8a35cd02117ce28b9ee117e54b9bddccec48412fe4c5667f4748aa9784761f3d",
+    "published_sha256": "6b8f6beec78f567a35220e2de252eacf0c4ee3a0e97276811a46ae84d66fef83",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/23-find-candidate.png",
+    "raw_file": "23-find-candidate.png",
+    "raw_sha256": "a63b5089b3a4000502b7dadeadb9f90c4582b85a2b706c4944bd29074a23d241",
+    "published_sha256": "250db126565f994235fe1543894f1e14091fe2365a7822597ace8284299e5d9a",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/36-note-draft.png",
+    "raw_file": "36-note-draft.png",
+    "raw_sha256": "93d839b4745afb7cfe5f7b770bff6ca373c45e006298dfa76272e3913e763da5",
+    "published_sha256": "37880cccb81604779255ec9c14f6b7b7d08201b888199ab4717023429d2a14c5",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/43-edited-draft.png",
+    "raw_file": "43-edited-draft.png",
+    "raw_sha256": "fcc68ec88ea062691dbf6e46500a83db07ef0d270768717001e762839071e1e6",
+    "published_sha256": "27712870798f78fbd2e93c9ac0404b538a1fccdbc131fd933df0990059f15fc9",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/44-note-save-doubletap.png",
+    "raw_file": "44-note-save-doubletap.png",
+    "raw_sha256": "0767fbfdd31e914afedb48aa9633b9d7cabd2f25111b278128f3e76626882500",
+    "published_sha256": "1db88759fc07856b2a108cef71245ee33e033a83284dbdca19c3b164b25383c4",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/46-save-return.png",
+    "raw_file": "46-save-return.png",
+    "raw_sha256": "75ad08b3019dfb150426c82683c6d29dc95d99b235b345cdcf1188d59c91c0d4",
+    "published_sha256": "2ced93c9610b63fb93d0afc068f19c29dbe7e4d0e6ec96c57120717c4ede3b06",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/49-provenance-visible.png",
+    "raw_file": "49-provenance-visible.png",
+    "raw_sha256": "f130c5429a67b19356d2f8dca344553f81e11dbfcb5394c05f25b9f94b2a2990",
+    "published_sha256": "8531f4e03b5182142aacf2a243446e3d1b53cef6d39224333eb3970fdcb8da15",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/53-source-probe-top.png",
+    "raw_file": "53-source-probe-top.png",
+    "raw_sha256": "e90f6c32ed4c256ac57508461675b43bbc0879239262ba0c501836dc3f7c42d0",
+    "published_sha256": "73ec6207c82c668d4dfd3e6baa2d2237c6705846de101cce6e43a94b126944da",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/55-source-corrected.png",
+    "raw_file": "55-source-corrected.png",
+    "raw_sha256": "89208d0cedb81d3b74cd0b2b5ecfaf15f2547580a0e580fd2aede48c7078c25f",
+    "published_sha256": "b53c7785849c3938f75285cf6a6877d1bc6e7ca799dcd6baaf2e0616ac9a7316",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/57-source-correction-save.png",
+    "raw_file": "57-source-correction-save.png",
+    "raw_sha256": "4c1f0645ab5c6476671a1bd83197dfde32180d5fe286222835859dba9c15b73f",
+    "published_sha256": "4835a13101f80797c0c92552ddd7a3810c2ff9d44a0bd233c65821ec00c6a183",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/59-source-provenance.png",
+    "raw_file": "59-source-provenance.png",
+    "raw_sha256": "37f3951565c7ece76f8689a716285ef76e1b24de260f800a9a9c18b8c08913d5",
+    "published_sha256": "be45601295410b80afed1efabe42b02683f2170df44a56f721bbf445c51693fb",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/60-cancel-draft.png",
+    "raw_file": "60-cancel-draft.png",
+    "raw_sha256": "88b70fa8d629173bfbd53da7b92d88467c4468449dc9c635baae83dab1222365",
+    "published_sha256": "d6e508ed5a6c845e46e7909d36234f48de2d9835f1320a723167e8b1f292d6e0",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/64-reject.png",
+    "raw_file": "64-reject.png",
+    "raw_sha256": "eaeff24b6f5fbcf70c29985305e3035a7d9388ff98908766c5b33f930ccb73d7",
+    "published_sha256": "83848f1dc96df60c1da46143896a6351bc6754d9ff4a7c3c0d7227ec88307449",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/67-mic-return.png",
+    "raw_file": "67-mic-return.png",
+    "raw_sha256": "1a03e916493232d4b05e535e89ce218e9ec56f72b4c2e0139f2324e5165d40c0",
+    "published_sha256": "dda383a74e8037839f58a0de7eb6b01362c0476f505153d3d9b220b0d7f90ace",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/69-enrollment-start.png",
+    "raw_file": "69-enrollment-start.png",
+    "raw_sha256": "79e4cc89bd0164700e06d3115746daaa774efa680a541c7a3c183a40e0250011",
+    "published_sha256": "638e1600d085d92e0c9db4d7006ca8162c1f88746dd6e3ed08474d8c1b86ea01",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/74-enrollment-complete.png",
+    "raw_file": "74-enrollment-complete.png",
+    "raw_sha256": "4ca45683c2b616481eb0fa9c9aa84ce7e94b23c971fd3bda0f532cb615a972c1",
+    "published_sha256": "b3552989277d20d8a789b77230f9bc695c66fcf4cf6a36f72f9ec0dd8575ab8c",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/75-real-record-start.png",
+    "raw_file": "75-real-record-start.png",
+    "raw_sha256": "1963a2039ac18d61caa1748cd2d72a55b4e200e9d5210047806c50c1e086a9ad",
+    "published_sha256": "5eec304f53b63aff0f09a40c3fa683851742555c3bfb2d7dda399f6f69d77ffe",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/77-record-result.png",
+    "raw_file": "77-record-result.png",
+    "raw_sha256": "5eca8527ce9df0d1b957324ec9f3a6b6153a8864e09002da6aab03c3f76b2279",
+    "published_sha256": "89779d0c5a629ca6dee1ef9a2df69c9e126ed7d58bf280678234b734a496d03e",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/89-pending-top.png",
+    "raw_file": "89-pending-top.png",
+    "raw_sha256": "35ff5d0004a466e6e603a668303f543d3057850c0f2104bc78cfba8e8dcc87dd",
+    "published_sha256": "10455a967cbba57c8b6c8e3931641d84ae1f25c81e36266f51fc48b62ceb08bd",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/91-transcript-background-return.png",
+    "raw_file": "91-transcript-background-return.png",
+    "raw_sha256": "6d1109d1d1709acd1b28309cabaa40c9d5a35ba5532cefe177f7df740ccba026",
+    "published_sha256": "958b107fe1651da29648ac15849c0aeb444dbde7155d195e32ab052f31ec947a",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/93-transcript-cold-stable.png",
+    "raw_file": "93-transcript-cold-stable.png",
+    "raw_sha256": "03c5867117e2056c918eb14fcded8566e164f33624b63dd706a61ee1ad861cf0",
+    "published_sha256": "3946b55a393b69dbe0ec76ea18ec0f2cc96e221b6e16326064500370d27a820e",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/96-cold-note-stable.png",
+    "raw_file": "96-cold-note-stable.png",
+    "raw_sha256": "347ec85fe954ab7f5140e2afedc65acf19080404f8ebae8ebd6eb83d9cded86c",
+    "published_sha256": "bb47beb3278436f2c4ad7cfef34837ea01ea0941b0b913eecd4b4a869be3b0b9",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/102-unsaved-note.png",
+    "raw_file": "102-unsaved-note.png",
+    "raw_sha256": "f97188a6df17b2e58c591a1a0d0622c614e78774195657a265c4144347aef568",
+    "published_sha256": "c5d30333b23d9762989eb44756264d70c5e697c70a278262798ef56b2c919496",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/104-draft-background.png",
+    "raw_file": "104-draft-background.png",
+    "raw_sha256": "4aedde139443a550bb5a7b47e971fb6f1b7eba0e4c1f19a782f2a107db965d3c",
+    "published_sha256": "fb4b6db425582abcb977dad9525179578053b54169799841898dbf29d7ee8360",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  },
+  {
+    "file": "evidence/published/106-draft-cold-stable.png",
+    "raw_file": "106-draft-cold-stable.png",
+    "raw_sha256": "f6de1279a6405e403f90d52f552a381377195bbaf2cde489c69046deb66a3a8c",
+    "published_sha256": "120979943074177b1d6fe74ba0ebe013f4d549c36ab8250a22f6f8cd3aa787ae",
+    "pixel_identical": true,
+    "dimensions": [
+      1256,
+      2760
+    ]
+  }
+]
