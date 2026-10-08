@@ -1,0 +1,628 @@
+{
+  "at": "2026-09-24T18:16:13.376307+08:00",
+  "captures": [
+    {
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 1,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:05:09+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_0be5b77ccbb94746",
+      "received_at": "2026-09-24T17:08:42+08:00",
+      "durable_received_at": "2026-09-24T17:08:42+08:00",
+      "organized_at": "2026-09-24T17:11:26+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241708移动采集PX24首次体验会议原定九点-896d20de",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:11:26+08:00"
+    },
+    {
+      "capture_id": "cap_273ebf0223f5a2cfd27b2a11f870816e",
+      "payload_revision": 1,
+      "kind": "audio",
+      "captured_at": "2026-09-24T17:20:40+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "176f7799a329b205e916981605eee40e2693e1be944a4dcf5f9224f693fd76a2",
+      "asset_size": 10026924,
+      "asset_duration_ms": 313340,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_f571b0473d524373",
+      "received_at": "2026-09-24T17:20:59+08:00",
+      "durable_received_at": "2026-09-24T17:20:59+08:00",
+      "organized_at": "2026-09-24T17:23:10+08:00",
+      "initial_transcript": "这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我看你不太喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡你不喜歡我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友我希望你能夠把我當成一個好朋友",
+      "corrected_text": null,
+      "note_id": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:23:10+08:00"
+    },
+    {
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 2,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:23:01+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_21fec049f2b74c1e",
+      "received_at": "2026-09-24T17:25:07+08:00",
+      "durable_received_at": "2026-09-24T17:25:07+08:00",
+      "organized_at": "2026-09-24T17:26:54+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:26:54+08:00"
+    },
+    {
+      "capture_id": "cap_dc6f326f5ddb6be0fe1e4d12ab139c34",
+      "payload_revision": 1,
+      "kind": "audio",
+      "captured_at": "2026-09-23T21:00:00+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "导入演示音频(合成朗读·昨日捕获)",
+      "asset_sha256": "1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c",
+      "asset_size": 1024078,
+      "asset_duration_ms": 32001,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_448286ced42640d7",
+      "received_at": "2026-09-24T17:26:03+08:00",
+      "durable_received_at": "2026-09-24T17:26:03+08:00",
+      "organized_at": "2026-09-24T17:29:00+08:00",
+      "initial_transcript": "现在是2026年9月22日下午,这条路因用于临西移动采集链路的集成验证。今天上午9点半,航材班组接到AOG紧急需求。需要调配库存报表并通知值班经理。下午的评审会上,张公提出要复合目标合同的第三条交付编解,并把结论记录到支持库。请临西把这段画整理成一条正式笔。",
+      "corrected_text": null,
+      "note_id": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:29:00+08:00"
+    },
+    {
+      "capture_id": "cap_c898ada0698571bfe3960f3ec516b1e0",
+      "payload_revision": 1,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:26:27+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_9f04a3bf1b1349d8",
+      "received_at": "2026-09-24T17:31:00+08:00",
+      "durable_received_at": "2026-09-24T17:31:00+08:00",
+      "organized_at": "2026-09-24T17:33:26+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:33:26+08:00"
+    },
+    {
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 3,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:32:20+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_ce48e90e5dfc408d",
+      "received_at": "2026-09-24T17:32:34+08:00",
+      "durable_received_at": "2026-09-24T17:32:34+08:00",
+      "organized_at": "2026-09-24T17:36:57+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:36:57+08:00"
+    },
+    {
+      "capture_id": "cap_b949934f7c2db324d0b5f727135b001e",
+      "payload_revision": 1,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:26:50+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_517c0e01eb724e08",
+      "received_at": "2026-09-24T17:35:46+08:00",
+      "durable_received_at": "2026-09-24T17:35:46+08:00",
+      "organized_at": "2026-09-24T17:38:28+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-135b001e",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:38:28+08:00"
+    },
+    {
+      "capture_id": "cap_935f0d7588fd8184e7aadbd65aed99ad",
+      "payload_revision": 1,
+      "kind": "audio",
+      "captured_at": "2026-09-24T17:29:07+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "4e7d31698fef00b34e4e8864d99dfe7d3335e25e16b0d92193f87013c00800ed",
+      "asset_size": 7310124,
+      "asset_duration_ms": 228440,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_b2ced887c6ca40f9",
+      "received_at": "2026-09-24T17:36:48+08:00",
+      "durable_received_at": "2026-09-24T17:36:48+08:00",
+      "organized_at": "2026-09-24T17:40:43+08:00",
+      "initial_transcript": "这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。这些是普通话的内容，。我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的我会把你带来的字幕by索兰娅",
+      "corrected_text": null,
+      "note_id": "202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-5aed99ad",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:40:43+08:00"
+    },
+    {
+      "capture_id": "cap_c82451bd763c6756a28b062652eac7f6",
+      "payload_revision": 1,
+      "kind": "text",
+      "captured_at": "2026-09-24T17:42:58+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "",
+      "asset_sha256": "",
+      "asset_size": 0,
+      "asset_duration_ms": 0,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_b404afdf688d47ee",
+      "received_at": "2026-09-24T17:45:01+08:00",
+      "durable_received_at": "2026-09-24T17:45:01+08:00",
+      "organized_at": "2026-09-24T17:46:50+08:00",
+      "initial_transcript": null,
+      "corrected_text": null,
+      "note_id": "202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:46:50+08:00"
+    },
+    {
+      "capture_id": "cap_7a9d904a896bbc7e75c4f181a87a19c7",
+      "payload_revision": 1,
+      "kind": "audio",
+      "captured_at": "2026-09-24T17:45:24+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "导入演示音频(合成朗读)",
+      "asset_sha256": "1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c",
+      "asset_size": 1024078,
+      "asset_duration_ms": 32001,
+      "transfer_status": "RECEIVED",
+      "processing_status": "COMPLETED",
+      "task_id": "task_b8ad4c7270fb4eeb",
+      "received_at": "2026-09-24T17:45:41+08:00",
+      "durable_received_at": "2026-09-24T17:45:41+08:00",
+      "organized_at": "2026-09-24T17:48:58+08:00",
+      "initial_transcript": "现在是2026年9月22日下午,这条路因用于临西移动采集链路的集成验证。今天上午9点半,航材班组接到AOG紧急需求。需要调配库存报表并通知值班经理。下午的评审会上,张公提出要复合目标合同的第三条交付编解,并把结论记录到支持库。请临西把这段画整理成一条正式笔。",
+      "corrected_text": null,
+      "note_id": "202609241745移动采集导入演示音频(合成朗读)-a87a19c7",
+      "note_revision": 1,
+      "error": null,
+      "recovery_action": null,
+      "updated_at": "2026-09-24T17:48:58+08:00"
+    },
+    {
+      "capture_id": "cap_7da867189fd368e1f349283ad0ebd0f1",
+      "payload_revision": 1,
+      "kind": "audio",
+      "captured_at": "2026-09-24T17:46:19+08:00",
+      "captured_timezone": "America/Chicago",
+      "title_hint": "导入演示音频(合成朗读)",
+      "asset_sha256": "1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c",
+      "asset_size": 1024078,
+      "asset_duration_ms": 32001,
+      "transfer_status": "RECEIVED",
+      "processing_status": "FAILED",
+      "task_id": "task_fb3b598179a34c69",
+      "received_at": "2026-09-24T17:46:42+08:00",
+      "durable_received_at": "2026-09-24T17:46:42+08:00",
+      "organized_at": null,
+      "initial_transcript": "现在是2026年9月22日下午,这条路因用于临西移动采集链路的集成验证。今天上午9点半,航材班组接到AOG紧急需求。需要调配库存报表并通知值班经理。下午的评审会上,张公提出要复合目标合同的第三条交付编解,并把结论记录到支持库。请临西把这段画整理成一条正式笔。",
+      "corrected_text": null,
+      "note_id": "",
+      "note_revision": 0,
+      "error": "RuntimeError: 整理超时（>600s 未见 HTML 产物）",
+      "recovery_action": "重新提交或联系工作台查看日志",
+      "updated_at": "2026-09-24T18:11:46+08:00"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "task_0be5b77ccbb94746",
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:08:42+08:00",
+      "updated_at": "2026-09-24T17:11:26+08:00"
+    },
+    {
+      "task_id": "task_f571b0473d524373",
+      "capture_id": "cap_273ebf0223f5a2cfd27b2a11f870816e",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:20:59+08:00",
+      "updated_at": "2026-09-24T17:23:10+08:00"
+    },
+    {
+      "task_id": "task_21fec049f2b74c1e",
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 2,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:25:07+08:00",
+      "updated_at": "2026-09-24T17:26:54+08:00"
+    },
+    {
+      "task_id": "task_448286ced42640d7",
+      "capture_id": "cap_dc6f326f5ddb6be0fe1e4d12ab139c34",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:26:03+08:00",
+      "updated_at": "2026-09-24T17:29:00+08:00"
+    },
+    {
+      "task_id": "task_9f04a3bf1b1349d8",
+      "capture_id": "cap_c898ada0698571bfe3960f3ec516b1e0",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 2,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:31:00+08:00",
+      "updated_at": "2026-09-24T17:33:26+08:00"
+    },
+    {
+      "task_id": "task_ce48e90e5dfc408d",
+      "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+      "payload_revision": 3,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:32:34+08:00",
+      "updated_at": "2026-09-24T17:36:57+08:00"
+    },
+    {
+      "task_id": "task_517c0e01eb724e08",
+      "capture_id": "cap_b949934f7c2db324d0b5f727135b001e",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:35:46+08:00",
+      "updated_at": "2026-09-24T17:38:28+08:00"
+    },
+    {
+      "task_id": "task_b2ced887c6ca40f9",
+      "capture_id": "cap_935f0d7588fd8184e7aadbd65aed99ad",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:36:48+08:00",
+      "updated_at": "2026-09-24T17:40:43+08:00"
+    },
+    {
+      "task_id": "task_b404afdf688d47ee",
+      "capture_id": "cap_c82451bd763c6756a28b062652eac7f6",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:45:01+08:00",
+      "updated_at": "2026-09-24T17:46:50+08:00"
+    },
+    {
+      "task_id": "task_b8ad4c7270fb4eeb",
+      "capture_id": "cap_7a9d904a896bbc7e75c4f181a87a19c7",
+      "payload_revision": 1,
+      "status": "COMPLETED",
+      "attempts": 1,
+      "error": null,
+      "recovery_action": null,
+      "created_at": "2026-09-24T17:45:41+08:00",
+      "updated_at": "2026-09-24T17:48:58+08:00"
+    },
+    {
+      "task_id": "task_fb3b598179a34c69",
+      "capture_id": "cap_7da867189fd368e1f349283ad0ebd0f1",
+      "payload_revision": 1,
+      "status": "FAILED",
+      "attempts": 3,
+      "error": "RuntimeError: 整理超时（>600s 未见 HTML 产物）",
+      "recovery_action": "可在手机端重新提交（幂等，不会产生重复结果）",
+      "created_at": "2026-09-24T17:46:38+08:00",
+      "updated_at": "2026-09-24T18:11:46+08:00"
+    }
+  ],
+  "generated_files": [
+    {
+      "name": ".organize-manifest.md",
+      "sha256": "9f5fc4c5d02bf0b75fe7fdd3405e45dd24d8e0b9c8e298ef367b9b9916b0980c",
+      "bytes": 47689,
+      "mtime": "2026-09-24T17:48:50.194413+08:00"
+    },
+    {
+      "name": "202609241708移动采集PX24首次体验会议原定九点-896d20de.md",
+      "sha256": "ee6536ab248184f5eb39d395aad68b7995fb98f233ce0315eda38fce12bac1a7",
+      "bytes": 5583,
+      "mtime": "2026-09-24T17:10:28.124453+08:00"
+    },
+    {
+      "name": "202609241708移动采集PX24首次体验会议原定九点-896d20de.md.html",
+      "sha256": "d20f9153cef203b31d9ca71fabad47ab00c52be4ced4c06a3e79a0003b6690a4",
+      "bytes": 20480,
+      "mtime": "2026-09-24T17:10:28.125970+08:00"
+    },
+    {
+      "name": "202609241708移动采集PX24首次体验会议原定九点-896d20de.md.raw-transcript.backup.md",
+      "sha256": "746054cbd03b9377193be3b0da9335e613af2adc8d5e2a40e0bca903d3c707c3",
+      "bytes": 624,
+      "mtime": "2026-09-24T17:08:42.643270+08:00"
+    },
+    {
+      "name": "20260924171620260924PX24工作台原有入口.md",
+      "sha256": "19c9c670bb06a8a4822b3f8b590c5ed8dba16aa02c5374dd4a47b58fba05483b",
+      "bytes": 6185,
+      "mtime": "2026-09-24T17:18:00.848066+08:00"
+    },
+    {
+      "name": "20260924171620260924PX24工作台原有入口.md.html",
+      "sha256": "2cb27c291fa8e2b954ca8bfecc215f9d7fd7a3c70351b5088d3288fe68ffa374",
+      "bytes": 21521,
+      "mtime": "2026-09-24T17:18:00.851772+08:00"
+    },
+    {
+      "name": "20260924171620260924PX24工作台原有入口.md.raw-transcript.backup.md",
+      "sha256": "b64984a302c3c53bca4107d4a668ffd96739c6caff0ea11f1a8ab1310d997589",
+      "bytes": 200,
+      "mtime": "2026-09-24T17:16:54.355704+08:00"
+    },
+    {
+      "name": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e.md",
+      "sha256": "1059ddae354edb08db3c531add40569c2e158aeb3d048d1e046906946a91a80e",
+      "bytes": 7451,
+      "mtime": "2026-09-24T17:22:33.828723+08:00"
+    },
+    {
+      "name": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e.md.html",
+      "sha256": "43da7707dc569fa104b1617bbc0321e812ff49bec408e1662f4fc5aa64301695",
+      "bytes": 23025,
+      "mtime": "2026-09-24T17:22:33.831001+08:00"
+    },
+    {
+      "name": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e.md.raw-transcript.backup.md",
+      "sha256": "c29dd8d8be632dfd11c6a09d1e302ffda5c461bbb45df370f350e54006a57c11",
+      "bytes": 8313,
+      "mtime": "2026-09-24T17:21:13.428626+08:00"
+    },
+    {
+      "name": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de.md",
+      "sha256": "f48f7d43cb171794d5cd23f85fd0f6b6dfc4e472f9d6dc84df3bdf5a6daffd98",
+      "bytes": 7816,
+      "mtime": "2026-09-24T17:26:31.570241+08:00"
+    },
+    {
+      "name": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de.md.html",
+      "sha256": "bf4285b75f993e3837974e9e918acfd797d36917ed277b1595264def991672de",
+      "bytes": 23465,
+      "mtime": "2026-09-24T17:26:31.571795+08:00"
+    },
+    {
+      "name": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de.md.raw-transcript.backup.md",
+      "sha256": "1688948a551d1494cb1061e4a9f31a72518b61793c0d96a58cbfc4d25a083fde",
+      "bytes": 778,
+      "mtime": "2026-09-24T17:25:07.511151+08:00"
+    },
+    {
+      "name": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34.md",
+      "sha256": "6a7ee4cf29c90217aeaf8a74ac2cfe43937a90fdaaf55e92a9a3a741e83399cd",
+      "bytes": 8972,
+      "mtime": "2026-09-24T17:28:30.604310+08:00"
+    },
+    {
+      "name": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34.md.html",
+      "sha256": "a896b0ef909cddabd5cb6161149e5e4ad0a6828a8c58536c5db22b0cfc89fbde",
+      "bytes": 25062,
+      "mtime": "2026-09-24T17:28:30.606126+08:00"
+    },
+    {
+      "name": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34.md.raw-transcript.backup.md",
+      "sha256": "04be20b5a3ea6c39b0d75e9280b4f89781c46606fbed57d377b2fa01b8926c67",
+      "bytes": 1581,
+      "mtime": "2026-09-24T17:26:05.470420+08:00"
+    },
+    {
+      "name": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0.md",
+      "sha256": "1159e40c80cd1873f06f98afb5b83eda5956d13300c942cd1cbf9d09b1f06b23",
+      "bytes": 8590,
+      "mtime": "2026-09-24T17:32:20.780151+08:00"
+    },
+    {
+      "name": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0.md.html",
+      "sha256": "ccce9b136a7482138224cd8389a003a380c320e9a69059598ee0c2f9766e5a47",
+      "bytes": 24274,
+      "mtime": "2026-09-24T17:32:20.781875+08:00"
+    },
+    {
+      "name": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0.md.raw-transcript.backup.md",
+      "sha256": "8e49256fb5cc0600a6e3f11012b873346b382523d2d77965955e02248b649ce7",
+      "bytes": 684,
+      "mtime": "2026-09-24T17:31:00.981884+08:00"
+    },
+    {
+      "name": "202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de.md",
+      "sha256": "9a79a8c31029fd71539e0fe86644a937a36c4739f4b1694e110523b5c0872b6c",
+      "bytes": 6762,
+      "mtime": "2026-09-24T17:36:01.909390+08:00"
+    },
+    {
+      "name": "202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de.md.html",
+      "sha256": "1d574a5b9476a5642475fdda1061ef09ccaefb8a386e9cd085b0d2d5b6f63bed",
+      "bytes": 22187,
+      "mtime": "2026-09-24T17:36:01.911273+08:00"
+    },
+    {
+      "name": "202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de.md.raw-transcript.backup.md",
+      "sha256": "87e19543f0c04d0be4f9c380184e59cb4c65065f062e1fa56bfa95c8b38f2b2e",
+      "bytes": 799,
+      "mtime": "2026-09-24T17:32:34.596718+08:00"
+    },
+    {
+      "name": "202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-135b001e.md",
+      "sha256": "ce91c16c459d27eb10fcf6ee42592b24a97f6211df6e85fdcce0e34896d043bc",
+      "bytes": 8912,
+      "mtime": "2026-09-24T17:37:56.391681+08:00"
+    },
+    {
+      "name": "202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-135b001e.md.html",
+      "sha256": "1ca29cd19331a7d24a1c23388288ca69825e49a337fb2bae798f043358056050",
+      "bytes": 24500,
+      "mtime": "2026-09-24T17:37:56.395450+08:00"
+    },
+    {
+      "name": "202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-135b001e.md.raw-transcript.backup.md",
+      "sha256": "a80d0777a4f5a1ef2c06006863f2cd9f46ee9931354182d091d9866d74caf6b9",
+      "bytes": 684,
+      "mtime": "2026-09-24T17:35:46.159280+08:00"
+    },
+    {
+      "name": "202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-5aed99ad.md",
+      "sha256": "e57a70b22a2d03f616a6431f84a41007a3e667ff6f76b1d55318d0445156f123",
+      "bytes": 7969,
+      "mtime": "2026-09-24T17:39:55.430621+08:00"
+    },
+    {
+      "name": "202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-5aed99ad.md.html",
+      "sha256": "295324ee977c007381cf8c536882d86d7308c856d7bc2e30a28e6b4339b10920",
+      "bytes": 23716,
+      "mtime": "2026-09-24T17:39:55.432929+08:00"
+    },
+    {
+      "name": "202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-5aed99ad.md.raw-transcript.backup.md",
+      "sha256": "78d646834c9dec831f84ed474599b77fe72c3e77af5cf95f9345dfbc4720805c",
+      "bytes": 5532,
+      "mtime": "2026-09-24T17:37:05.369058+08:00"
+    },
+    {
+      "name": "202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6.md",
+      "sha256": "5988c54718ee386f3df2367ca1a9387b7765ccf55e08dd54cfb5f10185429721",
+      "bytes": 8322,
+      "mtime": "2026-09-24T17:46:20.028411+08:00"
+    },
+    {
+      "name": "202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6.md.html",
+      "sha256": "9c2edc2fad572db3595b4eef447819a98382ee160183a4c2b642d3c276175231",
+      "bytes": 23972,
+      "mtime": "2026-09-24T17:46:20.032934+08:00"
+    },
+    {
+      "name": "202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6.md.raw-transcript.backup.md",
+      "sha256": "963ad14ba0912e746a5476262947a15e55b1d6a0e9518ccd907f7899452e0794",
+      "bytes": 630,
+      "mtime": "2026-09-24T17:45:01.378790+08:00"
+    },
+    {
+      "name": "202609241745移动采集导入演示音频(合成朗读)-a87a19c7.md",
+      "sha256": "7cbe3fc15510062cde60746b82f383bac3ce03938f016d9bdac3be8203ca1cb9",
+      "bytes": 8127,
+      "mtime": "2026-09-24T17:48:15.109577+08:00"
+    },
+    {
+      "name": "202609241745移动采集导入演示音频(合成朗读)-a87a19c7.md.html",
+      "sha256": "cb242879739781c0b12aa4b42ca6996be5bacd1f6a8da0e655963d35c610b164",
+      "bytes": 23892,
+      "mtime": "2026-09-24T17:48:15.111218+08:00"
+    },
+    {
+      "name": "202609241745移动采集导入演示音频(合成朗读)-a87a19c7.md.raw-transcript.backup.md",
+      "sha256": "a0bba708026602f704a8150a7d86b24f51d4dfe362662d82243532af813e4766",
+      "bytes": 1501,
+      "mtime": "2026-09-24T17:45:44.508108+08:00"
+    },
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md",
+      "sha256": "5a161f02c4af50bb97eaa4612ef72d196264f4b291046ffa8f3463df3fd7b541",
+      "bytes": 8190,
+      "mtime": "2026-09-24T17:50:17.744842+08:00"
+    },
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md.html",
+      "sha256": "d30d66c67e5cbaefdcd479b8cbaef79523649af1d278f894917f7671f9d4b8a8",
+      "bytes": 23955,
+      "mtime": "2026-09-24T17:50:17.749926+08:00"
+    },
+    {
+      "name": "202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1.md.raw-transcript.backup.md",
+      "sha256": "39ca31afb354ad49e70fd2d3feba07275f4620faa4c7bc1774c7dd5a8a9ccabf",
+      "bytes": 1501,
+      "mtime": "2026-09-24T17:46:44.956384+08:00"
+    },
+    {
+      "name": "202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md",
+      "sha256": "c311b74fcef1ee2880b86bda1b3bb24cd9ef36e3896b20fc6158942b003d66be",
+      "bytes": 1501,
+      "mtime": "2026-09-24T18:00:45.981203+08:00"
+    },
+    {
+      "name": "202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md.raw-transcript.backup.md",
+      "sha256": "c311b74fcef1ee2880b86bda1b3bb24cd9ef36e3896b20fc6158942b003d66be",
+      "bytes": 1501,
+      "mtime": "2026-09-24T18:00:45.981299+08:00"
+    }
+  ]
+}

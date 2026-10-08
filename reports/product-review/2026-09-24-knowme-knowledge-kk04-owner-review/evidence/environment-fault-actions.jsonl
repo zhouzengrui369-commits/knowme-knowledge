@@ -1,0 +1,2 @@
+{"at": "2026-09-24T17:30:56.753510+08:00", "action": "enable isolated plugin after service restart", "http": 200, "response": "{\"name\":\"mobile_capture_bridge\",\"status\":\"enabled\",\"resumed_tasks\":0}"}
+{"at": "2026-09-24T17:36:46.514546+08:00", "action": "enable for audio cold-start queue", "http": 200, "response": "{\"name\":\"mobile_capture_bridge\",\"status\":\"enabled\",\"resumed_tasks\":2}"}

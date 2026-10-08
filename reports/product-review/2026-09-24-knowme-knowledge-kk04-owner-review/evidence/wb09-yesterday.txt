@@ -1,0 +1,430 @@
+Browser tab: 3, Title: "灵犀 · NJX 知识地图与认知星海", URL: "http://127.0.0.1:18251/".
+1 AXWebArea 灵犀 · NJX 知识地图与认知星海, URL: 127.0.0.1:18251/
+	2 container
+		3 text 灵犀 · Digital Brain
+		4 button UI 设计候选 · 待你审核
+			5 text UI 设计候选 · 待你审核
+			6 image
+		7 container 神经感知
+			8 container
+				9 image
+				10 text DIGITAL BRAIN 灵犀 · NJX
+			11 heading 神经感知, Value: 2
+				12 text 神经感知
+			13 switch Description: 开启语音采集, Value: 0
+			14 container
+				15 image
+				16 text 语音采集未开启 · 点击开关后申请麦克风权限
+			17 button 体验感知动效 · 不录音
+			18 button 体验神经感知动效，不开启录音
+				19 image 脑形神经网络已暂停
+				20 container
+					21 image 声音流波形已暂停
+					22 image
+					23 text 等待你开启语音采集
+			298 container
+				299 text 数据来源 8 ›
+			300 container
+				373 text 数字大脑 5+9 ›
+			302 container njx-ch-entry
+				303 text 对话记录
+				304 text 9
+				374 text ›
+			306 container njx-timeline
+				307 text 知识添加记录
+				308 text 15 条
+				309 pop up button (collapsed, settable) Description: 按日期回看, Value: 2026-09-24（今天） · 23, ID: njx-tl-date, Secondary Actions: Expand
+					310 menu
+						311 (selected) 2026-09-24（今天） · 23
+				312 container njx-tl-body
+					313 text 17:32 笔记 笔记：202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信 17:32 整理 整理产出 HTML：202609241731移动采集PX24同名同分钟资料引用“把本条发送到 17:32 笔记 笔记：202609241732移动采集PX24首次体验后续补充会议最终改为十一点-89 17:28 整理 整理产出 HTML：202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab1 17:28 笔记 笔记：202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c3 17:26 笔记 笔记：202609241725移动采集PX24首次体验现场修正会议改为十点-896d2 17:26 整理 整理产出 HTML：202609241725移动采集PX24首次体验现场修正会议改为十点-8 17:22 整理 整理产出 HTML：202609241721移动采集这些是普通话的内容这些是普通话的内容这些 17:22 笔记 笔记：202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话 17:18 完成 整理完成：20260924171620260924PX24工作台原有入口 · 已发企业微信 · 已打开预览 17:18 整理 整理产出 HTML：20260924171620260924PX24工作台原有入口 17:18 笔记 笔记：20260924171620260924PX24工作台原有入口 17:16 录入 添加知识：20260924171620260924PX24工作台原有入口 17:10 笔记 笔记：202609241708移动采集PX24首次体验会议原定九点-896d20de 17:10 整理 整理产出 HTML：202609241708移动采集PX24首次体验会议原定九点-896d2
+			45 container
+				46 button 开始信息采集, Help: 开启后后台录音自动转文字，写进「添加知识」的正文；随时点开查看进度，再点「保存并整理」入库。
+					47 image
+					375 text 开始信息采集
+				49 button 添加知识
+		52 container NJX 的知识工作区
+			53 tab group 知识导航视图
+				54 tab (selected, settable, boolean) 知识导航 · WIKI MOC, Value: 1
+知识导航 · WIKI MOC
+				55 tab (selectable, settable, boolean) 2D 关系, Value: 0
+2D 关系
+				56 tab (selectable, settable, boolean) 3D 星海, Value: 0
+3D 星海
+			376 container
+				377 container
+					378 image
+					379 text 我的每日记录
+					380 image
+					381 image
+					382 text 提炼与连接
+					383 image
+					384 image
+					385 text 24  条摘要 依据 09-09 日记 NJX 的知识库
+					386 image
+					387 text 五维知识地图 × 九维认知图谱
+					388 heading 我的经历，逐渐成为我的理解。, Value: 1
+						389 text 我的经历，逐渐成为我的理解。
+					390 text 从一个维度出发，读懂已发生的事，也看见下一步。
+					391 container njx-dim-legend
+						392 text 知识地图
+						393 text 5
+						394 text 认知图谱
+						395 text 9
+						396 text 点任意维度看摘要，中列随之切换
+					397 checkbox 工作记录 我做了什么 24, Value: 1
+						398 image
+						399 text 工作记录
+						400 text 我做了什么
+						401 text 24
+					402 checkbox 生活感悟 我如何感受 0, Value: 0
+						403 image
+						404 text 生活感悟
+						405 text 我如何感受
+						406 text 0
+					407 checkbox 人生规划 我想走向哪里 0, Value: 0
+						408 image
+						409 text 人生规划
+						410 text 我想走向哪里
+						411 text 0
+					412 checkbox 系统思考 我如何理解 0, Value: 0
+						413 image
+						414 text 系统思考
+						415 text 我如何理解
+						416 text 0
+					417 checkbox 行业洞察 我看见什么变化 0, Value: 0
+						418 image
+						419 text 行业洞察
+						420 text 我看见什么变化
+						421 text 0
+					422 image
+					423 image
+					424 text field (settable) Description: 搜索我的知识, Value: 昨日捕获
+					425 container
+						426 button NOTE · 09.09 移动采集导入演示音频(合成朗读昨日捕获)-ab139c34 <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							427 container
+								428 text NOTE  · 09.09
+							429 text 移动采集导入演示音频(合成朗读昨日捕获)-ab139c34
+							430 text <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							431 image
+						432 button NOTE · 09.09 从单点处置到系统协同 <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							433 container
+								434 text NOTE  · 09.09
+							435 text 从单点处置到系统协同
+							436 text <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							437 image
+						438 button NOTE · 09.09 无人库实践 <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							439 container
+								440 text NOTE  · 09.09
+							441 text 无人库实践
+							442 text <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>
+							443 image
+					444 text 点击卡片，展开摘要、来源和关联知识。
+					445 image
+					446 checkbox 身份角色 0, Value: 0
+						447 text 身份角色
+						448 text 0
+					449 checkbox 价值认知 0, Value: 0
+						450 text 价值认知
+						451 text 0
+					452 checkbox 能力复用 0, Value: 0
+						453 text 能力复用
+						454 text 0
+					455 checkbox 人物关系 0, Value: 0
+						456 text 人物关系
+						457 text 0
+					458 checkbox 知识与工具 24, Value: 0
+						459 text 知识与工具
+						460 text 24
+					461 checkbox 行为与表达 0, Value: 0
+						462 text 行为与表达
+						463 text 0
+					464 checkbox 目标与项目 0, Value: 0
+						465 text 目标与项目
+						466 text 0
+					467 checkbox 决策与反馈 0, Value: 0
+						468 text 决策与反馈
+						469 text 0
+					470 checkbox 动态与情景 0, Value: 0
+						471 text 动态与情景
+						472 text 0
+				473 container 移动采集导入演示音频(合成朗读昨日捕获)-ab139c34 知识卡片
+					474 container
+						475 text NOTE  ·  工作记录 移动采集导入演示音频(合成朗读昨日捕获)-ab139c34
+						476 button 关闭知识卡片
+							477 image
+					478 container
+						479 heading 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）, Value: 1
+							480 text 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）
+						481 text 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）
+						482 heading 🧭 执行摘要, Value: 2
+							483 text 🧭 执行摘要
+						484 text 🧭 执行摘要 - 
+						485 text NJX 视角
+						486 text ：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2 2026-09-24 · njx-knowledge 真实数据
+						487 heading 对我的意义, Value: 3
+							488 text 对我的意义
+						489 heading 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）, Value: 1
+							490 text 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）
+						491 text 移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）
+						492 heading 🧭 执行摘要, Value: 2
+							493 text 🧭 执行摘要
+						494 text 🧭 执行摘要
+						495 content list
+							496 container
+								497 AXListMarker • 
+								498 text NJX 视角 ：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2026-09-23T21:00:00+08:00），文件名标注为「导入演示音频（合成朗读昨日捕获）」。全篇未出现「NJX」或「周增瑞」，也没有任何发言者标注；按归因防火墙，本文不产出任何 NJX 画像主张。
+							499 container
+								500 AXListMarker • 
+								501 text 对 NJX 的意义 ：该条采集是移动采集链路的一条演示素材（合成朗读昨日捕获内容），属情境信息；是否与 NJX 相关、是否需保留，由 NJX 自行判断，本文不作归属推定。
+							502 container
+								503 AXListMarker • 
+								504 text NJX 下一步 ：建议（需 NJX 确认）：若该演示音频用于链路验收，请在后续采集或记录中补充验收结论与 owner；本文不代为承诺。
+							505 container
+								506 AXListMarker • 
+								507 text 他人观点不归因提示 ：本来源为合成朗读，未记录可辨识的真实发言者；正文中被转写作「张公」的人属 unknown/他人，只作情境信息保留，不归入 NJX 九维。
+						508 heading Value: 2, 🧭 情境与人物 本源为移动采集（手机）按「导入演示音频」方式接收的一条音频采集，capture_kind=audio，文件名标注为「合成朗读昨日捕获」；未记录参与者、地点与真实发言者。以下事实均以同名原始备份为唯一事实源回源。
+							509 text 🧭 情境与人物 本源为移动采集（手机）按「导入演示音频」方式接收的一条音频采集，capture_kind=audio，文件名标注为「合成朗读昨日捕获」；未记录参与者、地点与真实发言者。以下事实均以同名原始备份为唯一事实源回源。
+						510 text 🧭 情境与人物 本源为移动采集（手机）按「导入演示音频」方式接收的一条音频采集，capture_kind=audio，文件名标注为「合成朗读昨日捕获」；未记录参与者、地点与真实发言者。以下事实均以同名原始备份为唯一事实源回源。
+						511 content list
+							512 container
+								513 AXListMarker • 
+								514 text CLAIM-01 【事实】采集元数据记录：capture_id=cap_dc6f326f5ddb6be0fe1e4d12ab139c34，capture_revision=1，capture_kind=audio，captured_at=2026-09-23T21:00:00+08:00，captured_timezone=America/Chicago，captured_date=2026-09-23，content_hash=sha256:1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c，intent=note。【置信度：高】【依据来源：原始备份 frontmatter L1-L13，raw#L1-L13】
+							515 container
+								516 AXListMarker • 
+								517 text CLAIM-02 【事实】原始录音资产：cap_dc6f326f5ddb6be0fe1e4d12ab139c34.wav，sha256=1e95b1be2c1a27c590284cfd1161e9ecb59c8b004b16696d5c4dd9946fc3d84c，size=1024078B，duration=32001ms；该 wav 未随笔记以路径或 embed 形式提供，本笔记仅存其元数据引用。【置信度：高】【依据来源：原始备份 L17，raw#L17】
+							518 container
+								519 AXListMarker • 
+								520 text CLAIM-03 【事实】接收记录：source=移动采集（手机），created=2026-09-24T17:26:05，本文件于 2026-09-24 由工作台接收整理；捕获日期记为 2026-09-23，并注明为「迟到采集，按捕获日期归属查询」。【置信度：高】【依据来源：原始备份 L1-L15，raw#L1-L15】
+							521 container
+								522 AXListMarker • 
+								523 text CLAIM-04 【事实】原始 ASR 转写区共两段，两段文字逐字相同（重复），均为同一内容。【置信度：高】【依据来源：原始备份 L19-L23，raw#L19-L23】
+							524 container
+								525 AXListMarker • 
+								526 text CLAIM-05 【事实】ASR 正文可辨识内容：自称「现在是2026年9月22日下午」；「今天上午9点半」航材班组接到 AOG 紧急需求、需调配库存报表并通知值班经理；「下午的评审会上」被转写作「张公」的人提出涉及「目标合同第三条交付」的事项，并把结论记录到「支持库」；末句要求把本段整理成一条正式笔记。因转写质量受限（多处词语明显误识别），仅作情境参考。【置信度：中】【依据来源：原始备份 ASR 正文 L21-L23，raw#L21-L23】
+						527 heading 🧠 主题洞察 未发现可归因于 NJX 的主题洞察：本源为一条合成朗读的演示音频转写，只有两段逐字重复的 ASR 文本与采集元数据，缺少真实发言者与可核验上下文；不为凑数而派生 NJX 洞察。, Value: 2
+							528 text 🧠 主题洞察 未发现可归因于 NJX 的主题洞察：本源为一条合成朗读的演示音频转写，只有两段逐字重复的 ASR 文本与采集元数据，缺少真实发言者与可核验上下文；不为凑数而派生 NJX 洞察。
+						529 text 🧠 主题洞察 未发现可归因于 NJX 的主题洞察：本源为一条合成朗读的演示音频转写，只有两段逐字重复的 ASR 文本与采集元数据，缺少真实发言者与可核验上下文；不为凑数而派生 NJX 洞察。
+						530 heading 🧬 九维 NJX 图谱, Value: 2
+							531 text 🧬 九维 NJX 图谱
+						532 text 🧬 九维 NJX 图谱
+						533 heading 1. NJX 身份与角色, Value: 4
+							534 text 1. NJX 身份与角色
+						535 content list
+							536 container
+								537 AXListMarker • 
+								538 text NJX 身份与角色
+							539 container
+								540 AXListMarker • 
+								541 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						542 heading 2. 价值与认知, Value: 4
+							543 text 2. 价值与认知
+						544 content list
+							545 container
+								546 AXListMarker • 
+								547 text 价值与认知
+							548 container
+								549 AXListMarker • 
+								550 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						551 heading 3. 能力, Value: 4
+							552 text 3. 能力
+						553 content list
+							554 container
+								555 AXListMarker • 
+								556 text 能力
+							557 container
+								558 AXListMarker • 
+								559 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						560 heading 4. 知识 / 工具, Value: 4
+							561 text 4. 知识 / 工具
+						562 content list
+							563 container
+								564 AXListMarker • 
+								565 text 知识 / 工具
+							566 container
+								567 AXListMarker • 
+								568 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						569 heading 5. 人际关系, Value: 4
+							570 text 5. 人际关系
+						571 content list
+							572 container
+								573 AXListMarker • 
+								574 text 人际关系
+							575 container
+								576 AXListMarker • 
+								577 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						578 heading 6. 行为 / 表达, Value: 4
+							579 text 6. 行为 / 表达
+						580 content list
+							581 container
+								582 AXListMarker • 
+								583 text 行为 / 表达
+							584 container
+								585 AXListMarker • 
+								586 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						587 heading 7. 目标 / 项目, Value: 4
+							588 text 7. 目标 / 项目
+						589 content list
+							590 container
+								591 AXListMarker • 
+								592 text 目标 / 项目
+							593 container
+								594 AXListMarker • 
+								595 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						596 heading 8. 决策 / 反馈, Value: 4
+							597 text 8. 决策 / 反馈
+						598 content list
+							599 container
+								600 AXListMarker • 
+								601 text 决策 / 反馈
+							602 container
+								603 AXListMarker • 
+								604 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						605 heading 9. 动态情境, Value: 4
+							606 text 9. 动态情境
+						607 content list
+							608 container
+								609 AXListMarker • 
+								610 text 动态情境
+							611 container
+								612 AXListMarker • 
+								613 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						614 heading 归因防火墙结论（本源）, Value: 4
+							615 text 归因防火墙结论（本源）
+						616 text 归因防火墙结论（本源）
+						617 content list
+							618 container
+								619 AXListMarker • 
+								620 text DIM0-01 【事实】本来源全篇未出现「NJX」或「周增瑞」（全文检索计数 NJX=0、周增瑞=0），也未出现可归因的第一人称发言；按归因防火墙，九维均无合格 NJX 证据。本行为归因判定，不是 NJX 画像主张。【置信度：高】【依据来源：原始备份全文 L1-L23，raw#L1-L23】【证据主体：NJX（归因判定：无合格证据）】
+						621 heading 🧾 决策与反馈, Value: 2
+							622 text 🧾 决策与反馈
+						623 text 🧾 决策与反馈
+						624 content list
+							625 container
+								626 AXListMarker • 
+								627 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						628 heading 🎯 目标 / 项目 / 行动, Value: 2
+							629 text 🎯 目标 / 项目 / 行动
+						630 text 🎯 目标 / 项目 / 行动
+						631 content list
+							632 container
+								633 AXListMarker • 
+								634 text 【事实】未发现明确证据：当前来源未明确 NJX 为发言者、行动主体或决策 owner。
+						635 heading 📡 可复用信号 未发现合格的可复用 NJX 信号；本源仅可作为「2026-09-24 移动采集：导入演示音频（合成朗读昨日捕获），用于移动采集链路集成验证」这一情境记录，供后续链路验收核对。, Value: 2
+							636 text 📡 可复用信号 未发现合格的可复用 NJX 信号；本源仅可作为「2026-09-24 移动采集：导入演示音频（合成朗读昨日捕获），用于移动采集链路集成验证」这一情境记录，供后续链路验收核对。
+						637 text 📡 可复用信号 未发现合格的可复用 NJX 信号；本源仅可作为「2026-09-24 移动采集：导入演示音频（合成朗读昨日捕获），用于移动采集链路集成验证」这一情境记录，供后续链路验收核对。
+						638 heading ⚠️ 风险、矛盾与待验证, Value: 2
+							639 text ⚠️ 风险、矛盾与待验证
+						640 text ⚠️ 风险、矛盾与待验证
+						641 content list
+							642 container
+								643 AXListMarker • 
+								644 text 【风险·待验证】时间矛盾：采集元数据 captured_at=2026-09-23T21:00:00+08:00、captured_date=2026-09-23，而 ASR 正文自称「2026年9月22日下午」，二者不一致；文件名又标注为「合成朗读昨日捕获」。需人工确认以哪一时间为准，以及该音频是演示素材还是真实记录。owner=unknown。
+							645 container
+								646 AXListMarker • 
+								647 text 【风险·待验证】ASR 质量受限：正文多处词语明显误识别（如「这条路因」「交付编解」「支持库」「正式笔」），据此得出的内容仅作情境参考，不得作为正式事实引用。owner=unknown。
+						648 heading 🏷️ 标签 #移动采集 #演示音频 #集成验证 #未归因, Value: 2
+							649 text 🏷️ 标签 #移动采集 #演示音频 #集成验证 #未归因
+						650 text 🏷️ 标签 #移动采集 #演示音频 #集成验证 #未归因
+						651 heading 🔗 关联 20260924, Value: 2
+							652 text 🔗 关联 
+							653 text 20260924
+						654 container
+							655 text 🔗 关联  20260924
+						656 heading Value: 2, 📎 附件转写 无。本源无 Obsidian embed、无 URL、无本地附件路径；正文元数据引用的 cap_dc6f326f5ddb6be0fe1e4d12ab139c34.wav 未以路径或 embed 形式提供，不构成可发现的附件，且本源已自带 ASR 原文，未重复转写。
+							657 text 📎 附件转写 无。本源无 Obsidian embed、无 URL、无本地附件路径；正文元数据引用的 cap_dc6f326f5ddb6be0fe1e4d12ab139c34.wav 未以路径或 embed 形式提供，不构成可发现的附件，且本源已自带 ASR 原文，未重复转写。
+						658 text 📎 附件转写 无。本源无 Obsidian embed、无 URL、无本地附件路径；正文元数据引用的 cap_dc6f326f5ddb6be0fe1e4d12ab139c34.wav 未以路径或 embed 形式提供，不构成可发现的附件，且本源已自带 ASR 原文，未重复转写。
+						659 heading Value: 2, 📚 证据索引 | ID | 类型 | 置信度 | 依据来源 | anchor | 主体 | scope | 验证 | |----|------|--------|----------|--------|------|-------|------| | DIM0-01 | 事实 | 高 | 原始备份全文 | raw#L1-L23 | NJX（归因判定：无合格证据） | 全篇无 NJX 证据，本行为归因判定 | 复核：全文检索 NJX/周增瑞 | | CLAIM-01 | 事实 | 高 | 原始备份 frontmatter L1-L13 | raw#L1-L13 | unknown（移动采集元数据） | 采集 id/版本/类型/时间/时区/日期/content_hash/intent | 核对 frontmatter | | CLAIM-02 | 事实 | 高 | 原始备份 L17 | raw#L17 | unknown（录音资产元数据） | wav 文件名/hash/大小/时长 | 核对原始备份 L17 | | CLAIM-03 | 事实 | 高 | 原始备份 L1-L15 | raw#L1-L15 | unknown（移动采集接收记录） | 来源、创建时间、工作台接收与迟到采集说明 | 核对原始备份 L1-L15 | | CLAIM-04 | 事实 | 高 | 原始备份 L19-L23 | raw#L19-L23 | unknown（ASR 转写区结构） | 两段 ASR 文本逐字重复 | 核对原始备份 L21/L23 | | CLAIM-05 | 事实 | 中 | 原始备份 ASR 正文 L21-L23 | raw#L21-L23 | unknown（ASR 正文，未标注发言者） | 自称日期、航材班组 AOG 需求、评审会「张公」提出事项、末句整理要求 | 转写质量受限，需人工听核原始音频 |
+							660 text 📚 证据索引 | ID | 类型 | 置信度 | 依据来源 | anchor | 主体 | scope | 验证 | |----|------|--------|----------|--------|------|-------|------| | DIM0-01 | 事实 | 高 | 原始备份全文 | raw#L1-L23 | NJX（归因判定：无合格证据） | 全篇无 NJX 证据，本行为归因判定 | 复核：全文检索 NJX/周增瑞 | | CLAIM-01 | 事实 | 高 | 原始备份 frontmatter L1-L13 | raw#L1-L13 | unknown（移动采集元数据） | 采集 id/版本/类型/时间/时区/日期/content_hash/intent | 核对 frontmatter | | CLAIM-02 | 事实 | 高 | 原始备份 L17 | raw#L17 | unknown（录音资产元数据） | wav 文件名/hash/大小/时长 | 核对原始备份 L17 | | CLAIM-03 | 事实 | 高 | 原始备份 L1-L15 | raw#L1-L15 | unknown（移动采集接收记录） | 来源、创建时间、工作台接收与迟到采集说明 | 核对原始备份 L1-L15 | | CLAIM-04 | 事实 | 高 | 原始备份 L19-L23 | raw#L19-L23 | unknown（ASR 转写区结构） | 两段 ASR 文本逐字重复 | 核对原始备份 L21/L23 | | CLAIM-05 | 事实 | 中 | 原始备份 ASR 正文 L21-L23 | raw#L21-L23 | unknown（ASR 正文，未标注发言者） | 自称日期、航材班组 AOG 需求、评审会「张公」提出事项、末句整理要求 | 转写质量受限，需人工听核原始音频 |
+						661 text 📚 证据索引 | ID | 类型 | 置信度 | 依据来源 | anchor | 主体 | scope | 验证 | |----|------|--------|----------|--------|------|-------|------| | DIM0-01 | 事实 | 高 | 原始备份全文 | raw#L1-L23 | NJX（归因判定：无合格证据） | 全篇无 NJX 证据，本行为归因判定 | 复核：全文检索 NJX/周增瑞 | | CLAIM-01 | 事实 | 高 | 原始备份 frontmatter L1-L13 | raw#L1-L13 | unknown（移动采集元数据） | 采集 id/版本/类型/时间/时区/日期/content_hash/intent | 核对 frontmatter | | CLAIM-02 | 事实 | 高 | 原始备份 L17 | raw#L17 | unknown（录音资产元数据） | wav 文件名/hash/大小/时长 | 核对原始备份 L17 | | CLAIM-03 | 事实 | 高 | 原始备份 L1-L15 | raw#L1-L15 | unknown（移动采集接收记录） | 来源、创建时间、工作台接收与迟到采集说明 | 核对原始备份 L1-L15 | | CLAIM-04 | 事实 | 高 | 原始备份 L19-L23 | raw#L19-L23 | unknown（ASR 转写区结构） | 两段 ASR 文本逐字重复 | 核对原始备份 L21/L23 | | CLAIM-05 | 事实 | 中 | 原始备份 ASR 正文 L21-L23 | raw#L21-L23 | unknown（ASR 正文，未标注发言者） | 自称日期、航材班组 AOG 需求、评审会「张公」提出事项、末句整理要求 | 转写质量受限，需人工听核原始音频 |
+						662 heading 知识地图与认知连接, Value: 3
+							663 text 知识地图与认知连接
+						664 text 工作记录 知识与工具
+						665 heading 依据与边界, Value: 3
+							666 text 依据与边界
+						667 text knowledge/notes/daily/202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34.md
+						668 text NJX-first · 他人观点不归因 NJX
+						669 button (collapsed) 查看来源说明, Secondary Actions: Expand
+							670 text 查看来源说明
+						671 heading 关联知识, Value: 3
+							672 text 关联知识
+					673 container
+						674 button 同对象 2D
+							675 image
+							676 text 同对象 2D
+						677 button 同对象 3D
+							678 image
+							679 text 同对象 3D
+		279 container 计划、轨迹与助手
+			280 text 视角
+			281 text NJX
+			282 text 知识
+			283 text 24
+			284 text 五维
+			285 text 5
+			286 text 九维
+			287 text 9
+			288 button 计划
+				289 image
+				290 text 计划
+			291 button 轨迹
+				292 image
+				293 text 轨迹
+			294 button 助手
+				295 image
+				296 text 助手
+			321 container njx-rtab-body
+				322 text 轨迹
+				323 text 2026-09-24 · 我的行动 15 条
+				324 pop up button (collapsed, settable) Value: 2026-09-24（今天）, ID: njx-tr-date, Secondary Actions: Expand
+					325 menu
+						326 (selected) 2026-09-24（今天）
+				327 container njx-tr-list
+					328 text 行动
+					329 text 15
+					330 text 已完成
+					331 text 7
+					332 text 日程
+					333 text 0
+					334 text 工作台
+					335 text 15
+					336 button 全部 15
+					337 button 灵犀工作台 15
+					338 button 全部 15
+					339 button 未完成 8
+					340 button 已完成 7
+					341 container
+						342 text 17:10 整理 把它整理入库　202609241708移动采集PX24首次体验会议原定九点-896d2 ✓ ▸
+					343 container
+						344 text 17:10 笔记 记录了一篇笔记　202609241708移动采集PX24首次体验会议原定九点-896d20de ▸
+					345 container
+						346 text 17:16 录入 添加了笔记原文　20260924171620260924PX24工作台原有入口 ▸
+					347 container
+						348 text 17:18 笔记 记录了一篇笔记　20260924171620260924PX24工作台原有入口 ▸
+					349 container
+						350 text 17:18 整理 把它整理入库　20260924171620260924PX24工作台原有入口 ✓ ▸
+					351 container
+						352 text 17:18 完成 完成了整理并归档　20260924171620260924PX24工作台原有入口 · 已发企业微信 · 已打开预览 ✓ ▸
+					353 container
+						354 text 17:22 笔记 记录了一篇笔记　202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话 ▸
+					355 container
+						356 text 17:22 整理 把它整理入库　202609241721移动采集这些是普通话的内容这些是普通话的内容这些 ✓ ▸
+					357 container
+						358 text 17:26 整理 把它整理入库　202609241725移动采集PX24首次体验现场修正会议改为十点-8 ✓ ▸
+					359 container
+						360 text 17:26 笔记 记录了一篇笔记　202609241725移动采集PX24首次体验现场修正会议改为十点-896d2 ▸
+					361 container
+						362 text 17:28 笔记 记录了一篇笔记　202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c3 ▸
+					363 container
+						364 text 17:28 整理 把它整理入库　202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab1 ✓ ▸
+					365 container
+						366 text 17:32 笔记 记录了一篇笔记　202609241732移动采集PX24首次体验后续补充会议最终改为十一点-89 ▸
+					367 container
+						368 text 17:32 整理 把它整理入库　202609241731移动采集PX24同名同分钟资料引用“把本条发送到 ✓ ▸
+					369 container
+						370 text 17:32 笔记 记录了一篇笔记　202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信 ▸
+			297 text 我的知识，服务我的判断。
+	371 button Description: 打开灵犀对话, Help: 展开完整对话, ID: njx-dock-toggle
+		372 image
+
+The focused UI element is 426 button NOTE · 09.09 移动采集导入演示音频(合成朗读昨日捕获)-ab139c34 <h1>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</h1><p>移动采集 · 导入演示音频（合成朗读昨日捕获，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:26 由移动采集（手机）导入的一条音频采集（capture revision 1，intent=note，captured_at=2</p>

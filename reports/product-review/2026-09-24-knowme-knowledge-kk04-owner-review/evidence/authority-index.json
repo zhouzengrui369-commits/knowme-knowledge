@@ -1,0 +1,26 @@
+{
+  "reviewer_authority_commit": "4253deb55a04de20fca6ac50a47b42a6d4489c04",
+  "reviewer_authority_tree": "eaa62967737b17cc8ad07e46e297e0a52b2c3092",
+  "core_sha256": "041a475d8cbc3404ed1e6df66c52377aecfcd631721d18a0ec9de59783f2b676",
+  "central_parent_commit": "fc4872d9ba33325cf43a0778bb3ea01aea050c0f",
+  "baseline_contract_commit": "be400447c1d68062d22ae5e9ea0d169d929514df",
+  "ed_evidence_commit": "b44d11b8ffe594666721510a3b9cd9e97015415f",
+  "archived_document_sha256": {
+    "AGENTS.md": "61b0f4e62b17e03590c137f02e33026f8569dfdc35790875bcca6a53475b64e9",
+    "governance-lock.json": "4bb3cbc9a2b74c3ea2ecbf84aa25acfe19b8d168ff75e815bf13fa7051df779d",
+    "core-parent.md": "eabfa800b88f3edadd7451f60e4663ce73d67b98747666a813fd0f3b5da08726",
+    "state-machine.json": "86ba0b4dc1e78ee36f48a56d978a967d16ad426c08866346791f0eb596a5878f",
+    "local-governance-skill.md": "75f6b111621f310f7759caacff8f5a725584131a922d59c6ccfffbfcee0274ad",
+    "profile.yaml": "54ca5c6b7e30596136da4e945bcdd57fc8d58f714d75f42f8486ca8e521c3586",
+    "ecosystem-policy.md": "01e442d6454dc9986e7101966c98f529e6fbbd49ec226faeedb511bd9f625733",
+    "baseline-v3.md": "7f2935e22f591df0da908316807caa6973377e46dc5c2ef4b8c8408dfd022e55",
+    "PROJECT_STATUS.md": "15a30f5b1cc33494b8aeb59a7f76973989271db77d2a671a91eb43de481bc4bb",
+    "contract.md": "6f020ef537c00040bc71e9bb230e9d33a2f637eb827e1c2605e913f0deb51473",
+    "admission.md": "3b7b6320ecf1a3f4ec29c9a479e0b6983b280dcb64487f7a88eba3dc71f9701f",
+    "referral.md": "65e0cdbfd290505bd533ec4ed6749307a5d9929cd33834d3cc371316197d55ee",
+    "runtime_runbook.md": "f1288cf05ab9d13d39b1a9ef067bcb3a265aa3ce6dc0883a44a55227b64a3d5c",
+    "canonical_artifact_receipt.md": "c0ede01ea92170eb781df0f9eeaa6d410fd7d70356631716593b4fdf32807e43",
+    "environment_receipt.md": "21a0fdc83d9ac4d5cf8b769eb05bffc63e5a8e31114d2e65062a98fa17138727",
+    "interface-contract.md": "c95f118a35facd010e3665a7082bcc9e3130f5920eed6c3b74db1f740d0b045d"
+  }
+}

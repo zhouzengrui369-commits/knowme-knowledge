@@ -1,0 +1,29 @@
+project_id: knowme-knowledge
+product_name: KnowME Knowledge
+product_subject: Lingxi Workbench
+product_type: plugin_connected_mobile_capture_device
+repository: zhouzengrui369-commits/knowme-knowledge
+workbench_repository: zhouzengrui369-commits/njx-knowledge
+knowledge_authority: workbench_managed_NJX_Knowledge
+primary_device: Huawei Mate60
+primary_platform: existing_Owner_OS_no_forced_upgrade
+product_mode: capture_first_contextual_agent_access
+data_strategy: offline_capture_workbench_canonical_results
+harness_location: workbench_only
+initial_harness: existing_DSH
+harness_replaceable: true
+mobile_harness_required: false
+provider_location: workbench_existing_authorized_configuration
+model_provider_replaceable: true
+silent_provider_fallback: false
+mobile_local_store: capture_outbox_and_cache_not_second_KB
+user_scale: '<10'
+security_model: RISK_PROPORTIONAL
+exposure: AUTHENTICATED_REMOTE_CAPTURE
+pre_1_0_owner_acceptance: false
+final_1_0_owner_acceptance: true
+active_goal: GOAL-KK-04-LINGXI-MOBILE-CAPTURE-BRIDGE
+active_milestone: MILESTONE-GOAL-KK-04-LINGXI-MOBILE-CAPTURE-BRIDGE
+baseline: PRODUCT-BASELINE-KNOWME-KNOWLEDGE-20260922-v3-LINGXI-CAPTURE-DEVICE
+ui_lineage: preserve_Lingxi_visual_language_mobile_capture_layout_per_frozen_contract
+engineering_start_authority: Issue_35_final_exact_pair_activation_only

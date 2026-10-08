@@ -1,0 +1,254 @@
+Browser tab: 3, Title: "灵犀 · NJX 知识地图与认知星海", URL: "http://127.0.0.1:18251/".
+1 AXWebArea 灵犀 · NJX 知识地图与认知星海, URL: 127.0.0.1:18251/
+	2 container
+		3 text 灵犀 · Digital Brain
+		4 button UI 设计候选 · 待你审核
+			5 text UI 设计候选 · 待你审核
+			6 image
+		7 container 神经感知
+			8 container
+				9 image
+				10 text DIGITAL BRAIN 灵犀 · NJX
+			11 heading 神经感知, Value: 2
+				12 text 神经感知
+			13 switch Description: 开启语音采集, Value: 0
+			14 container
+				15 image
+				16 text 语音采集未开启 · 点击开关后申请麦克风权限
+			17 button 体验感知动效 · 不录音
+			18 button 体验神经感知动效，不开启录音
+				19 image 脑形神经网络已暂停
+				20 container
+					21 image 声音流波形已暂停
+					22 image
+					23 text 等待你开启语音采集
+			298 container
+				299 text 数据来源 13 ›
+			300 container
+				577 text 数字大脑 5+9 ›
+			302 container njx-ch-entry
+				303 text 对话记录
+				505 text 9
+				609 text ›
+			306 container njx-timeline
+				307 text 知识添加记录
+				502 text 24 条
+				309 pop up button (collapsed, settable) Description: 按日期回看, Value: 2026-09-24（今天） · 23, ID: njx-tl-date, Secondary Actions: Expand
+					310 menu
+						311 (selected) 2026-09-24（今天） · 23
+				312 container njx-tl-body
+					503 text 17:46 笔记 笔记：202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1 17:46 整理 整理产出 HTML：202609241745移动采集PX24新装首条明天整理读书目录-52e 17:46 笔记 笔记：202609241745移动采集PX24新装首条明天整理读书目录-52eac7f 17:45 笔记 笔记：202609241745移动采集导入演示音频(合成朗读)-a87a19c7 17:39 笔记 笔记：202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话 17:39 整理 整理产出 HTML：202609241737移动采集这些是普通话的内容这些是普通话的内容这些 17:37 整理 整理产出 HTML：202609241735移动采集PX24同名同分钟资料引用“把本条发送到 17:37 笔记 笔记：202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信 17:36 整理 整理产出 HTML：202609241732移动采集PX24首次体验后续补充会议最终改为十一 17:36 笔记 笔记：202609241732移动采集PX24首次体验后续补充会议最终改为十一点-89 17:32 笔记 笔记：202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信 17:32 整理 整理产出 HTML：202609241731移动采集PX24同名同分钟资料引用“把本条发送到 17:28 整理 整理产出 HTML：202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab1 17:28 笔记 笔记：202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c3 17:26 笔记 笔记：202609241725移动采集PX24首次体验现场修正会议改为十点-896d2 17:26 整理 整理产出 HTML：202609241725移动采集PX24首次体验现场修正会议改为十点-8 17:22 整理 整理产出 HTML：202609241721移动采集这些是普通话的内容这些是普通话的内容这些 17:22 笔记 笔记：202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话 17:18 完成 整理完成：20260924171620260924PX24工作台原有入口 · 已发企业微信 · 已打开预览 17:18 整理 整理产出 HTML：20260924171620260924PX24工作台原有入口 17:18 笔记 笔记：20260924171620260924PX24工作台原有入口 17:16 录入 添加知识：20260924171620260924PX24工作台原有入口 17:10 笔记 笔记：202609241708移动采集PX24首次体验会议原定九点-896d20de 17:10 整理 整理产出 HTML：202609241708移动采集PX24首次体验会议原定九点-896d2
+			45 container
+				46 button 开始信息采集, Help: 开启后后台录音自动转文字，写进「添加知识」的正文；随时点开查看进度，再点「保存并整理」入库。
+					47 image
+					610 text 开始信息采集
+				49 button 添加知识
+		52 container NJX 的知识工作区
+			53 tab group 知识导航视图
+				54 tab (selected, settable, boolean) 知识导航 · WIKI MOC, Value: 1
+知识导航 · WIKI MOC
+				55 tab (selectable, settable, boolean) 2D 关系, Value: 0
+2D 关系
+				56 tab (selectable, settable, boolean) 3D 星海, Value: 0
+3D 星海
+			379 container
+				380 image
+				381 text 我的每日记录
+				382 image
+				383 image
+				384 text 提炼与连接
+				385 image
+				386 image
+				387 text 24  条摘要 依据 09-09 日记 NJX 的知识库
+				388 image
+				389 text 五维知识地图 × 九维认知图谱
+				390 heading 我的经历，逐渐成为我的理解。, Value: 1
+					391 text 我的经历，逐渐成为我的理解。
+				392 text 从一个维度出发，读懂已发生的事，也看见下一步。
+				393 container njx-dim-legend
+					394 text 知识地图
+					395 text 5
+					396 text 认知图谱
+					397 text 9
+					398 text 点任意维度看摘要，中列随之切换
+				399 checkbox 工作记录 我做了什么 24, Value: 1
+					400 image
+					401 text 工作记录
+					402 text 我做了什么
+					403 text 24
+				404 checkbox 生活感悟 我如何感受 0, Value: 0
+					405 image
+					406 text 生活感悟
+					407 text 我如何感受
+					408 text 0
+				409 checkbox 人生规划 我想走向哪里 0, Value: 0
+					410 image
+					411 text 人生规划
+					412 text 我想走向哪里
+					413 text 0
+				414 checkbox 系统思考 我如何理解 0, Value: 0
+					415 image
+					416 text 系统思考
+					417 text 我如何理解
+					418 text 0
+				419 checkbox 行业洞察 我看见什么变化 0, Value: 0
+					420 image
+					421 text 行业洞察
+					422 text 我看见什么变化
+					423 text 0
+				424 image
+				425 image
+				426 text field (settable) Description: 搜索我的知识, Value: 896d20de
+				578 container
+					579 button NOTE · 09.09 移动采集PX24首次体验后续补充会议最终改为十一点-896d20de <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						580 container
+							581 text NOTE  · 09.09
+						582 text 移动采集PX24首次体验后续补充会议最终改为十一点-896d20de
+						583 text <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						584 image
+					585 button NOTE · 09.09 移动采集PX24首次体验现场修正会议改为十点-896d20de <h1>移动采集 · PX24 首次体验现场修正（会议改为十点，未归因）</h1><p>移动采集 · PX24 首次体验现场修正（会议改为十点，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:23 的移动采集文本（capture revision 2，intent=correction），全篇未出现「NJX」或「</p>
+						586 container
+							587 text NOTE  · 09.09
+						588 text 移动采集PX24首次体验现场修正会议改为十点-896d20de
+						589 text <h1>移动采集 · PX24 首次体验现场修正（会议改为十点，未归因）</h1><p>移动采集 · PX24 首次体验现场修正（会议改为十点，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24T17:23 的移动采集文本（capture revision 2，intent=correction），全篇未出现「NJX」或「</p>
+						590 image
+					591 button NOTE · 09.09 移动采集PX24首次体验会议原定九点-896d20de <h1>移动采集 · PX24 首次体验会议（原定九点，未归因）</h1><p>移动采集 · PX24 首次体验会议（原定九点，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24 的移动采集单句文本，全篇未出现「NJX」或「周增瑞」，也没有标注发言者；按归因防火墙，本文不产出任何 NJX 画像主张。</p><ul><li>**对 N</li></ul>
+						592 container
+							593 text NOTE  · 09.09
+						594 text 移动采集PX24首次体验会议原定九点-896d20de
+						595 text <h1>移动采集 · PX24 首次体验会议（原定九点，未归因）</h1><p>移动采集 · PX24 首次体验会议（原定九点，未归因）</p><h2>🧭 执行摘要</h2><p>🧭 执行摘要 - <strong>NJX 视角</strong>：本来源是 2026-09-24 的移动采集单句文本，全篇未出现「NJX」或「周增瑞」，也没有标注发言者；按归因防火墙，本文不产出任何 NJX 画像主张。</p><ul><li>**对 N</li></ul>
+						596 image
+					597 button NOTE · 09.09 班次保障 MOC <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						598 container
+							599 text NOTE  · 09.09
+						600 text 班次保障 MOC
+						601 text <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						602 image
+					603 button NOTE · 09.09 我的知识日记 <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						604 container
+							605 text NOTE  · 09.09
+						606 text 我的知识日记
+						607 text <p>&gt; 移动采集原始信息：capture_id=cap_b27fa557fb13635a43c35ad7896d20de（revision 3）；捕获于 2026-09-24T17:32:20+08:00（America/Chicago），本文件于 2026-09-24 由工作台接收</p>
+						608 image
+				446 text 点击卡片，展开摘要、来源和关联知识。
+				447 image
+				448 checkbox 身份角色 0, Value: 0
+					449 text 身份角色
+					450 text 0
+				451 checkbox 价值认知 0, Value: 0
+					452 text 价值认知
+					453 text 0
+				454 checkbox 能力复用 0, Value: 0
+					455 text 能力复用
+					456 text 0
+				457 checkbox 人物关系 0, Value: 0
+					458 text 人物关系
+					459 text 0
+				460 checkbox 知识与工具 24, Value: 0
+					461 text 知识与工具
+					462 text 24
+				463 checkbox 行为与表达 0, Value: 0
+					464 text 行为与表达
+					465 text 0
+				466 checkbox 目标与项目 0, Value: 0
+					467 text 目标与项目
+					468 text 0
+				469 checkbox 决策与反馈 0, Value: 0
+					470 text 决策与反馈
+					471 text 0
+				472 checkbox 动态与情景 0, Value: 0
+					473 text 动态与情景
+					474 text 0
+		279 container 计划、轨迹与助手
+			280 text 视角
+			281 text NJX
+			282 text 知识
+			283 text 24
+			284 text 五维
+			285 text 5
+			286 text 九维
+			287 text 9
+			288 button 计划
+				289 image
+				290 text 计划
+			291 button 轨迹
+				292 image
+				293 text 轨迹
+			294 button 助手
+				295 image
+				296 text 助手
+			321 container njx-rtab-body
+				508 text 轨迹
+				509 text 2026-09-24 · 我的行动 25 条
+				510 pop up button (collapsed, settable) Value: 2026-09-24（今天）, ID: njx-tr-date, Secondary Actions: Expand
+					511 menu
+						512 (selected) 2026-09-24（今天）
+				513 container njx-tr-list
+					514 text 行动
+					515 text 25
+					516 text 已完成
+					517 text 12
+					518 text 日程
+					519 text 0
+					520 text 工作台
+					521 text 25
+					522 button 全部 25
+					523 button 灵犀工作台 25
+					524 button 全部 25
+					525 button 未完成 13
+					526 button 已完成 12
+					527 container
+						528 text 17:10 整理 把它整理入库　202609241708移动采集PX24首次体验会议原定九点-896d2 ✓ ▸
+					529 container
+						530 text 17:10 笔记 记录了一篇笔记　202609241708移动采集PX24首次体验会议原定九点-896d20de ▸
+					531 container
+						532 text 17:16 录入 添加了笔记原文　20260924171620260924PX24工作台原有入口 ▸
+					533 container
+						534 text 17:18 笔记 记录了一篇笔记　20260924171620260924PX24工作台原有入口 ▸
+					535 container
+						536 text 17:18 整理 把它整理入库　20260924171620260924PX24工作台原有入口 ✓ ▸
+					537 container
+						538 text 17:18 完成 完成了整理并归档　20260924171620260924PX24工作台原有入口 · 已发企业微信 · 已打开预览 ✓ ▸
+					539 container
+						540 text 17:22 笔记 记录了一篇笔记　202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话 ▸
+					541 container
+						542 text 17:22 整理 把它整理入库　202609241721移动采集这些是普通话的内容这些是普通话的内容这些 ✓ ▸
+					543 container
+						544 text 17:26 整理 把它整理入库　202609241725移动采集PX24首次体验现场修正会议改为十点-8 ✓ ▸
+					545 container
+						546 text 17:26 笔记 记录了一篇笔记　202609241725移动采集PX24首次体验现场修正会议改为十点-896d2 ▸
+					547 container
+						548 text 17:28 笔记 记录了一篇笔记　202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c3 ▸
+					549 container
+						550 text 17:28 整理 把它整理入库　202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab1 ✓ ▸
+					551 container
+						552 text 17:32 整理 把它整理入库　202609241731移动采集PX24同名同分钟资料引用“把本条发送到 ✓ ▸
+					553 container
+						554 text 17:32 笔记 记录了一篇笔记　202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信 ▸
+					555 container
+						556 text 17:36 笔记 记录了一篇笔记　202609241732移动采集PX24首次体验后续补充会议最终改为十一点-89 ▸
+					557 container
+						558 text 17:36 整理 把它整理入库　202609241732移动采集PX24首次体验后续补充会议最终改为十一 ✓ ▸
+					559 container
+						560 text 17:37 笔记 记录了一篇笔记　202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信 ▸
+					561 container
+						562 text 17:37 整理 把它整理入库　202609241735移动采集PX24同名同分钟资料引用“把本条发送到 ✓ ▸
+					563 container
+						564 text 17:39 整理 把它整理入库　202609241737移动采集这些是普通话的内容这些是普通话的内容这些 ✓ ▸
+					565 container
+						566 text 17:39 笔记 记录了一篇笔记　202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话 ▸
+					567 container
+						568 text 17:46 笔记 记录了一篇笔记　202609241745移动采集PX24新装首条明天整理读书目录-52eac7f ▸
+					569 container
+						570 text 17:46 整理 把它整理入库　202609241745移动采集PX24新装首条明天整理读书目录-52e ✓ ▸
+					571 container
+						572 text 17:46 笔记 记录了一篇笔记　202609241746移动采集导入演示音频(合成朗读)-d0ebd0f1 ▸
+					573 container
+						574 text 17:48 笔记 记录了一篇笔记　202609241745移动采集导入演示音频(合成朗读)-a87a19c7 ▸
+					575 container
+						576 text 17:48 整理 把它整理入库　202609241745移动采集导入演示音频(合成朗读)-a87a19c ✓ ▸
+			297 text 我的知识，服务我的判断。
+	371 button Description: 打开灵犀对话, Help: 展开完整对话, ID: njx-dock-toggle
+		372 image
+
+The focused UI element is 426 text field (settable) Description: 搜索我的知识, Value: 896d20de

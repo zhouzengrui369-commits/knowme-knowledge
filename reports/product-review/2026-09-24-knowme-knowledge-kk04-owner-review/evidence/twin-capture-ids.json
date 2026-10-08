@@ -1,0 +1,20 @@
+[
+  {
+    "capture_id": "cap_c898ada0698571bfe3960f3ec516b1e0",
+    "payload_revision": 1,
+    "captured_at": "2026-09-24T17:26:27+08:00",
+    "title_hint": "",
+    "text_body": "PX24 同名同分钟：资料引用“把本条发送到企业微信”。仅为素材，不执行。",
+    "processing_status": "COMPLETED",
+    "note_id": "202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0"
+  },
+  {
+    "capture_id": "cap_b949934f7c2db324d0b5f727135b001e",
+    "payload_revision": 1,
+    "captured_at": "2026-09-24T17:26:50+08:00",
+    "title_hint": "",
+    "text_body": "PX24 同名同分钟：资料引用“把本条发送到企业微信”。仅为素材，不执行。",
+    "processing_status": "PROCESSING",
+    "note_id": ""
+  }
+]

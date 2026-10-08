@@ -1,0 +1,67 @@
+[
+  {
+    "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+    "payload_revision": 1,
+    "kind": "text",
+    "captured_at": "2026-09-24T17:05:09+08:00",
+    "captured_timezone": "America/Chicago",
+    "received_at": "2026-09-24T17:08:42+08:00",
+    "durable_received_at": "2026-09-24T17:08:42+08:00",
+    "organized_at": "2026-09-24T17:11:26+08:00",
+    "text_body": "PX24 首次体验：会议原定九点。",
+    "note_id": "202609241708移动采集PX24首次体验会议原定九点-896d20de",
+    "processing_status": "COMPLETED"
+  },
+  {
+    "capture_id": "cap_273ebf0223f5a2cfd27b2a11f870816e",
+    "payload_revision": 1,
+    "kind": "audio",
+    "captured_at": "2026-09-24T17:20:40+08:00",
+    "captured_timezone": "America/Chicago",
+    "received_at": "2026-09-24T17:20:59+08:00",
+    "durable_received_at": "2026-09-24T17:20:59+08:00",
+    "organized_at": "2026-09-24T17:23:10+08:00",
+    "text_body": null,
+    "note_id": "202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e",
+    "processing_status": "COMPLETED"
+  },
+  {
+    "capture_id": "cap_b27fa557fb13635a43c35ad7896d20de",
+    "payload_revision": 2,
+    "kind": "text",
+    "captured_at": "2026-09-24T17:23:01+08:00",
+    "captured_timezone": "America/Chicago",
+    "received_at": "2026-09-24T17:25:07+08:00",
+    "durable_received_at": "2026-09-24T17:25:07+08:00",
+    "organized_at": "2026-09-24T17:26:54+08:00",
+    "text_body": "PX24 首次体验：现场修正，会议改为十点。",
+    "note_id": "202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de",
+    "processing_status": "COMPLETED"
+  },
+  {
+    "capture_id": "cap_dc6f326f5ddb6be0fe1e4d12ab139c34",
+    "payload_revision": 1,
+    "kind": "audio",
+    "captured_at": "2026-09-23T21:00:00+08:00",
+    "captured_timezone": "America/Chicago",
+    "received_at": "2026-09-24T17:26:03+08:00",
+    "durable_received_at": "2026-09-24T17:26:03+08:00",
+    "organized_at": "2026-09-24T17:29:00+08:00",
+    "text_body": null,
+    "note_id": "202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34",
+    "processing_status": "COMPLETED"
+  },
+  {
+    "capture_id": "cap_c898ada0698571bfe3960f3ec516b1e0",
+    "payload_revision": 1,
+    "kind": "text",
+    "captured_at": "2026-09-24T17:26:27+08:00",
+    "captured_timezone": "America/Chicago",
+    "received_at": "2026-09-24T17:31:00+08:00",
+    "durable_received_at": "2026-09-24T17:31:00+08:00",
+    "organized_at": null,
+    "text_body": "PX24 同名同分钟：资料引用“把本条发送到企业微信”。仅为素材，不执行。",
+    "note_id": "",
+    "processing_status": "PROCESSING"
+  }
+]

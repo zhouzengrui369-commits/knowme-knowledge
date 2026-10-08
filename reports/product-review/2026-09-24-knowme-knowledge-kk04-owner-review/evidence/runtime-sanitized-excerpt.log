@@ -1,0 +1,19 @@
+Selected runtime output only; line numbers refer to local isolated log at capture. Model-generated narration is background, not reviewer technical validation.
+15: [transcribe] mlx_whisper 不可用，将回退 openai-whisper：[metal::load_device] No Metal device available. This typically occurs in headless, sandboxed, or virtualized macOS sessions where the GPU is not accessible.
+36: [transcribe] MLX 模型预热完成（后续转写约 1 秒）
+57: [transcribe] MLX 模型预热完成（后续转写约 1 秒）
+404: [mcb] organizer 返回 202609241708移动采集PX24首次体验会议原定九点-896d20de.md: I've loaded the skill and its three attachments. Let me set up a todo list and start the runbook sequence (R0 self-test first).Self-test 25/25 ✅. Now R1 (manifest) and R2 (atomic lock).Manifest missin
+2165: [mcb] organizer 返回 202609241721移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-f870816e.md: I'll load the skill instructions first.Now let me run the required self-test and gather exact source facts.Self-test is 25/25. Now gathering exact anchors/counts and testing temp scratch space.Lock ac
+2749: [mcb] organizer 返回 202609241725移动采集PX24首次体验现场修正会议改为十点-896d20de.md: 即时笔记整理 v4 已完成，状态 **PASS**。
+3120: [mcb] organizer 返回 202609241726移动采集导入演示音频(合成朗读昨日捕获)-ab139c34.md: I'll start by loading the skill file and inspecting the source note.Selftest passes 25/25. Now inspecting the gate/renderer contracts and the lock state.Selftest is green (25/25). Now let me generate 
+3172: [transcribe] MLX 模型预热完成（后续转写约 1 秒）
+3578: [mcb] organizer 返回 202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0.md: I'll start by locating and reading the skill instructions, plus the main source file.Now let me run the mandatory self-test and inspect the toolchain scripts.Self-test passes 25/25. Let me study a pre
+3655: [mcb] organizer 返回 202609241731移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-c516b1e0.md: Selftest passed 25/25. Now let me follow the runbook order: R1 manifest read, R2 lock, then hashes.Key finding: a concurrent run is actively holding the lock (its tmp dir was created at 17:32). Let me
+4247: [mcb] organizer 返回 202609241732移动采集PX24首次体验后续补充会议最终改为十一点-896d20de.md: I'll start by locating and reading the skill instructions and the main source note.I've read the skill and its three reference attachments plus both scripts. Now I'll execute in runbook order: **R0 se
+4505: [mcb] organizer 返回 202609241735移动采集PX24同名同分钟资料引用“把本条发送到企业微信”仅为素材不执行-135b001e.md: I'll start by loading the named skill and inspecting the source note.Lock acquired. Now drafting the staged organized Markdown.Gate PASS (99 checks, 0 FAIL). Now running R5 manual gates and committing
+4865: [mcb] organizer 返回 202609241737移动采集这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普通话的内容这些是普-5aed99ad.md: Self-test 25/25, lock acquired. Now drafting the staged Markdown.Gate PASS (99/0/0). Committing the PASSed pair atomically.即时笔记整理完成（状态 **PASS**，全程仅在 `knowledge/notes/daily/` 内读写，未做任何对外分发）。
+6296: [mcb] organizer 返回 202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6.md: 即时笔记整理 v4 执行完成，状态 **PASS**。主源 `202609241745移动采集PX24新装首条明天整理读书目录-52eac7f6.md` 已就地生成三件产出。
+6955: [mcb] organizer 返回 202609241745移动采集导入演示音频(合成朗读)-a87a19c7.md: I'll start by locating the skill definition and the main source note.Now let me look at an existing completed example to model the exact output structure, and check the manifest and scripts.Selftest i
+7405: [transcribe] MLX 模型预热完成（后续转写约 1 秒）
+7409: [mcb] organizer 返回 202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md: ❌ dsh-acp init 超时
+7410: [mcb] organizer 返回 202609241800移动采集导入演示音频(合成朗读)-d0ebd0f1.md: ❌ dsh-acp init 超时

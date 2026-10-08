@@ -1,0 +1,2 @@
+{"at": "2026-09-24T17:45:01.378514+08:00", "method": "POST", "path": "/api/mobile-capture/v1/captures", "fault": "lost_ack_after_durable_accept", "upstream_http": 202, "input_bytes": 495}
+{"at": "2026-09-24T17:46:38.027499+08:00", "method": "PUT", "path": "/api/mobile-capture/v1/captures/cap_7da867189fd368e1f349283ad0ebd0f1/asset?payload_revision=1", "fault": "upload_interrupted_before_delivery", "upstream_http": null, "input_bytes": 1024078}
